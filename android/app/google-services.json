@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "481798215371",
+    "project_id": "u-traffic",
+    "storage_bucket": "u-traffic.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:481798215371:android:337ba0c167baf12851ed4e",
+        "android_client_info": {
+          "package_name": "com.example.u_traffic_enforcer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "481798215371-8np2tossh15tr4sg6df4cckbo8s30l1j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCA7CXiC2SA3a4y8mZNljvzvdD1Aber4GM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "481798215371-8np2tossh15tr4sg6df4cckbo8s30l1j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
