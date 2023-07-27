@@ -403,7 +403,7 @@ class UTextStyle {
         fontSize: 20,
         decoration: TextDecoration.none,
         fontStyle: FontStyle.normal,
-        fontWeight: FontWeight.w400,
+        fontWeight: FontWeight.w900,
         height: 30 / 20,
         letterSpacing: 0,
       );
