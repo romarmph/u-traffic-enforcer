@@ -18,6 +18,7 @@ class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool isObscure = true;
 
   void loginBtnPressed() async {
     if (_formKey.currentState!.validate()) {
@@ -66,6 +67,10 @@ class _LoginState extends State<Login> {
       ],
     );
   }
+
+  // Widget passwordVisibility() {
+  //   return IconButton(onPressed: onPressed, icon: icon)
+  // }
 
   Widget passwordField() {
     return Column(
