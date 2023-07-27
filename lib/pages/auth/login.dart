@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../config/themes/colors.dart';
 import '../../config/themes/spacing.dart';
 import '../../config/themes/textstyles.dart';
+import '../../model/user.dart';
+import '../../service/auth_service.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -15,6 +18,31 @@ class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  void loginBtnPressed() async {
+    if (_formKey.currentState!.validate()) {
+      final email = _emailController.text;
+      final password = _passwordController.text;
+      final authService = Provider.of<AuthService>(context, listen: false);
+      final result = await authService.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+    }
+  }
+
+  void navigateToHome() {
+    Navigator.pushNamed(context, "/home");
+  }
+
+  void displayLoginError(User? result) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(result.toString()),
+        backgroundColor: UColors.red400,
+      ),
+    );
+  }
 
   Widget emailField() {
     return Column(
@@ -65,15 +93,7 @@ class _LoginState extends State<Login> {
 
   Widget loginButton() {
     return ElevatedButton(
-      onPressed: () {
-        if (_formKey.currentState!.validate()) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Processing Data'),
-            ),
-          );
-        }
-      },
+      onPressed: loginBtnPressed,
       child: const Text('Login'),
     );
   }
