@@ -34,8 +34,9 @@ class AuthService {
       return null;
     }
 
-    Enforcer enforcer =
-        Enforcer.fromJson(result.docs.first as Map<String, dynamic>);
+    Enforcer enforcer = Enforcer.fromJson(
+      result.docs.first.data(),
+    );
 
     return enforcer;
   }

@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 
+import 'config/themes/components/fab.dart';
 import 'config/themes/components/input_decoration.dart';
 import 'config/themes/components/elevated_button.dart';
+import 'config/themes/components/text_button.dart';
 import 'firebase_options.dart';
 import '../pages/auth/login.dart';
 import '../pages/auth/register.dart';
@@ -39,6 +41,8 @@ class UTrafficEnforcer extends StatelessWidget {
           useMaterial3: true,
           elevatedButtonTheme: elevatedButtonTheme,
           inputDecorationTheme: inputDecorationTheme,
+          textButtonTheme: textButtonTheme,
+          floatingActionButtonTheme: fabTheme,
         ),
         initialRoute: "/",
         routes: {
