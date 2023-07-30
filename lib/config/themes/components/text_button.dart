@@ -14,6 +14,6 @@ final textButtonTheme = TextButtonThemeData(
       vertical: USpace.space12,
       horizontal: USpace.space24,
     ),
-    textStyle: const UTextStyle().textxsfontnormal,
+    textStyle: const UTextStyle().textbasefontnormal,
   ),
 );

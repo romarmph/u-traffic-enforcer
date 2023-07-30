@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../config/themes/colors.dart';
 import '../../config/themes/spacing.dart';
 import '../../config/themes/textstyles.dart';
-import '../../model/user.dart';
+import '../../model/user_model.dart';
 import '../../service/auth_service.dart';
 
 class Login extends StatefulWidget {

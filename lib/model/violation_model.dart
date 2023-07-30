@@ -1,13 +1,13 @@
 class Violation {
   final String? id;
-  final double fineAmount;
+  final int fineAmount;
   final String name;
-  final String description;
+  bool isSelected;
 
-  const Violation({
+  Violation({
     this.id,
+    this.isSelected = false,
     required this.fineAmount,
     required this.name,
-    required this.description,
   });
 }

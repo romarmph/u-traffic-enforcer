@@ -10,14 +10,21 @@ final inputDecorationTheme = InputDecorationTheme(
     horizontal: USpace.space16,
   ),
   filled: true,
-  fillColor: UColors.white,
+  fillColor: UColors.gray100,
   prefixIconColor: UColors.gray400,
-  hintStyle:
-      const UTextStyle().textbasefontnormal.copyWith(color: UColors.gray400),
+  hintStyle: const UTextStyle().textbasefontnormal.copyWith(
+        color: UColors.gray400,
+      ),
+  labelStyle: const UTextStyle().textbasefontnormal.copyWith(
+        color: UColors.gray400,
+      ),
+  floatingLabelStyle: const UTextStyle().textbasefontnormal.copyWith(
+        color: UColors.blue400,
+      ),
   enabledBorder: OutlineInputBorder(
     borderRadius: BorderRadius.circular(USpace.space8),
     borderSide: const BorderSide(
-      color: UColors.gray300,
+      color: UColors.white,
       width: 1,
     ),
   ),
