@@ -320,11 +320,15 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
+        onPressed: fabPressed,
         label: const Text("New Ticket"),
         icon: const Icon(Icons.add),
       ),
       bottomNavigationBar: bottomNav(),
     );
+  }
+
+  void fabPressed() {
+    Navigator.pushNamed(context, "/violatordetails");
   }
 }
