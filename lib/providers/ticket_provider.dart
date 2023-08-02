@@ -24,6 +24,7 @@ class TicketProvider extends ChangeNotifier {
     violationDateTime: "",
     enforcerId: "",
     driverSignature: "",
+    licenseImageUrl: "",
   );
 
   Ticket get getTicket => _ticket;
@@ -32,6 +33,11 @@ class TicketProvider extends ChangeNotifier {
     Map<String, dynamic> ticket = _ticket.toJson();
     ticket[fieldName] = value;
     _ticket = Ticket.fromJson(ticket);
+    notifyListeners();
+  }
+
+  void setLicenseImagePath(String path) {
+    _ticket.licenseImageUrl = path;
     notifyListeners();
   }
 }

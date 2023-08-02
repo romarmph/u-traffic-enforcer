@@ -5,7 +5,7 @@ import '../../config/themes/colors.dart';
 import '../../config/themes/spacing.dart';
 import '../../config/themes/textstyles.dart';
 import '../../model/user_model.dart';
-import '../../service/auth_service.dart';
+import '../../services/auth_service.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
