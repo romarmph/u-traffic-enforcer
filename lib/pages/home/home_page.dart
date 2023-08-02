@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:u_traffic_enforcer/config/themes/colors.dart';
+import 'package:u_traffic_enforcer/service/auth_service.dart';
 import '../../config/themes/spacing.dart';
 import '../../config/themes/textstyles.dart';
 
@@ -306,6 +308,10 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<AuthService>(context);
+
+    print(provider.currentUser.email);
+    print(provider.currentUser.id);
     return Scaffold(
       body: SafeArea(
         child: Column(

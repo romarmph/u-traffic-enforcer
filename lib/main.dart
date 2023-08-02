@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:u_traffic_enforcer/config/themes/textstyles.dart';
 
 import 'config/themes/colors.dart';
 import 'config/themes/components/app_bar_theme.dart';
@@ -59,6 +60,19 @@ class UTrafficEnforcer extends StatelessWidget {
           textButtonTheme: textButtonTheme,
           floatingActionButtonTheme: fabTheme,
           appBarTheme: appBarTheme,
+          outlinedButtonTheme: OutlinedButtonThemeData(
+            style: OutlinedButton.styleFrom(
+              textStyle: const UTextStyle().textbasefontmedium,
+              side: const BorderSide(
+                color: UColors.blue500,
+                width: 1.5,
+              ),
+              foregroundColor: UColors.blue500,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
           scaffoldBackgroundColor: UColors.white,
         ),
         initialRoute: "/",

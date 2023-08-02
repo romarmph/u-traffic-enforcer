@@ -41,6 +41,7 @@ class _ViolatorDetailsState extends State<ViolatorDetails> {
           length: 2,
           initialIndex: 0,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.max,
             children: [
@@ -76,7 +77,7 @@ class _ViolatorDetailsState extends State<ViolatorDetails> {
                     ),
                   ],
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -163,6 +164,17 @@ class _ViolatorDetailsState extends State<ViolatorDetails> {
           label: "License Number",
           controller: _licenseNumberController,
           keyboardType: TextInputType.number,
+        ),
+        const SizedBox(height: USpace.space12),
+        SizedBox(
+          height: 64,
+          width: double.infinity,
+          // padding: const EdgeInsets.all(USpace.space16),
+          child: OutlinedButton.icon(
+            onPressed: () {},
+            label: const Text("Scann Driver's License"),
+            icon: const Icon(Icons.camera_alt_rounded),
+          ),
         ),
       ],
     );
