@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:u_traffic_enforcer/config/themes/colors.dart';
-import 'package:u_traffic_enforcer/service/auth_service.dart';
+import 'package:u_traffic_enforcer/providers/ticket_provider.dart';
+import '../../config/themes/colors.dart';
+import '../../services/auth_service.dart';
 import '../../config/themes/spacing.dart';
 import '../../config/themes/textstyles.dart';
+import '../../services/image_picker.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -334,7 +336,47 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void fabPressed() {
-    Navigator.pushNamed(context, "/violatordetails");
+  void fabPressed() async {
+    final imageProvider = Provider.of<TicketProvider>(context, listen: false);
+    final imagePicker = ImagePickerService.instance;
+    final image = await imagePicker.pickImage();
+
+    if (image == null) {
+      showNoImagePickedError();
+      return;
+    }
+
+    final croppedImage = await imagePicker.cropImage(image);
+
+    if (croppedImage == null) {
+      showImageUnCroppedErorr();
+      return;
+    }
+
+    imageProvider.setLicenseImagePath(croppedImage.path);
+    continueToDetailsPage();
+  }
+
+  void continueToDetailsPage() {
+    Navigator.pushNamed(
+      context,
+      '/ticket/scannedpreview',
+    );
+  }
+
+  void showNoImagePickedError() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("No image picked"),
+      ),
+    );
+  }
+
+  void showImageUnCroppedErorr() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Image not cropped"),
+      ),
+    );
   }
 }

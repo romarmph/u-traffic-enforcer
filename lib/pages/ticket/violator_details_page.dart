@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../config/themes/colors.dart';
 import '../../config/themes/spacing.dart';
 import '../../config/themes/textstyles.dart';
+import '../../services/image_picker.dart';
 
 class ViolatorDetails extends StatefulWidget {
   const ViolatorDetails({super.key});
@@ -171,7 +172,13 @@ class _ViolatorDetailsState extends State<ViolatorDetails> {
           width: double.infinity,
           // padding: const EdgeInsets.all(USpace.space16),
           child: OutlinedButton.icon(
-            onPressed: () {},
+            onPressed: () async {
+              final imagePicker = ImagePickerService.instance;
+              final file = await imagePicker.pickImage();
+              print(
+                  "=========================== DITO YUN PRE ============================");
+              print(file!.path);
+            },
             label: const Text("Scann Driver's License"),
             icon: const Icon(Icons.camera_alt_rounded),
           ),

@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:u_traffic_enforcer/config/themes/textstyles.dart';
+import 'package:u_traffic_enforcer/pages/ticket/scanned_preview.dart';
 
 import 'config/themes/colors.dart';
 import 'config/themes/components/app_bar_theme.dart';
@@ -20,7 +21,7 @@ import 'pages/ticket/violator_details_page.dart';
 import 'pages/wrapper.dart';
 import 'providers/ticket_provider.dart';
 import 'providers/violations_provider.dart';
-import 'service/auth_service.dart';
+import 'services/auth_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -78,11 +79,12 @@ class UTrafficEnforcer extends StatelessWidget {
         initialRoute: "/",
         routes: {
           "/": (context) => const Wrapper(),
-          "/login": (context) => const Login(),
-          "/register": (context) => const Register(),
-          "/violatordetails": (context) => const ViolatorDetails(),
-          "/violationslist": (context) => const ViolationsList(),
-          "/ticketpreview": (context) => const TicketPreview(),
+          "/auth/login": (context) => const Login(),
+          "/auth/register": (context) => const Register(),
+          "/ticket/violatordetails": (context) => const ViolatorDetails(),
+          "/ticket/violationslist": (context) => const ViolationsList(),
+          "/ticket/ticketpreview": (context) => const TicketPreview(),
+          "/ticket/scannedpreview": (context) => const ScannedLicensePreview(),
         },
       ),
     );
