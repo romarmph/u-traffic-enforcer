@@ -19,6 +19,10 @@ class AuthService {
     );
   }
 
+  User get currentUser {
+    return _userFromFirebase(_firebaseAuth.currentUser)!;
+  }
+
   Stream<User?>? get user {
     return _firebaseAuth.authStateChanges().map(_userFromFirebase);
   }

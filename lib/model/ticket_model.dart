@@ -23,28 +23,30 @@ class Ticket {
   String? violationDateTime;
   String? enforcerId;
   String? driverSignature;
+  String? licenseImageUrl;
 
   Ticket({
     this.id,
-    required this.ticketNumber,
-    required this.violationsID,
-    required this.licenseNumber,
-    required this.driverFirstName,
-    required this.driverMiddleName,
-    required this.driverLastName,
-    required this.birthDate,
-    required this.address,
-    required this.status,
-    required this.vehicleType,
-    required this.engineNumber,
-    required this.chassisNumber,
-    required this.plateNumber,
-    required this.vehicleOwner,
-    required this.vehicleOwnerAddress,
-    required this.placeOfViolation,
-    required this.violationDateTime,
-    required this.enforcerId,
-    required this.driverSignature,
+    this.ticketNumber,
+    this.violationsID,
+    this.licenseNumber,
+    this.driverFirstName,
+    this.driverMiddleName,
+    this.driverLastName,
+    this.birthDate,
+    this.address,
+    this.status,
+    this.vehicleType,
+    this.engineNumber,
+    this.chassisNumber,
+    this.plateNumber,
+    this.vehicleOwner,
+    this.vehicleOwnerAddress,
+    this.placeOfViolation,
+    this.violationDateTime,
+    this.enforcerId,
+    this.driverSignature,
+    this.licenseImageUrl,
   });
 
   factory Ticket.fromJson(Map<String, dynamic> json) {

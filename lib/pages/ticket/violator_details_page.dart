@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../config/themes/colors.dart';
 import '../../config/themes/spacing.dart';
 import '../../config/themes/textstyles.dart';
+import '../../services/image_picker.dart';
 
 class ViolatorDetails extends StatefulWidget {
   const ViolatorDetails({super.key});
@@ -41,6 +42,7 @@ class _ViolatorDetailsState extends State<ViolatorDetails> {
           length: 2,
           initialIndex: 0,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.max,
             children: [
@@ -76,7 +78,7 @@ class _ViolatorDetailsState extends State<ViolatorDetails> {
                     ),
                   ],
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -163,6 +165,23 @@ class _ViolatorDetailsState extends State<ViolatorDetails> {
           label: "License Number",
           controller: _licenseNumberController,
           keyboardType: TextInputType.number,
+        ),
+        const SizedBox(height: USpace.space12),
+        SizedBox(
+          height: 64,
+          width: double.infinity,
+          // padding: const EdgeInsets.all(USpace.space16),
+          child: OutlinedButton.icon(
+            onPressed: () async {
+              final imagePicker = ImagePickerService.instance;
+              final file = await imagePicker.pickImage();
+              print(
+                  "=========================== DITO YUN PRE ============================");
+              print(file!.path);
+            },
+            label: const Text("Scann Driver's License"),
+            icon: const Icon(Icons.camera_alt_rounded),
+          ),
         ),
       ],
     );
