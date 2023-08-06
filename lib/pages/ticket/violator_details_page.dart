@@ -166,23 +166,6 @@ class _ViolatorDetailsState extends State<ViolatorDetails> {
           controller: _licenseNumberController,
           keyboardType: TextInputType.number,
         ),
-        const SizedBox(height: USpace.space12),
-        SizedBox(
-          height: 64,
-          width: double.infinity,
-          // padding: const EdgeInsets.all(USpace.space16),
-          child: OutlinedButton.icon(
-            onPressed: () async {
-              final imagePicker = ImagePickerService.instance;
-              final file = await imagePicker.pickImage();
-              print(
-                  "=========================== DITO YUN PRE ============================");
-              print(file!.path);
-            },
-            label: const Text("Scann Driver's License"),
-            icon: const Icon(Icons.camera_alt_rounded),
-          ),
-        ),
       ],
     );
   }
@@ -315,7 +298,7 @@ class _ViolatorDetailsState extends State<ViolatorDetails> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text("Cancel"),
+              child: const Text("Previous"),
             ),
           ),
           const SizedBox(width: USpace.space16),
