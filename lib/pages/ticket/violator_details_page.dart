@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../config/themes/colors.dart';
 import '../../config/themes/spacing.dart';
 import '../../config/themes/textstyles.dart';
-import '../../services/image_picker.dart';
+// import '../../services/image_picker.dart';
 
 class ViolatorDetails extends StatefulWidget {
   const ViolatorDetails({super.key});
@@ -304,7 +304,9 @@ class _ViolatorDetailsState extends State<ViolatorDetails> {
           const SizedBox(width: USpace.space16),
           Expanded(
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                print("Next");
+              },
               child: const Text("Next"),
             ),
           ),
