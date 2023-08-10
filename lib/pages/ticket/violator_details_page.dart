@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../config/themes/colors.dart';
 import '../../config/themes/spacing.dart';
 import '../../config/themes/textstyles.dart';
+import '../../model/ticket_model.dart';
 // import '../../services/image_picker.dart';
 
 class ViolatorDetails extends StatefulWidget {
@@ -12,10 +13,12 @@ class ViolatorDetails extends StatefulWidget {
   State<ViolatorDetails> createState() => _ViolatorDetailsState();
 }
 
-class _ViolatorDetailsState extends State<ViolatorDetails> {
+class _ViolatorDetailsState extends State<ViolatorDetails>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
   final _driverDetailFormKey = GlobalKey<FormState>();
   final _vehicleDetailFormKey = GlobalKey<FormState>();
-
   final _firstNameController = TextEditingController();
   final _middleNameController = TextEditingController();
   final _lastNameController = TextEditingController();
@@ -31,6 +34,18 @@ class _ViolatorDetailsState extends State<ViolatorDetails> {
   bool _isSameAsDriver = false;
 
   @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, initialIndex: 0, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -38,49 +53,46 @@ class _ViolatorDetailsState extends State<ViolatorDetails> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(USpace.space16),
-        child: DefaultTabController(
-          length: 2,
-          initialIndex: 0,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              _buildTabs(),
-              Expanded(
-                child: TabBarView(
-                  children: [
-                    SingleChildScrollView(
-                      child: Form(
-                        key: _driverDetailFormKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: USpace.space12),
-                            _buildDriverDetailsForm(),
-                            const SizedBox(height: USpace.space12),
-                          ],
-                        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            _buildTabs(),
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  SingleChildScrollView(
+                    child: Form(
+                      key: _driverDetailFormKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: USpace.space12),
+                          _buildDriverDetailsForm(),
+                          const SizedBox(height: USpace.space12),
+                        ],
                       ),
                     ),
-                    SingleChildScrollView(
-                      child: Form(
-                        key: _vehicleDetailFormKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: USpace.space12),
-                            _buildVehicleForm(),
-                            const SizedBox(height: USpace.space12),
-                          ],
-                        ),
+                  ),
+                  SingleChildScrollView(
+                    child: Form(
+                      key: _vehicleDetailFormKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: USpace.space12),
+                          _buildVehicleForm(),
+                          const SizedBox(height: USpace.space12),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
       bottomNavigationBar: _buildActionButtons(),
@@ -298,14 +310,19 @@ class _ViolatorDetailsState extends State<ViolatorDetails> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text("Previous"),
+              child: const Text("Cancel"),
             ),
           ),
           const SizedBox(width: USpace.space16),
           Expanded(
             child: ElevatedButton(
               onPressed: () {
-                print("Next");
+                if (_tabController.index == 0) {
+                  _tabController.animateTo(1);
+                  return;
+                }
+
+                getFieldValues();
               },
               child: const Text("Next"),
             ),
@@ -316,11 +333,31 @@ class _ViolatorDetailsState extends State<ViolatorDetails> {
   }
 
   Widget _buildTabs() {
-    return const TabBar(
-      tabs: [
+    return TabBar(
+      controller: _tabController,
+      tabs: const [
         Tab(text: "Driver Details"),
         Tab(text: "Vehicle Details"),
       ],
     );
+  }
+
+  void getFieldValues() {
+    final ticket = Ticket(
+      driverFirstName: _firstNameController.text,
+      driverMiddleName: _middleNameController.text,
+      driverLastName: _lastNameController.text,
+      birthDate: DateTime.parse(_birthDateController.text),
+      address: _addressController.text,
+      licenseNumber: _licenseNumberController.text,
+      plateNumber: _plateNumberController.text,
+      vehicleType: _vehicleTypeController.text,
+      engineNumber: _engineNumberController.text,
+      chassisNumber: _chassisNumberController.text,
+      vehicleOwner: _vehicleOwnerController.text,
+      vehicleOwnerAddress: _vehicleOwnerAddressController.text,
+    );
+
+    print(ticket.toString());
   }
 }
