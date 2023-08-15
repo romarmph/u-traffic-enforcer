@@ -15,24 +15,13 @@ class ViolationsList extends StatefulWidget {
 }
 
 class _ViolationsListState extends State<ViolationsList> {
-  List<Violation> violationsList = [
-    Violation(
-        fineAmount: 300,
-        name: "No Driver's License",
-        id: "21312231321312",
-        isSelected: false),
-    Violation(
-        fineAmount: 300,
-        name: "No Driver's License",
-        id: "21312231321312",
-        isSelected: false),
-    Violation(
-      fineAmount: 300,
-      name: "No Driver's License",
-      id: "21312231321312",
-      isSelected: false,
-    ),
-  ];
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    Provider.of<ViolationProvider>(context, listen: false).listenToViolations();
+  }
 
   Widget _buildActionButtons() {
     return Container(
@@ -69,10 +58,12 @@ class _ViolationsListState extends State<ViolationsList> {
             Violation current = violation.getViolations[index];
             return CheckboxListTile(
               value: current.isSelected,
-              onChanged: (value) {},
+              onChanged: (value) {
+                violation.selectViolation(current.id);
+              },
               title: Text(current.name),
               subtitle: Text(
-                "Fine: ${current.fineAmount.toString()}",
+                "Fine: ${current.fine.toString()}",
               ),
             );
           },
