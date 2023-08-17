@@ -137,7 +137,19 @@ class _TicketPreviewState extends State<TicketPreview>
 
             return ListTile(
               title: Text(violation.name),
-              subtitle: Text(violation.fine.toString()),
+              trailing: Text(
+                violation.fine.toString(),
+                style: const TextStyle(
+                  color: UColors.red400,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              titleTextStyle: const TextStyle(
+                color: UColors.gray600,
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+              ),
             );
           },
         );
