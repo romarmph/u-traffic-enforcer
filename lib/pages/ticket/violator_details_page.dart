@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../config/themes/colors.dart';
 import '../../config/themes/spacing.dart';
 import '../../config/themes/textstyles.dart';
 import '../../model/ticket_model.dart';
+import '../../providers/ticket_provider.dart';
 // import '../../services/image_picker.dart';
 
 class ViolatorDetails extends StatefulWidget {
@@ -379,7 +381,7 @@ class _ViolatorDetailsState extends State<ViolatorDetails>
           : _vehicleOwnerAddressController.text,
     );
 
-    print(ticket.toJson());
+    Provider.of<TicketProvider>(context, listen: false).updateTicket(ticket);
 
     Navigator.pushNamed(context, "/ticket/violationslist");
   }

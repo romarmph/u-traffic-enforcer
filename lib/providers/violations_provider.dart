@@ -20,6 +20,7 @@ class ViolationProvider extends ChangeNotifier {
     final int index = _violationsList.indexWhere((Violation v) => v.id == id);
     _violationsList[index].isSelected =
         _violationsList[index].isSelected ? false : true;
+
     notifyListeners();
   }
 }

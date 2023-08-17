@@ -310,8 +310,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final provider = Provider.of<AuthService>(context);
 
-    print(provider.currentUser.email);
-    print(provider.currentUser.id);
     return Scaffold(
       body: SafeArea(
         child: Column(

@@ -5,6 +5,7 @@ import 'package:u_traffic_enforcer/config/themes/textstyles.dart';
 import '../../config/themes/colors.dart';
 import '../../config/themes/spacing.dart';
 import '../../model/violation_model.dart';
+import '../../providers/ticket_provider.dart';
 import '../../providers/violations_provider.dart';
 
 class ViolationsList extends StatefulWidget {
@@ -40,7 +41,7 @@ class _ViolationsListState extends State<ViolationsList> {
           const SizedBox(width: USpace.space16),
           Expanded(
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: goToTicketPreview,
               child: const Text("Next"),
             ),
           ),
@@ -95,5 +96,28 @@ class _ViolationsListState extends State<ViolationsList> {
       ),
       bottomNavigationBar: _buildActionButtons(),
     );
+  }
+
+  void goToTicketPreview() {
+    final provider = Provider.of<ViolationProvider>(context, listen: false);
+
+    if (provider.getViolations.where((element) => element.isSelected).isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please select at least one violation"),
+        ),
+      );
+      return;
+    }
+
+    final List<String?> selectedTicket = provider.getViolations
+        .where((element) => element.isSelected)
+        .map((e) => e.id)
+        .toList();
+
+    Provider.of<TicketProvider>(context, listen: false)
+        .updateTicketField("violationsID", selectedTicket);
+
+    Navigator.pushNamed(context, "/ticket/ticketpreview");
   }
 }
