@@ -29,10 +29,15 @@ class TicketProvider extends ChangeNotifier {
 
   Ticket get getTicket => _ticket;
 
-  void updateTicket(String fieldName, dynamic value) {
+  void updateTicketField(String fieldName, dynamic value) {
     Map<String, dynamic> ticket = _ticket.toJson();
     ticket[fieldName] = value;
     _ticket = Ticket.fromJson(ticket);
+    notifyListeners();
+  }
+
+  void updateTicket(Ticket ticket) {
+    _ticket = ticket;
     notifyListeners();
   }
 

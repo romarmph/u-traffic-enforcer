@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:u_traffic_enforcer/config/themes/textstyles.dart';
-import 'package:u_traffic_enforcer/pages/ticket/scanned_preview.dart';
 
+import 'config/themes/textstyles.dart';
+import 'pages/ticket/scanned_preview.dart';
+import 'providers/printer_provider.dart';
 import 'config/themes/colors.dart';
 import 'config/themes/components/app_bar_theme.dart';
 import 'config/themes/components/fab.dart';
@@ -15,6 +16,8 @@ import 'config/themes/components/text_button.dart';
 import 'firebase_options.dart';
 import 'pages/auth/login_page.dart';
 import 'pages/auth/register_page.dart';
+import 'pages/printer/device_scan_page.dart';
+import 'pages/printer/printer_home.dart';
 import 'pages/ticket/preview_page.dart';
 import 'pages/ticket/violations_list_page.dart';
 import 'pages/ticket/violator_details_page.dart';
@@ -42,6 +45,9 @@ class UTrafficEnforcer extends StatelessWidget {
       providers: [
         Provider<AuthService>(
           create: (_) => AuthService(),
+        ),
+        ChangeNotifierProvider<PrinterProvider>(
+          create: (_) => PrinterProvider(),
         ),
         ChangeNotifierProvider<TicketProvider>(
           create: (_) => TicketProvider(),
@@ -85,6 +91,8 @@ class UTrafficEnforcer extends StatelessWidget {
           "/ticket/violationslist": (context) => const ViolationsList(),
           "/ticket/ticketpreview": (context) => const TicketPreview(),
           "/ticket/scannedpreview": (context) => const ScannedLicensePreview(),
+          "/printer/": (context) => const PrinterHome(),
+          "/printer/scan": (context) => const DeviceScanPage(),
         },
       ),
     );
