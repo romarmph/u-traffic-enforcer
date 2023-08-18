@@ -346,39 +346,20 @@ class _ViolatorDetailsState extends State<ViolatorDetails>
 
   void getFieldValues() {
     final ticket = Ticket(
-      driverFirstName:
-          _firstNameController.text.isEmpty ? "N/A" : _firstNameController.text,
-      driverMiddleName: _middleNameController.text.isEmpty
-          ? "N/A"
-          : _middleNameController.text,
-      driverLastName:
-          _lastNameController.text.isEmpty ? "N/A" : _lastNameController.text,
+      driverFirstName: _firstNameController.text,
+      driverMiddleName: _middleNameController.text,
+      driverLastName: _lastNameController.text,
       birthDate: _birthDateController.text.isEmpty
           ? null
           : DateTime.parse(_birthDateController.text),
-      address:
-          _addressController.text.isEmpty ? "N/A" : _addressController.text,
-      licenseNumber: _licenseNumberController.text.isEmpty
-          ? "N/A"
-          : _licenseNumberController.text,
-      plateNumber: _plateNumberController.text.isEmpty
-          ? "N/A"
-          : _plateNumberController.text,
-      vehicleType: _vehicleTypeController.text.isEmpty
-          ? "N/A"
-          : _vehicleTypeController.text,
-      engineNumber: _engineNumberController.text.isEmpty
-          ? "N/A"
-          : _engineNumberController.text,
-      chassisNumber: _chassisNumberController.text.isEmpty
-          ? "N/A"
-          : _chassisNumberController.text,
-      vehicleOwner: _vehicleOwnerController.text.isEmpty
-          ? "N/A"
-          : _vehicleOwnerController.text,
-      vehicleOwnerAddress: _vehicleOwnerAddressController.text.isEmpty
-          ? "N/A"
-          : _vehicleOwnerAddressController.text,
+      address: _addressController.text,
+      licenseNumber: _licenseNumberController.text,
+      plateNumber: _plateNumberController.text,
+      vehicleType: _vehicleTypeController.text,
+      engineNumber: _engineNumberController.text,
+      chassisNumber: _chassisNumberController.text,
+      vehicleOwner: _vehicleOwnerController.text,
+      vehicleOwnerAddress: _vehicleOwnerAddressController.text,
     );
 
     Provider.of<TicketProvider>(context, listen: false).updateTicket(ticket);

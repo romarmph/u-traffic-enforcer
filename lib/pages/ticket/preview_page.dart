@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:u_traffic_enforcer/model/violation_model.dart';
+import 'package:quickalert/quickalert.dart';
 
 import '../../config/themes/colors.dart';
 import '../../config/themes/spacing.dart';
 import '../../model/ticket_model.dart';
+import '../../model/violation_model.dart';
 import '../../providers/ticket_provider.dart';
 import '../../providers/violations_provider.dart';
 import '../common/preview_list_tile.dart';
@@ -64,7 +65,19 @@ class _TicketPreviewState extends State<TicketPreview>
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, "/ticketpreview");
+                    // Navigator.pushNamed(context, "");
+                    QuickAlert.show(
+                      context: context,
+                      type: QuickAlertType.confirm,
+                      text: "Are you sure to print this ticket?",
+                      confirmBtnText: "Print now",
+                      cancelBtnText: "No, cancel",
+                      onConfirmBtnTap: () {
+                        print("Printed");
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pushNamed("/printer/");
+                      },
+                    );
                   },
                   child: const Text("Print"),
                 ),
@@ -159,78 +172,58 @@ class _TicketPreviewState extends State<TicketPreview>
 
   Widget _builDetailsView(Ticket ticket) {
     final dateFormat = DateFormat("MMMM dd, yyyy");
+
+    final details = ticket
+        .map((key, value) => {key: value})
+        .entries
+        .toList()
+        .where((element) =>
+            (element.value != null || element.key == "birthDate") &&
+            element.key != "violationsID");
+
+    print(details);
+
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(USpace.space8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text(
-              "Driver Details",
-              style: TextStyle(
-                color: UColors.gray400,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            PreviewListTile(
-              title: ticket.driverLastName!,
-              subtitle: "Last Name",
-            ),
-            PreviewListTile(
-              title: ticket.driverFirstName!,
-              subtitle: "First Name",
-            ),
-            PreviewListTile(
-              title: ticket.driverMiddleName!,
-              subtitle: "Middle Name",
-            ),
-            PreviewListTile(
-              title: dateFormat.format(ticket.birthDate!),
-              subtitle: "Birthdate",
-            ),
-            PreviewListTile(
-              title: ticket.licenseNumber!,
-              subtitle: "License Number",
-            ),
-            const SizedBox(
-              height: USpace.space12,
-            ),
-            const Text(
-              "Vehicle Details",
-              style: TextStyle(
-                color: UColors.gray400,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            PreviewListTile(
-              title: ticket.plateNumber!,
-              subtitle: "Plate Number",
-            ),
-            PreviewListTile(
-              title: ticket.engineNumber!,
-              subtitle: "Engine Number",
-            ),
-            PreviewListTile(
-              title: ticket.chassisNumber!,
-              subtitle: "Chassis Number",
-            ),
-            PreviewListTile(
-              title: ticket.vehicleType!,
-              subtitle: "Vehicle Type",
-            ),
-            PreviewListTile(
-              title: ticket.vehicleOwner!,
-              subtitle: "Vehicle Owner",
-            ),
-            PreviewListTile(
-              title: ticket.vehicleOwnerAddress!,
-              subtitle: "Vehicle Owner Address",
-            ),
-          ],
+          children: details.map((e) {
+            String title = "";
+
+            return PreviewListTile(
+              title: title,
+              subtitle: _getLabel(e.key),
+            );
+          }).toList(),
         ),
       ),
     );
+  }
+
+  String _getLabel(String key) {
+    Map<String, dynamic> fields = {
+      // 'ticketNumber': "ticketNumber",
+      // 'violationsID': "violationsID",
+      'licenseNumber': "License Number",
+      'driverFirstName': "First Name",
+      'driverMiddleName': "Middle Name",
+      'driverLastName': "Last Name",
+      'birthDate': "Birthdate",
+      'address': "Address",
+      // 'status': "status",
+      'vehicleType': "Vehicle Type",
+      'engineNumber': "Engine Number",
+      'chassisNumber': "Chassis Number",
+      'plateNumber': "Plate Number",
+      'vehicleOwner': "Vehicle Owner",
+      'vehicleOwnerAddress': "Vehicle Owner Address",
+      // 'placeOfViolation': "placeOfViolation",
+      // 'violationDateTime': "violationDateTime",
+      // 'enforcerId': "enforcerId",
+      // 'driverSignature': "driverSignature",
+    };
+
+    return fields[key];
   }
 }

@@ -103,4 +103,14 @@ class Ticket {
   }
 
   dynamic operator [](String key) => toJson()[key];
+
+  Map<String, dynamic> map(Function(String key, dynamic value) f) {
+    Map<String, dynamic> result = {};
+
+    toJson().forEach((key, value) {
+      result.addAll(f(key, value));
+    });
+
+    return result;
+  }
 }

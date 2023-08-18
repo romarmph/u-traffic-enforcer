@@ -18,7 +18,6 @@ class ViolationsList extends StatefulWidget {
 class _ViolationsListState extends State<ViolationsList> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     Provider.of<ViolationProvider>(context, listen: false).listenToViolations();
