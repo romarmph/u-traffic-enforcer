@@ -1,11 +1,9 @@
 import 'package:u_traffic_enforcer/config/enums/ticket_status.dart';
 
 class Ticket {
-  String? id;
-
+  final String? id;
   int? ticketNumber;
-
-  List<String>? violationsID;
+  List<String?> violationsID;
   String? licenseNumber;
   String? driverFirstName;
   String? driverMiddleName;
@@ -28,7 +26,7 @@ class Ticket {
   Ticket({
     this.id,
     this.ticketNumber,
-    this.violationsID,
+    this.violationsID = const [],
     this.licenseNumber,
     this.driverFirstName,
     this.driverMiddleName,
@@ -105,4 +103,14 @@ class Ticket {
   }
 
   dynamic operator [](String key) => toJson()[key];
+
+  Map<String, dynamic> map(Function(String key, dynamic value) f) {
+    Map<String, dynamic> result = {};
+
+    toJson().forEach((key, value) {
+      result.addAll(f(key, value));
+    });
+
+    return result;
+  }
 }
