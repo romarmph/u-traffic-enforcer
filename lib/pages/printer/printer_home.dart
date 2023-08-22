@@ -18,7 +18,6 @@ class PrinterHome extends StatefulWidget {
 class _PrinterHomeState extends State<PrinterHome> {
   static final _printer = BluetoothPrint.instance;
   final isConnectedStream = Stream.fromFuture(_printer.isConnected);
-  bool isPrinting = false;
 
   @override
   Widget build(BuildContext context) {
@@ -73,25 +72,15 @@ class _PrinterHomeState extends State<PrinterHome> {
               child: const Text("Select Printer"),
             ),
             ElevatedButton(
-              onPressed: isPrinting
-                  ? null
-                  : () async {
-                      bool? isConnected = await _printer.isConnected;
-                      if (isConnected != null && !isConnected) {
-                        displayPrinterErrorState();
-                        return;
-                      }
-                      // setState(() {
-                      //   isPrinting = true;
-                      // });
-                      await startPrint();
-                      // setState(() {
-                      //   isPrinting = false;
-                      // });
-                    },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: isPrinting ? UColors.gray400 : UColors.blue600,
-              ),
+              onPressed: () async {
+                bool? isConnected = await _printer.isConnected;
+                if (isConnected != null && !isConnected) {
+                  displayPrinterErrorState();
+                  return;
+                }
+
+                await startPrint();
+              },
               child: const Text("Print"),
             ),
             ElevatedButton(
@@ -172,12 +161,6 @@ class _PrinterHomeState extends State<PrinterHome> {
       ),
     );
 
-    setState(() {
-      isPrinting = true;
-    });
     await _printer.printReceipt(config, list);
-    setState(() {
-      isPrinting = false;
-    });
   }
 }
