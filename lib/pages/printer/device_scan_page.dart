@@ -45,32 +45,44 @@ class DeviceScanPageState extends State<DeviceScanPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(USpace.space12),
-        child: ListView.builder(
-          itemCount: _devices.length,
-          itemBuilder: (context, index) {
-            if (_devices.isEmpty) {
-              return const Center(
-                child: Text(
-                  'No device found',
-                ),
-              );
-            }
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                itemCount: _devices.length,
+                itemBuilder: (context, index) {
+                  if (_devices.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        'No device found',
+                      ),
+                    );
+                  }
 
-            BluetoothDevice device = _devices[index];
+                  BluetoothDevice device = _devices[index];
 
-            return ListTile(
-              leading: const Icon(Icons.print_rounded),
-              title: Text(
-                device.name!,
+                  return ListTile(
+                    leading: const Icon(Icons.print_rounded),
+                    title: Text(
+                      device.name!,
+                    ),
+                    onTap: () async {
+                      if (device.address != null) {
+                        await _bluetooth.connect(device);
+                        insertDevice(device);
+                      }
+                    },
+                  );
+                },
               ),
-              onTap: () async {
-                if (device.address != null) {
-                  await _bluetooth.connect(device);
-                  insertDevice(device);
-                }
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _bluetooth.scan();
               },
-            );
-          },
+              child: const Text("Refresh"),
+            ),
+          ],
         ),
       ),
     );

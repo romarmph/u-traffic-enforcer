@@ -1,3 +1,5 @@
+import 'package:bluetooth_print/bluetooth_print.dart';
+import 'package:bluetooth_print/bluetooth_print_model.dart';
 import 'package:flutter/material.dart';
 
 import '../../config/themes/spacing.dart';
@@ -10,6 +12,8 @@ class PrinterHome extends StatefulWidget {
 }
 
 class _PrinterHomeState extends State<PrinterHome> {
+  final printer = BluetoothPrint.instance;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,13 +25,48 @@ class _PrinterHomeState extends State<PrinterHome> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            StreamBuilder(
+              stream: printer.state,
+              builder: (context, snapshot) {
+                if (snapshot.data == 1) {
+                  return const Text("Printer connected");
+                }
+
+                return const Text("Printer disconnected");
+              },
+            ),
             ElevatedButton(
               onPressed: () => Navigator.pushNamed(context, '/printer/scan'),
               child: const Text("Select Printer"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                startPrint();
+              },
+              child: const Text("Print"),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> startPrint() async {
+    Map<String, dynamic> config = {
+      'width': 48,
+    };
+
+    List<LineText> list = [];
+
+    list.add(
+      LineText(
+        type: LineText.TYPE_TEXT,
+        content: "test\nMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM",
+        weight: 2,
+        align: LineText.ALIGN_LEFT,
+      ),
+    );
+
+    printer.printReceipt(config, list);
   }
 }
