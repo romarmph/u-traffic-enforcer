@@ -1,12 +1,8 @@
 import 'package:bluetooth_print/bluetooth_print.dart';
 import 'package:bluetooth_print/bluetooth_print_model.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import '../../config/themes/colors.dart';
 import '../../config/themes/spacing.dart';
-import '../../providers/printer_provider.dart';
-import '../../providers/ticket_provider.dart';
 
 class PrinterHome extends StatefulWidget {
   const PrinterHome({super.key});
@@ -16,9 +12,7 @@ class PrinterHome extends StatefulWidget {
 }
 
 class _PrinterHomeState extends State<PrinterHome> {
-  static final _printer = BluetoothPrint.instance;
-  final isConnectedStream = Stream.fromFuture(_printer.isConnected);
-  bool isPrinting = false;
+  final printer = BluetoothPrint.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -31,90 +25,28 @@ class _PrinterHomeState extends State<PrinterHome> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Consumer<PrinterProvider>(
-              builder: (context, value, child) {
-                return StreamBuilder<bool?>(
-                  stream: value.isConnected,
-                  builder: (context, snapshot) {
-                    // ignore: avoid_print
-                    print("checking printer connection state");
+            StreamBuilder(
+              stream: printer.state,
+              builder: (context, snapshot) {
+                if (snapshot.data == 1) {
+                  return const Text("Printer connected");
+                }
 
-                    if (snapshot.data != null && !snapshot.data!) {
-                      return Container(
-                        padding: const EdgeInsets.all(USpace.space12),
-                        decoration: BoxDecoration(
-                          color: UColors.red200,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Text("Printer is not connected."),
-                      );
-                    }
-
-                    return Container(
-                      padding: const EdgeInsets.all(USpace.space12),
-                      decoration: BoxDecoration(
-                        color: UColors.green200,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Text("Printer is connected."),
-                    );
-                  },
-                );
+                return const Text("Printer disconnected");
               },
             ),
             ElevatedButton(
-              onPressed: () async {
-                bool? isConnected = await _printer.isConnected;
-                if (isConnected != null && isConnected) {
-                  _printer.disconnect();
-                }
-                findDevice();
-              },
+              onPressed: () => Navigator.pushNamed(context, '/printer/scan'),
               child: const Text("Select Printer"),
             ),
             ElevatedButton(
-              onPressed: isPrinting
-                  ? null
-                  : () async {
-                      bool? isConnected = await _printer.isConnected;
-                      if (isConnected != null && !isConnected) {
-                        displayPrinterErrorState();
-                        return;
-                      }
-                      // setState(() {
-                      //   isPrinting = true;
-                      // });
-                      await startPrint();
-                      // setState(() {
-                      //   isPrinting = false;
-                      // });
-                    },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: isPrinting ? UColors.gray400 : UColors.blue600,
-              ),
-              child: const Text("Print"),
-            ),
-            ElevatedButton(
               onPressed: () {
-                _printer.disconnect();
+                startPrint();
               },
-              child: const Text("Disconnect"),
+              child: const Text("Print"),
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  void findDevice() {
-    Navigator.pushNamed(context, '/printer/scan');
-  }
-
-  void displayPrinterErrorState() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Printer not connected"),
-        backgroundColor: UColors.red500,
       ),
     );
   }
@@ -129,55 +61,12 @@ class _PrinterHomeState extends State<PrinterHome> {
     list.add(
       LineText(
         type: LineText.TYPE_TEXT,
-        content: "Public Order and Safety Office",
-        weight: 4,
-        height: 4,
-        width: 4,
-        align: LineText.ALIGN_CENTER,
-        linefeed: 1,
-      ),
-    );
-    list.add(
-      LineText(
-        type: LineText.TYPE_TEXT,
-        content: "CHUCHUCHUCHU",
-        weight: 4,
-        height: 4,
-        width: 4,
-        align: LineText.ALIGN_CENTER,
-        linefeed: 1,
-      ),
-    );
-    list.add(
-      LineText(
-        type: LineText.TYPE_TEXT,
-        content: "DADADADADADADADA",
-        weight: 4,
-        height: 4,
-        width: 4,
-        align: LineText.ALIGN_CENTER,
-        linefeed: 1,
+        content: "test\nMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM",
+        weight: 2,
+        align: LineText.ALIGN_LEFT,
       ),
     );
 
-    list.add(
-      LineText(
-        type: LineText.TYPE_BARCODE,
-        content: "1231241231312",
-        align: LineText.ALIGN_CENTER,
-        width: 12,
-        height: 12,
-        linefeed: 1,
-        weight: 12,
-      ),
-    );
-
-    setState(() {
-      isPrinting = true;
-    });
-    await _printer.printReceipt(config, list);
-    setState(() {
-      isPrinting = false;
-    });
+    printer.printReceipt(config, list);
   }
 }
