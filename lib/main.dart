@@ -60,6 +60,9 @@ class UTrafficEnforcer extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: "U-Traffic Enforcer",
         theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: UColors.blue600,
+          ),
           useMaterial3: true,
           fontFamily: GoogleFonts.inter().fontFamily,
           elevatedButtonTheme: elevatedButtonTheme,

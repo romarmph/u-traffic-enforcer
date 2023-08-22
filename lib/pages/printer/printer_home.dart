@@ -1,12 +1,9 @@
 import 'package:bluetooth_print/bluetooth_print.dart';
 import 'package:bluetooth_print/bluetooth_print_model.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../../config/themes/colors.dart';
 import '../../config/themes/spacing.dart';
-import '../../providers/printer_provider.dart';
-import '../../providers/ticket_provider.dart';
 
 class PrinterHome extends StatefulWidget {
   const PrinterHome({super.key});
@@ -30,38 +27,40 @@ class _PrinterHomeState extends State<PrinterHome> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Consumer<PrinterProvider>(
-              builder: (context, value, child) {
-                return StreamBuilder<bool?>(
-                  stream: value.isConnected,
-                  builder: (context, snapshot) {
-                    // ignore: avoid_print
-                    print("checking printer connection state");
+            Expanded(
+              child: StreamBuilder<int>(
+                stream: _printer.state,
+                builder: (context, snapshot) {
+                  // ignore: avoid_print
+                  print("PRINTER STATE: ${snapshot.data}");
 
-                    if (snapshot.data != null && !snapshot.data!) {
-                      return Container(
-                        padding: const EdgeInsets.all(USpace.space12),
-                        decoration: BoxDecoration(
-                          color: UColors.red200,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Text("Printer is not connected."),
-                      );
-                    }
-
+                  if (snapshot.data != null &&
+                      (snapshot.data == 12 || snapshot.data == 1)) {
                     return Container(
                       padding: const EdgeInsets.all(USpace.space12),
                       decoration: BoxDecoration(
                         color: UColors.green200,
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Text("Printer is connected."),
+                      child: const Center(child: Text("Printer is connected.")),
                     );
-                  },
-                );
-              },
+                  }
+
+                  return Container(
+                    padding: const EdgeInsets.all(USpace.space12),
+                    decoration: BoxDecoration(
+                      color: UColors.red200,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Center(
+                      child: Text("Printer is not connected."),
+                    ),
+                  );
+                },
+              ),
             ),
-            ElevatedButton(
+            const SizedBox(height: USpace.space12),
+            OutlinedButton(
               onPressed: () async {
                 bool? isConnected = await _printer.isConnected;
                 if (isConnected != null && isConnected) {
@@ -71,6 +70,7 @@ class _PrinterHomeState extends State<PrinterHome> {
               },
               child: const Text("Select Printer"),
             ),
+            const SizedBox(height: USpace.space8),
             ElevatedButton(
               onPressed: () async {
                 bool? isConnected = await _printer.isConnected;
@@ -81,13 +81,7 @@ class _PrinterHomeState extends State<PrinterHome> {
 
                 await startPrint();
               },
-              child: const Text("Print"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                _printer.disconnect();
-              },
-              child: const Text("Disconnect"),
+              child: const Text("Print Ticket"),
             ),
           ],
         ),
@@ -129,7 +123,7 @@ class _PrinterHomeState extends State<PrinterHome> {
     list.add(
       LineText(
         type: LineText.TYPE_TEXT,
-        content: "CHUCHUCHUCHU",
+        content: "City of Urdaneta",
         weight: 4,
         height: 4,
         width: 4,

@@ -2,6 +2,7 @@ import 'package:bluetooth_print/bluetooth_print.dart';
 import 'package:bluetooth_print/bluetooth_print_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:quickalert/quickalert.dart';
 
 import '../../config/themes/spacing.dart';
 import '../../providers/printer_provider.dart';
@@ -43,13 +44,13 @@ class DeviceScanPageState extends State<DeviceScanPage> {
               child: StreamBuilder<List<BluetoothDevice>>(
                 stream: _bluetooth.scanResults,
                 builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
+                  if (snapshot.data == null) {
                     return const Center(
                       child: CircularProgressIndicator(),
                     );
                   }
 
-                  if (!snapshot.hasData) {
+                  if (snapshot.hasData && snapshot.data!.isEmpty) {
                     return const Center(
                       child: Text("No devices found"),
                     );
@@ -69,7 +70,6 @@ class DeviceScanPageState extends State<DeviceScanPage> {
                       }
 
                       BluetoothDevice device = devices[index];
-                      _bluetooth.state.listen((state) {});
 
                       return ListTile(
                         leading: const Icon(Icons.print_rounded),
@@ -78,8 +78,19 @@ class DeviceScanPageState extends State<DeviceScanPage> {
                         ),
                         onTap: () async {
                           if (device.address != null) {
-                            await _bluetooth.connect(device);
-                            insertDevice(device);
+                            try {
+                              final success = await _bluetooth.connect(device);
+
+                              if (success) {
+                                await showSuccessDialog();
+                                insertDevice(device);
+                              } else {
+                                await showErrorDialog();
+                              }
+                            } on Exception catch (e) {
+                              // ignore: avoid_print
+                              print(e);
+                            }
                           }
                         },
                       );
@@ -108,5 +119,21 @@ class DeviceScanPageState extends State<DeviceScanPage> {
       listen: false,
     ).selectDevice(device);
     Navigator.of(context).pop();
+  }
+
+  Future showSuccessDialog() async {
+    return await QuickAlert.show(
+      context: context,
+      type: QuickAlertType.success,
+      text: "Printer connected!",
+    );
+  }
+
+  Future showErrorDialog() async {
+    return await QuickAlert.show(
+      context: context,
+      type: QuickAlertType.error,
+      text: "Couldn't connect to device. Please try again",
+    );
   }
 }

@@ -12,10 +12,4 @@ class PrinterProvider extends ChangeNotifier {
     _printer = device;
     notifyListeners();
   }
-
-  Stream<bool?> get isConnected async* {
-    yield await _device.isConnected;
-    // Hack :D
-    notifyListeners();
-  }
 }
