@@ -14,7 +14,6 @@ class DeviceScanPage extends StatefulWidget {
 }
 
 class DeviceScanPageState extends State<DeviceScanPage> {
-  List<BluetoothDevice> _devices = [];
   final _bluetooth = BluetoothPrint.instance;
 
   @override
@@ -28,13 +27,6 @@ class DeviceScanPageState extends State<DeviceScanPage> {
 
   Future<void> initPrinter() async {
     _bluetooth.startScan(timeout: const Duration(seconds: 2));
-    if (!mounted) return;
-    _bluetooth.scanResults.listen((devices) {
-      if (!mounted) return;
-      setState(() {
-        _devices = devices;
-      });
-    });
   }
 
   @override
@@ -48,37 +40,59 @@ class DeviceScanPageState extends State<DeviceScanPage> {
         child: Column(
           children: [
             Expanded(
-              child: ListView.builder(
-                itemCount: _devices.length,
-                itemBuilder: (context, index) {
-                  if (_devices.isEmpty) {
+              child: StreamBuilder<List<BluetoothDevice>>(
+                stream: _bluetooth.scanResults,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
-                      child: Text(
-                        'No device found',
-                      ),
+                      child: CircularProgressIndicator(),
                     );
                   }
 
-                  BluetoothDevice device = _devices[index];
+                  if (!snapshot.hasData) {
+                    return const Center(
+                      child: Text("No devices found"),
+                    );
+                  }
 
-                  return ListTile(
-                    leading: const Icon(Icons.print_rounded),
-                    title: Text(
-                      device.name!,
-                    ),
-                    onTap: () async {
-                      if (device.address != null) {
-                        await _bluetooth.connect(device);
-                        insertDevice(device);
+                  List<BluetoothDevice> devices = snapshot.data!;
+
+                  return ListView.builder(
+                    itemCount: devices.length,
+                    itemBuilder: (context, index) {
+                      if (devices.isEmpty) {
+                        return const Center(
+                          child: Text(
+                            'No device found',
+                          ),
+                        );
                       }
+
+                      BluetoothDevice device = devices[index];
+                      _bluetooth.state.listen((state) {});
+
+                      return ListTile(
+                        leading: const Icon(Icons.print_rounded),
+                        title: Text(
+                          device.name!,
+                        ),
+                        onTap: () async {
+                          if (device.address != null) {
+                            await _bluetooth.connect(device);
+                            insertDevice(device);
+                          }
+                        },
+                      );
                     },
                   );
                 },
               ),
             ),
-            ElevatedButton(
+            OutlinedButton(
               onPressed: () {
-                _bluetooth.scan();
+                _bluetooth.startScan(
+                  timeout: const Duration(seconds: 2),
+                );
               },
               child: const Text("Refresh"),
             ),
