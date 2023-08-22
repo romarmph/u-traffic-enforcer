@@ -179,6 +179,7 @@ class _TicketPreviewState extends State<TicketPreview>
         .where((element) =>
             (element.value != null || element.key == "birthDate") &&
             element.key != "violationsID");
+    print(details);
 
     return SingleChildScrollView(
       child: Padding(
@@ -187,6 +188,14 @@ class _TicketPreviewState extends State<TicketPreview>
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: details.map((e) {
             String title = "";
+
+            if (e.value != null && e.value.runtimeType == DateTime) {
+              title = dateFormat.format(e.value);
+            }
+
+            if (e.value != null && e.value.runtimeType != DateTime) {
+              title = e.value;
+            }
 
             return PreviewListTile(
               title: title,

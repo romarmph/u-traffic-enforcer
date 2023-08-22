@@ -366,4 +366,10 @@ class _ViolatorDetailsState extends State<ViolatorDetails>
 
     Navigator.pushNamed(context, "/ticket/violationslist");
   }
+
+  /// Para
 }
+
+/// When FirstName and LastName are both empty, use LicenseNumber
+/// If Name and LicenseNumber are unavailable use Vehicle Details
+/// If Vehicle Details and
