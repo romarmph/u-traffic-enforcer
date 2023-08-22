@@ -73,7 +73,6 @@ class _TicketPreviewState extends State<TicketPreview>
                       confirmBtnText: "Print now",
                       cancelBtnText: "No, cancel",
                       onConfirmBtnTap: () {
-                        print("Printed");
                         Navigator.of(context).pop();
                         Navigator.of(context).pushNamed("/printer/");
                       },
@@ -180,8 +179,6 @@ class _TicketPreviewState extends State<TicketPreview>
         .where((element) =>
             (element.value != null || element.key == "birthDate") &&
             element.key != "violationsID");
-
-    print(details);
 
     return SingleChildScrollView(
       child: Padding(

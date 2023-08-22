@@ -1,3 +1,6 @@
 # u_traffic_enforcer
 
-TEST
+## Bugs Known:
+
+- Printer connection success dialog still shows despite printer turned off.
+- Can't identify connected device type
