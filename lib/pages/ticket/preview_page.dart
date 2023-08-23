@@ -9,7 +9,7 @@ import '../../model/ticket_model.dart';
 import '../../model/violation_model.dart';
 import '../../providers/ticket_provider.dart';
 import '../../providers/violations_provider.dart';
-import '../common/preview_list_tile.dart';
+import 'widgets/preview_list_tile.dart';
 
 class TicketPreview extends StatefulWidget {
   const TicketPreview({super.key});

@@ -172,7 +172,7 @@ class _PrinterHomeState extends State<PrinterHome> {
       LineText(
         type: LineText.TYPE_TEXT,
         content:
-            "Name:\n  ${ticket.driverFirstName ?? 'N/A'} ${ticket.driverMiddleName ?? ''} ${ticket.driverLastName ?? ""}",
+            "Name:\n  ${ticket.firstName ?? 'N/A'} ${ticket.middleName ?? ''} ${ticket.lastName ?? ""}",
         weight: 2,
         height: 2,
         width: 2,
