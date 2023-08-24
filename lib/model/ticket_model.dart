@@ -3,12 +3,14 @@ import 'package:u_traffic_enforcer/config/enums/ticket_status.dart';
 class Ticket {
   final String? id;
   int? ticketNumber;
-  List<String?> violationsID;
+  Set<String?> violationsID;
   String? licenseNumber;
-  String? driverFirstName;
-  String? driverMiddleName;
-  String? driverLastName;
+  String? firstName;
+  String? middleName;
+  String? lastName;
   DateTime? birthDate;
+  String? phone;
+  String? email;
   String? address;
   TicketStatus? status;
   String? vehicleType;
@@ -26,12 +28,14 @@ class Ticket {
   Ticket({
     this.id,
     this.ticketNumber,
-    this.violationsID = const [],
+    this.violationsID = const {},
     this.licenseNumber,
-    this.driverFirstName,
-    this.driverMiddleName,
-    this.driverLastName,
+    this.firstName,
+    this.middleName,
+    this.lastName,
     this.birthDate,
+    this.phone,
+    this.email,
     this.address,
     this.status,
     this.vehicleType,
@@ -53,10 +57,12 @@ class Ticket {
       ticketNumber: json['ticketNumber'],
       violationsID: json['violationsID'],
       licenseNumber: json['licenseNumber'],
-      driverFirstName: json['driverFirstName'],
-      driverMiddleName: json['driverMiddleName'],
-      driverLastName: json['driverLastName'],
+      firstName: json['firstName'],
+      middleName: json['middleName'],
+      lastName: json['lastName'],
       birthDate: json['birthDate'],
+      phone: json['phone'],
+      email: json['email'],
       address: json['address'],
       status: json['status'],
       vehicleType: json['vehicleType'],
@@ -78,10 +84,12 @@ class Ticket {
       'ticketNumber': ticketNumber,
       'violationsID': violationsID,
       'licenseNumber': licenseNumber,
-      'driverFirstName': driverFirstName,
-      'driverMiddleName': driverMiddleName,
-      'driverLastName': driverLastName,
+      'firstName': firstName,
+      'middleName': middleName,
+      'lastName': lastName,
       'birthDate': birthDate,
+      'phone': phone,
+      'email': email,
       'address': address,
       'status': status,
       'vehicleType': vehicleType,

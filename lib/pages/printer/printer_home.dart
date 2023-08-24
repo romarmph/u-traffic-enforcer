@@ -1,9 +1,13 @@
 import 'package:bluetooth_print/bluetooth_print.dart';
 import 'package:bluetooth_print/bluetooth_print_model.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 import '../../config/themes/colors.dart';
 import '../../config/themes/spacing.dart';
+import '../../providers/ticket_provider.dart';
+import '../../providers/violations_provider.dart';
 
 class PrinterHome extends StatefulWidget {
   const PrinterHome({super.key});
@@ -42,7 +46,9 @@ class _PrinterHomeState extends State<PrinterHome> {
                         color: UColors.green200,
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Center(child: Text("Printer is connected.")),
+                      child: const Center(
+                        child: Text("Printer is connected."),
+                      ),
                     );
                   }
 
@@ -106,6 +112,15 @@ class _PrinterHomeState extends State<PrinterHome> {
     Map<String, dynamic> config = {
       'width': 48,
     };
+    final ticket = Provider.of<TicketProvider>(
+      context,
+      listen: false,
+    ).getTicket;
+    final violationProvider = Provider.of<ViolationProvider>(
+      context,
+      listen: false,
+    );
+    final dateFormatter = DateFormat("yyyy-MM-dd hh:mm:ss");
 
     List<LineText> list = [];
 
@@ -134,12 +149,160 @@ class _PrinterHomeState extends State<PrinterHome> {
     list.add(
       LineText(
         type: LineText.TYPE_TEXT,
-        content: "DADADADADADADADA",
+        content: "Traffic Violation Ticket",
         weight: 4,
         height: 4,
         width: 4,
         align: LineText.ALIGN_CENTER,
         linefeed: 1,
+      ),
+    );
+    list.add(
+      LineText(
+        type: LineText.TYPE_TEXT,
+        content: dateFormatter.format(DateTime.now()),
+        weight: 2,
+        height: 2,
+        width: 2,
+        align: LineText.ALIGN_CENTER,
+        linefeed: 1,
+      ),
+    );
+    list.add(
+      LineText(
+        type: LineText.TYPE_TEXT,
+        content:
+            "Name:\n  ${ticket.firstName ?? 'N/A'} ${ticket.middleName ?? ''} ${ticket.lastName ?? ""}",
+        weight: 2,
+        height: 2,
+        width: 2,
+        align: LineText.ALIGN_LEFT,
+        linefeed: 1,
+      ),
+    );
+    list.add(
+      LineText(
+        type: LineText.TYPE_TEXT,
+        content: "Address:\n  ${ticket.address ?? "N/A"}",
+        weight: 2,
+        height: 2,
+        width: 2,
+        align: LineText.ALIGN_LEFT,
+        linefeed: 1,
+      ),
+    );
+    list.add(
+      LineText(
+        type: LineText.TYPE_TEXT,
+        content: "License Number:\n  ${ticket.licenseNumber ?? "N/A"}",
+        weight: 2,
+        height: 2,
+        width: 2,
+        align: LineText.ALIGN_LEFT,
+        linefeed: 1,
+      ),
+    );
+    list.add(
+      LineText(
+        type: LineText.TYPE_TEXT,
+        content: "Plate Number:\n  ${ticket.plateNumber ?? "N/A"}",
+        weight: 2,
+        height: 2,
+        width: 2,
+        align: LineText.ALIGN_LEFT,
+        linefeed: 1,
+      ),
+    );
+    list.add(
+      LineText(
+        type: LineText.TYPE_TEXT,
+        content: "Vehicle Type:\n  ${ticket.vehicleType ?? "N/A"}",
+        weight: 2,
+        height: 2,
+        width: 2,
+        align: LineText.ALIGN_LEFT,
+        linefeed: 1,
+      ),
+    );
+    list.add(
+      LineText(
+        type: LineText.TYPE_TEXT,
+        content: "Place of Violation:\n  ${ticket.placeOfViolation ?? "N/A"}",
+        weight: 2,
+        height: 2,
+        width: 2,
+        align: LineText.ALIGN_LEFT,
+        linefeed: 1,
+      ),
+    );
+    list.add(
+      LineText(
+        type: LineText.TYPE_TEXT,
+        content:
+            "Date and Time of Violation:\n  ${ticket.violationDateTime ?? "N/A"}",
+        weight: 2,
+        height: 2,
+        width: 2,
+        align: LineText.ALIGN_LEFT,
+        linefeed: 1,
+      ),
+    );
+    list.add(
+      LineText(
+        type: LineText.TYPE_TEXT,
+        content: "Enforcer ID:\n  ${ticket.enforcerId}",
+        weight: 2,
+        height: 2,
+        width: 2,
+        align: LineText.ALIGN_LEFT,
+        linefeed: 2,
+      ),
+    );
+
+    list.add(
+      LineText(
+        type: LineText.TYPE_TEXT,
+        content: "Violations:",
+        weight: 2,
+        height: 2,
+        width: 2,
+        align: LineText.ALIGN_LEFT,
+        linefeed: 1,
+      ),
+    );
+
+    final driverViolations =
+        violationProvider.getViolations.where((element) => element.isSelected);
+
+    for (final violation in driverViolations) {
+      list.add(
+        LineText(
+          type: LineText.TYPE_TEXT,
+          content: "  ${violation.name}",
+          weight: 2,
+          height: 2,
+          width: 2,
+          align: LineText.ALIGN_LEFT,
+          linefeed: 1,
+        ),
+      );
+      list.add(
+        LineText(
+          type: LineText.TYPE_TEXT,
+          content: " PHP ${violation.fine}",
+          weight: 2,
+          height: 2,
+          width: 2,
+          align: LineText.ALIGN_RIGHT,
+          linefeed: 1,
+        ),
+      );
+    }
+
+    list.add(
+      LineText(
+        type: LineText.TYPE_TEXT,
+        content: "\n\n",
       ),
     );
 
