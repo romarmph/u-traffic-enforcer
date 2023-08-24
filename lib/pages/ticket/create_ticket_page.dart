@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:u_traffic_enforcer/config/enums/ticket_field.dart';
 import 'package:u_traffic_enforcer/pages/ticket/widgets/driver_details_form.dart';
 import 'package:u_traffic_enforcer/pages/ticket/widgets/vehicle_details_form.dart';
 import 'package:u_traffic_enforcer/providers/create_ticket_form_notifier.dart';
@@ -148,8 +149,20 @@ class _CreateTicketPageState extends State<CreateTicketPage>
   }
 
   void getFieldValues() {
-    final data = Provider.of<CreateTicketFormNotifier>(context, listen: false);
-    print(data.vehicleFormData.toString());
-    print(data.driverFormData.toString());
+    final formData =
+        Provider.of<CreateTicketFormNotifier>(context, listen: false);
+    formData.driverFormData.forEach((key, value) {
+      formData.driverFormData[key] =
+          formData.formSettings[key]!.controller!.text;
+    });
+    formData.vehicleFormData.forEach((key, value) {
+      if (key != TicketField.violationsID) {
+        formData.vehicleFormData[key] =
+            formData.formSettings[key]!.controller!.text;
+      }
+    });
+
+    print(formData.driverFormData.toString());
+    print(formData.vehicleFormData.toString());
   }
 }

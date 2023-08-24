@@ -1,88 +1,118 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:u_traffic_enforcer/config/enums/field_type.dart';
 import 'package:u_traffic_enforcer/config/extensions/input_validator.dart';
 import 'package:u_traffic_enforcer/model/form_input_settings.dart';
+
+import '../config/enums/ticket_field.dart';
 
 class CreateTicketFormNotifier extends ChangeNotifier {
   static final _formatter = FilteringTextInputFormatter.allow(
     RegExp(r"[a-zA-Z]+|\s"),
   );
 
-  bool _enabledField = false;
-  bool _readOnlyField = false;
+  bool _noDriver = false;
+  bool _ownedByDriver = false;
 
-  final Map<String, dynamic> _vehicleFormFields = {
-    'violationsID': <Set<String>>{},
-    'vehicleType': "",
-    'engineNumber': "",
-    'chassisNumber': "",
-    'plateNumber': "",
-    'vehicleOwner': "",
-    'vehicleOwnerAddress': "",
+  final Map<TicketField, dynamic> _vehicleFormFields = {
+    TicketField.violationsID: <Set<String>>{},
+    TicketField.vehicleType: "",
+    TicketField.engineNumber: "",
+    TicketField.chassisNumber: "",
+    TicketField.plateNumber: "",
+    TicketField.vehicleOwner: "",
+    TicketField.vehicleOwnerAddress: "",
   };
 
-  final Map<String, dynamic> _driverFormFields = {
-    'licenseNumber': "",
-    'firstName': "",
-    'middleName': "",
-    'lastName': "",
-    'birthDate': "",
-    'phone': "",
-    'email': "",
-    'address': "",
+  final Map<TicketField, dynamic> _driverFormFields = {
+    TicketField.licenseNumber: "",
+    TicketField.lastName: "",
+    TicketField.firstName: "",
+    TicketField.middleName: "",
+    TicketField.birthDate: "",
+    TicketField.phone: "",
+    TicketField.email: "",
+    TicketField.address: "",
   };
 
   final _driverFormkey = GlobalKey<FormState>();
   final _vehicleFormKey = GlobalKey<FormState>();
 
-  final FormSettings _firstName = FormSettings(
-    fieldName: "firstName",
-    label: "First Name",
-    errorMessage: "Please enter a valid name",
-    formatters: [_formatter],
-  );
-
-  final FormSettings _middleName = FormSettings(
-    fieldName: "middleName",
-    label: "Middle Name",
-    errorMessage: "Please enter a valid name",
-    formatters: [_formatter],
-  );
-
-  final FormSettings _lastName = FormSettings(
-    fieldName: "lastName",
-    label: "Last Name",
-    errorMessage: "Please enter a valid name",
-    formatters: [_formatter],
-  );
-
-  final FormSettings _birthDate = FormSettings(
-    fieldName: "birthDate",
-    label: "Birthdate",
-  );
-
-  final FormSettings _phone = FormSettings(
-    fieldName: "phone",
-    label: "Phone Number",
-    errorMessage: "Please enter a valid phone number",
-  );
-
-  final FormSettings _email = FormSettings(
-    fieldName: "email",
-    label: "Email",
-    errorMessage: "Please enter a valid email address",
-  );
-
-  final FormSettings _address = FormSettings(
-    fieldName: "address",
-    label: "Address",
-  );
-
-  final FormSettings _licenseNumber = FormSettings(
-    fieldName: "licenseNumber",
-    label: "License Number",
-    errorMessage: "Please enter a License Number",
-  );
+  final Map<TicketField, FormSettings> _formSettings = {
+    TicketField.firstName: FormSettings(
+      label: "First Name",
+      errorMessage: "Please enter a valid name",
+      formatters: [_formatter],
+      type: TicketFieldType.driver,
+    ),
+    TicketField.middleName: FormSettings(
+      label: "Middle Name",
+      errorMessage: "Please enter a valid name",
+      formatters: [_formatter],
+      type: TicketFieldType.driver,
+    ),
+    TicketField.lastName: FormSettings(
+      label: "Last Name",
+      errorMessage: "Please enter a valid name",
+      formatters: [_formatter],
+      type: TicketFieldType.driver,
+    ),
+    TicketField.birthDate: FormSettings(
+      label: "Birthdate",
+      type: TicketFieldType.driver,
+    ),
+    TicketField.phone: FormSettings(
+      label: "Phone Number",
+      errorMessage: "Please enter a valid phone number",
+      type: TicketFieldType.driver,
+      keyboardType: TextInputType.phone,
+    ),
+    TicketField.email: FormSettings(
+      label: "Email",
+      errorMessage: "Please enter a valid email address",
+      type: TicketFieldType.driver,
+      keyboardType: TextInputType.emailAddress,
+    ),
+    TicketField.address: FormSettings(
+      label: "Address",
+      type: TicketFieldType.driver,
+    ),
+    TicketField.licenseNumber: FormSettings(
+      label: "License Number",
+      errorMessage: "Please enter a License Number",
+      type: TicketFieldType.driver,
+    ),
+    TicketField.plateNumber: FormSettings(
+      label: "Plate Number",
+      errorMessage: "Please enter valid plate number",
+      type: TicketFieldType.vehicle,
+    ),
+    TicketField.chassisNumber: FormSettings(
+      label: "Chassis Number",
+      errorMessage: "Please enter valid chassis number",
+      type: TicketFieldType.vehicle,
+    ),
+    TicketField.engineNumber: FormSettings(
+      label: "Engine Number",
+      errorMessage: "Please enter valid engine number",
+      type: TicketFieldType.vehicle,
+    ),
+    TicketField.vehicleType: FormSettings(
+      label: "Vehicle Type",
+      errorMessage: "Please enter valid vehicle type",
+      type: TicketFieldType.vehicle,
+    ),
+    TicketField.vehicleOwner: FormSettings(
+      label: "Vehicle Owner",
+      errorMessage: "Please enter valid name",
+      type: TicketFieldType.vehicle,
+    ),
+    TicketField.vehicleOwnerAddress: FormSettings(
+      label: "Vehicle Owner Address",
+      errorMessage: "Please enter valid address",
+      type: TicketFieldType.vehicle,
+    ),
+  };
 
   ///
   ///
@@ -93,20 +123,13 @@ class CreateTicketFormNotifier extends ChangeNotifier {
   GlobalKey get driverFormKey => _driverFormkey;
   GlobalKey get vehicleFormKey => _vehicleFormKey;
 
-  bool get enabledField => _enabledField;
-  bool get readOnlyField => _readOnlyField;
+  bool get noDriver => _noDriver;
+  bool get ownedByDriver => _ownedByDriver;
 
-  Map<String, dynamic> get driverFormData => _driverFormFields;
-  Map<String, dynamic> get vehicleFormData => _vehicleFormFields;
+  Map<TicketField, dynamic> get driverFormData => _driverFormFields;
+  Map<TicketField, dynamic> get vehicleFormData => _vehicleFormFields;
 
-  FormSettings get firstName => _firstName;
-  FormSettings get middleName => _middleName;
-  FormSettings get lastName => _lastName;
-  FormSettings get birthDate => _birthDate;
-  FormSettings get phone => _phone;
-  FormSettings get email => _email;
-  FormSettings get address => _address;
-  FormSettings get licenseNumber => _licenseNumber;
+  Map<TicketField, FormSettings> get formSettings => _formSettings;
 
   ///
   ///
@@ -114,45 +137,87 @@ class CreateTicketFormNotifier extends ChangeNotifier {
   ///
   ///
 
-  String? validateName(String? value) {
-    return value.isNotNull && !value!.isValidName
-        ? firstName.errorMessage
-        : null;
+  String? validateName(String? value, TicketField field) {
+    switch (field) {
+      case TicketField.firstName:
+        {
+          return value.isNotNull && !value!.isValidName
+              ? _formSettings[field]!.errorMessage
+              : null;
+        }
+      case TicketField.middleName:
+        {
+          return value.isNotNull && !value!.isValidName
+              ? _formSettings[field]!.errorMessage
+              : null;
+        }
+      default:
+        {
+          return value.isNotNull && !value!.isValidName
+              ? _formSettings[TicketField.lastName]!.errorMessage
+              : null;
+        }
+    }
   }
 
   String? validatePhone(String? value) {
-    return value.isNotNull && !value!.isValidPhone ? phone.errorMessage : null;
+    return value.isNotNull && !value!.isValidPhone
+        ? _formSettings[TicketField.phone]!.errorMessage
+        : null;
   }
 
   String? validateEmail(String? value) {
-    return value.isNotNull && !value!.isValidEmail ? email.errorMessage : null;
+    return value.isNotNull && !value!.isValidEmail
+        ? _formSettings[TicketField.email]!.errorMessage
+        : null;
   }
 
-  void updateDriverFormField(String field, dynamic value) {
+  void updateDriverFormField(TicketField field, dynamic value) {
     _driverFormFields[field] = value;
     notifyListeners();
   }
 
-  void updateVehicleFormField(String field, dynamic value) {
-    _driverFormFields[field] = value;
+  void updateVehicleFormField(TicketField field, dynamic value) {
+    _vehicleFormFields[field] = value;
     notifyListeners();
   }
 
-  void disableFields(bool value) {
-    _enabledField = value;
-    print(driverFormData.toString());
-    print(vehicleFormData.toString());
+  void setNoDriver(bool value) {
+    _noDriver = value;
+    _ownedByDriver = false;
+
     notifyListeners();
   }
 
-  void setReadOnly(bool value) {
-    _readOnlyField = value;
+  void setOwnedByDriver(bool value) {
+    _ownedByDriver = value;
+    if (value && !_noDriver) {
+      String firstName = _formSettings[TicketField.firstName]!.controller!.text;
+      String middleName =
+          _formSettings[TicketField.middleName]!.controller!.text;
+      String lastName = _formSettings[TicketField.lastName]!.controller!.text;
+
+      _formSettings[TicketField.vehicleOwner]!.controller!.text =
+          "$lastName, $firstName $middleName";
+
+      _formSettings[TicketField.vehicleOwnerAddress]!.controller!.text =
+          _formSettings[TicketField.address]!.controller!.text;
+    } else {
+      _formSettings[TicketField.vehicleOwner]!.controller!.clear();
+      _formSettings[TicketField.vehicleOwnerAddress]!.controller!.clear();
+    }
     notifyListeners();
   }
 
-  void clearDriverFields() {
-    _driverFormkey.currentState!.reset();
-    _vehicleFormKey.currentState!.reset();
-    _enabledField = false;
+  void clearDriverFields([bool value = false]) {
+    _formSettings.forEach((key, value) {
+      value.controller!.clear();
+    });
+
+    _driverFormFields.forEach((key, value) {
+      _driverFormFields[key] = "";
+    });
+
+    _noDriver = value;
   }
 }
