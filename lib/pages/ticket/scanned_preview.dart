@@ -68,7 +68,7 @@ class _ScannedLicensePreviewState extends State<ScannedLicensePreview> {
           Expanded(
             child: ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, "/ticket/violatordetails");
+                Navigator.pushNamed(context, "/ticket/create");
               },
               child: const Text("Next"),
             ),

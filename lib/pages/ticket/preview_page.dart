@@ -9,7 +9,7 @@ import '../../model/ticket_model.dart';
 import '../../model/violation_model.dart';
 import '../../providers/ticket_provider.dart';
 import '../../providers/violations_provider.dart';
-import '../common/preview_list_tile.dart';
+import 'widgets/preview_list_tile.dart';
 
 class TicketPreview extends StatefulWidget {
   const TicketPreview({super.key});
@@ -179,6 +179,7 @@ class _TicketPreviewState extends State<TicketPreview>
         .where((element) =>
             (element.value != null || element.key == "birthDate") &&
             element.key != "violationsID");
+    print(details);
 
     return SingleChildScrollView(
       child: Padding(
@@ -187,6 +188,14 @@ class _TicketPreviewState extends State<TicketPreview>
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: details.map((e) {
             String title = "";
+
+            if (e.value != null && e.value.runtimeType == DateTime) {
+              title = dateFormat.format(e.value);
+            }
+
+            if (e.value != null && e.value.runtimeType != DateTime) {
+              title = e.value;
+            }
 
             return PreviewListTile(
               title: title,

@@ -6,11 +6,11 @@ import '../config/enums/ticket_status.dart';
 class TicketProvider extends ChangeNotifier {
   Ticket _ticket = Ticket(
     ticketNumber: 0,
-    violationsID: [],
+    violationsID: {},
     licenseNumber: "",
-    driverFirstName: "",
-    driverMiddleName: "",
-    driverLastName: "",
+    firstName: "",
+    middleName: "",
+    lastName: "",
     birthDate: DateTime.now(),
     address: "",
     status: TicketStatus.unpaid,

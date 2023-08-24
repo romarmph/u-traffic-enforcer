@@ -333,44 +333,7 @@ class _HomePageState extends State<HomePage> {
     // final imagePicker = ImagePickerService.instance;
     // final image = await imagePicker.pickImage();
 
-    // if (image == null) {
-    //   showNoImagePickedError();
-    //   return;
+    Navigator.of(context).pushNamed('/ticket/create');
     // }
-
-    // final croppedImage = await imagePicker.cropImage(image);
-
-    // if (croppedImage == null) {
-    //   showImageUnCroppedErorr();
-    //   return;
-    // }
-
-    // imageProvider.setLicenseImagePath(croppedImage.path);
-    // continueToDetailsPage();
-
-    Navigator.of(context).pushNamed('/ticket/violatordetails');
-  }
-
-  // void continueToDetailsPage() {
-  //   Navigator.pushNamed(
-  //     context,
-  //     '/ticket/scannedpreview',
-  //   );
-  // }
-
-  void showNoImagePickedError() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("No image picked"),
-      ),
-    );
-  }
-
-  void showImageUnCroppedErorr() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Image not cropped"),
-      ),
-    );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../config/themes/colors.dart';
-import '../../config/themes/spacing.dart';
+import '../../../config/themes/colors.dart';
+import '../../../config/themes/spacing.dart';
 
 class PreviewListTile extends StatelessWidget {
   const PreviewListTile({

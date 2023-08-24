@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:u_traffic_enforcer/pages/ticket/create_ticket_page.dart';
 
 import 'config/themes/textstyles.dart';
 import 'pages/ticket/scanned_preview.dart';
+import 'providers/create_ticket_form_notifier.dart';
 import 'providers/printer_provider.dart';
 import 'config/themes/colors.dart';
 import 'config/themes/components/app_bar_theme.dart';
@@ -20,7 +22,6 @@ import 'pages/printer/device_scan_page.dart';
 import 'pages/printer/printer_home.dart';
 import 'pages/ticket/preview_page.dart';
 import 'pages/ticket/violations_list_page.dart';
-import 'pages/ticket/violator_details_page.dart';
 import 'pages/wrapper.dart';
 import 'providers/ticket_provider.dart';
 import 'providers/violations_provider.dart';
@@ -54,6 +55,9 @@ class UTrafficEnforcer extends StatelessWidget {
         ),
         ChangeNotifierProvider<ViolationProvider>(
           create: (_) => ViolationProvider(),
+        ),
+        ChangeNotifierProvider<CreateTicketFormNotifier>(
+          create: (_) => CreateTicketFormNotifier(),
         ),
       ],
       child: MaterialApp(
@@ -90,7 +94,7 @@ class UTrafficEnforcer extends StatelessWidget {
           "/": (context) => const Wrapper(),
           "/auth/login": (context) => const Login(),
           "/auth/register": (context) => const Register(),
-          "/ticket/violatordetails": (context) => const ViolatorDetails(),
+          "/ticket/create": (context) => const CreateTicketPage(),
           "/ticket/violationslist": (context) => const ViolationsList(),
           "/ticket/ticketpreview": (context) => const TicketPreview(),
           "/ticket/scannedpreview": (context) => const ScannedLicensePreview(),
