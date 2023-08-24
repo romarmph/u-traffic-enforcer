@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:u_traffic_enforcer/config/enums/field_type.dart';
+import 'package:u_traffic_enforcer/config/enums/ticket_field.dart';
 import 'package:u_traffic_enforcer/providers/create_ticket_form_notifier.dart';
 
 import '../../../config/themes/spacing.dart';
 import '../../../config/themes/textstyles.dart';
+import '../../../model/form_input_settings.dart';
 import 'text_field.dart';
 
 class VehiecleDetailsForm extends StatelessWidget {
@@ -23,21 +26,24 @@ class VehiecleDetailsForm extends StatelessWidget {
               style: const UTextStyle().textbasefontmedium,
             ),
             const SizedBox(height: USpace.space12),
-            const CreateTicketField(
-              label: "Plate Number",
-              fieldName: "plateNumber",
+            _buildVehicleTypeInput(context, form),
+            const SizedBox(height: USpace.space12),
+            CreateTicketField(
+              label: form.formSettings[TicketField.plateNumber]!.label,
+              controller:
+                  form.formSettings[TicketField.plateNumber]!.controller!,
             ),
             const SizedBox(height: USpace.space12),
-            _buildVehicleTypeInput(context),
-            const SizedBox(height: USpace.space12),
-            const CreateTicketField(
-              label: "Engine Number",
-              fieldName: "engineNumber",
+            CreateTicketField(
+              label: form.formSettings[TicketField.engineNumber]!.label,
+              controller:
+                  form.formSettings[TicketField.engineNumber]!.controller!,
             ),
             const SizedBox(height: USpace.space12),
-            const CreateTicketField(
-              label: "Chassis Number",
-              fieldName: "chassisNumber",
+            CreateTicketField(
+              label: form.formSettings[TicketField.chassisNumber]!.label,
+              controller:
+                  form.formSettings[TicketField.chassisNumber]!.controller!,
             ),
             const SizedBox(height: USpace.space12),
             Row(
@@ -52,24 +58,31 @@ class VehiecleDetailsForm extends StatelessWidget {
                   flex: 1,
                   child: CheckboxListTile(
                     title: const Text("Owned by Driver"),
+                    enabled: !form.noDriver,
                     contentPadding: const EdgeInsets.all(0),
                     dense: true,
                     visualDensity: VisualDensity.compact,
-                    value: true,
-                    onChanged: (value) {},
+                    value: form.ownedByDriver,
+                    onChanged: (value) => form.setOwnedByDriver(value!),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: USpace.space12),
-            const CreateTicketField(
-              label: "Name",
-              fieldName: "vehicleOwner",
+            CreateTicketField(
+              enabled: !form.noDriver,
+              readOnly: form.ownedByDriver,
+              label: form.formSettings[TicketField.vehicleOwner]!.label,
+              controller:
+                  form.formSettings[TicketField.vehicleOwner]!.controller!,
             ),
             const SizedBox(height: USpace.space12),
-            const CreateTicketField(
-              label: "Address",
-              fieldName: "vehicleOwnerAddress",
+            CreateTicketField(
+              enabled: !form.noDriver,
+              readOnly: form.ownedByDriver,
+              label: form.formSettings[TicketField.vehicleOwnerAddress]!.label,
+              controller: form
+                  .formSettings[TicketField.vehicleOwnerAddress]!.controller!,
             ),
           ],
         );
@@ -77,13 +90,17 @@ class VehiecleDetailsForm extends StatelessWidget {
     );
   }
 
-  Widget _buildVehicleTypeInput(BuildContext context) {
+  Widget _buildVehicleTypeInput(
+    BuildContext context,
+    CreateTicketFormNotifier form,
+  ) {
+    FormSettings formSettings = form.formSettings[TicketField.vehicleType]!;
     return TextFormField(
       readOnly: true,
       decoration: const InputDecoration(
         labelText: "Vehicle Type",
       ),
-      // controller: widget.vehicleType,
+      controller: formSettings.controller,
       onTap: () async {
         final type = await showDialog(
           context: context,
@@ -114,7 +131,7 @@ class VehiecleDetailsForm extends StatelessWidget {
         );
 
         if (type != null) {
-          // widget.vehicleType.text = type;
+          formSettings.controller!.text = type;
         }
       },
     );

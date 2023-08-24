@@ -1,0 +1,17 @@
+enum TicketField {
+  firstName,
+  lastName,
+  middleName,
+  licenseNumber,
+  birthDate,
+  phone,
+  email,
+  address,
+  violationsID,
+  vehicleType,
+  engineNumber,
+  chassisNumber,
+  plateNumber,
+  vehicleOwner,
+  vehicleOwnerAddress,
+}
