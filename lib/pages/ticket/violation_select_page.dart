@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:u_traffic_enforcer/config/enums/ticket_field.dart';
 import 'package:u_traffic_enforcer/config/themes/textstyles.dart';
+import 'package:u_traffic_enforcer/config/utils/nav_utils.dart';
+import 'package:u_traffic_enforcer/providers/create_ticket_form_notifier.dart';
 
 import '../../config/themes/colors.dart';
 import '../../config/themes/spacing.dart';
@@ -40,7 +43,7 @@ class _ViolationsListState extends State<ViolationsList> {
           const SizedBox(width: USpace.space16),
           Expanded(
             child: ElevatedButton(
-              onPressed: goToTicketPreview,
+              onPressed: _previewTicket,
               child: const Text("Next"),
             ),
           ),
@@ -97,7 +100,7 @@ class _ViolationsListState extends State<ViolationsList> {
     );
   }
 
-  void goToTicketPreview() {
+  void _previewTicket() {
     final provider = Provider.of<ViolationProvider>(context, listen: false);
 
     if (provider.getViolations.where((element) => element.isSelected).isEmpty) {
@@ -109,14 +112,11 @@ class _ViolationsListState extends State<ViolationsList> {
       return;
     }
 
-    final List<String?> selectedTicket = provider.getViolations
+    final Set<String?> selectedTicket = provider.getViolations
         .where((element) => element.isSelected)
         .map((e) => e.id)
-        .toList();
+        .toSet();
 
-    Provider.of<TicketProvider>(context, listen: false)
-        .updateTicketField("violationsID", selectedTicket);
-
-    Navigator.pushNamed(context, "/ticket/preview");
+    goPreviewTicket();
   }
 }

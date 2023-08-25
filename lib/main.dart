@@ -22,7 +22,7 @@ import 'pages/auth/register_page.dart';
 import 'pages/printer/device_scan_page.dart';
 import 'pages/printer/printer_home.dart';
 import 'pages/ticket/preview_page.dart';
-import 'pages/ticket/violations_list_page.dart';
+import 'pages/ticket/violation_select_page.dart';
 import 'pages/wrapper.dart';
 import 'providers/ticket_provider.dart';
 import 'providers/violations_provider.dart';

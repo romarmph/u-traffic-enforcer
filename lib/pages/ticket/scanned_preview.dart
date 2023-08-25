@@ -102,6 +102,6 @@ class _ScannedLicensePreviewState extends State<ScannedLicensePreview> {
       return;
     }
 
-    provider.setLicenseImagePath(croppedImage.path);
+    // provider.setLicenseImagePath(croppedImage.path);
   }
 }

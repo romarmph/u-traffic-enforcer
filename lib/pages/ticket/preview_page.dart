@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
+import 'package:u_traffic_enforcer/model/form_input_settings.dart';
+import 'package:u_traffic_enforcer/providers/create_ticket_form_notifier.dart';
 
+import '../../config/enums/ticket_field.dart';
 import '../../config/themes/colors.dart';
 import '../../config/themes/spacing.dart';
-import '../../model/ticket_model.dart';
 import '../../model/violation_model.dart';
-import '../../providers/ticket_provider.dart';
 import '../../providers/violations_provider.dart';
 import 'widgets/preview_list_tile.dart';
 
@@ -24,7 +25,7 @@ class _TicketPreviewState extends State<TicketPreview>
 
   @override
   void initState() {
-    tabController = TabController(length: 2, vsync: this);
+    tabController = TabController(length: 3, vsync: this);
 
     super.initState();
   }
@@ -64,21 +65,8 @@ class _TicketPreviewState extends State<TicketPreview>
               const SizedBox(width: USpace.space16),
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () {
-                    // Navigator.pushNamed(context, "");
-                    QuickAlert.show(
-                      context: context,
-                      type: QuickAlertType.confirm,
-                      text: "Are you sure to print this ticket?",
-                      confirmBtnText: "Print now",
-                      cancelBtnText: "No, cancel",
-                      onConfirmBtnTap: () {
-                        Navigator.of(context).pop();
-                        Navigator.of(context).pushNamed("/printer/");
-                      },
-                    );
-                  },
-                  child: const Text("Print"),
+                  onPressed: _showDialog,
+                  child: const Text("Save Ticket"),
                 ),
               ),
             ],
@@ -86,6 +74,32 @@ class _TicketPreviewState extends State<TicketPreview>
         ],
       ),
     );
+  }
+
+  void _showDialog() async {
+    final value = await QuickAlert.show(
+      context: context,
+      type: QuickAlertType.confirm,
+      title: "Save Ticket",
+      text: "Are you sure the ticket is correct?",
+      confirmBtnText: "Yes, save",
+      cancelBtnText: "No, cancel",
+      barrierDismissible: true,
+      onConfirmBtnTap: () {
+        Navigator.of(context).pop(true);
+        // Navigator.of(context).pushNamed("/printer/");
+      },
+    );
+
+    if (value == null) {
+      return;
+    }
+
+    await saveTicket();
+  }
+
+  Future<void> saveTicket() async {
+    print("saving ticket");
   }
 
   @override
@@ -98,9 +112,11 @@ class _TicketPreviewState extends State<TicketPreview>
       appBar: AppBar(
         title: const Text("Ticket Details"),
       ),
-      body: Consumer<TicketProvider>(
-        builder: (context, value, child) {
-          final Ticket ticket = value.getTicket;
+      body: Consumer<CreateTicketFormNotifier>(
+        builder: (context, form, child) {
+          final driverForm = form.driverFormData;
+          final vehicleForm = form.vehicleFormData;
+          final formSettings = form.formSettings;
 
           return Column(
             children: [
@@ -112,7 +128,8 @@ class _TicketPreviewState extends State<TicketPreview>
                 child: TabBarView(
                   controller: tabController,
                   children: [
-                    _builDetailsView(ticket),
+                    _buildDetails(driverForm, formSettings),
+                    _buildDetails(vehicleForm, formSettings),
                     _buildViolationsView(),
                   ],
                 ),
@@ -128,7 +145,10 @@ class _TicketPreviewState extends State<TicketPreview>
   List<Widget> _buildTabs() {
     return const <Widget>[
       Tab(
-        text: "Violator Detials",
+        text: "Driver Detials",
+      ),
+      Tab(
+        text: "Vehicle Detials",
       ),
       Tab(
         text: "Violations",
@@ -169,67 +189,31 @@ class _TicketPreviewState extends State<TicketPreview>
     );
   }
 
-  Widget _builDetailsView(Ticket ticket) {
+  Widget _buildDetails(
+    Map<TicketField, dynamic> formData,
+    Map<TicketField, dynamic> formSettings,
+  ) {
     final dateFormat = DateFormat("MMMM dd, yyyy");
-
-    final details = ticket
-        .map((key, value) => {key: value})
-        .entries
-        .toList()
-        .where((element) =>
-            (element.value != null || element.key == "birthDate") &&
-            element.key != "violationsID");
-    print(details);
 
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(USpace.space8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: details.map((e) {
-            String title = "";
+          children: formData.entries.map((data) {
+            String title = data.value;
 
-            if (e.value != null && e.value.runtimeType == DateTime) {
-              title = dateFormat.format(e.value);
-            }
-
-            if (e.value != null && e.value.runtimeType != DateTime) {
-              title = e.value;
+            if (data.key == TicketField.birthDate) {
+              title = dateFormat.format(DateTime.parse(data.value));
             }
 
             return PreviewListTile(
               title: title,
-              subtitle: _getLabel(e.key),
+              subtitle: formSettings[data.key].label,
             );
           }).toList(),
         ),
       ),
     );
-  }
-
-  String _getLabel(String key) {
-    Map<String, dynamic> fields = {
-      // 'ticketNumber': "ticketNumber",
-      // 'violationsID': "violationsID",
-      'licenseNumber': "License Number",
-      'driverFirstName': "First Name",
-      'driverMiddleName': "Middle Name",
-      'driverLastName': "Last Name",
-      'birthDate': "Birthdate",
-      'address': "Address",
-      // 'status': "status",
-      'vehicleType': "Vehicle Type",
-      'engineNumber': "Engine Number",
-      'chassisNumber': "Chassis Number",
-      'plateNumber': "Plate Number",
-      'vehicleOwner': "Vehicle Owner",
-      'vehicleOwnerAddress': "Vehicle Owner Address",
-      // 'placeOfViolation': "placeOfViolation",
-      // 'violationDateTime': "violationDateTime",
-      // 'enforcerId': "enforcerId",
-      // 'driverSignature': "driverSignature",
-    };
-
-    return fields[key];
   }
 }

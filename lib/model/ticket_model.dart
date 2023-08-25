@@ -3,7 +3,7 @@ import 'package:u_traffic_enforcer/config/enums/ticket_status.dart';
 class Ticket {
   final String? id;
   int? ticketNumber;
-  Set<String?> violationsID;
+  Set<String?>? violationsID;
   String? licenseNumber;
   String? firstName;
   String? middleName;
@@ -28,7 +28,7 @@ class Ticket {
   Ticket({
     this.id,
     this.ticketNumber,
-    this.violationsID = const {},
+    this.violationsID,
     this.licenseNumber,
     this.firstName,
     this.middleName,
