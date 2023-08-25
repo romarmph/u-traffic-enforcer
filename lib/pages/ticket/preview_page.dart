@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
+import 'package:u_traffic_enforcer/config/enums/ticket_status.dart';
+import 'package:u_traffic_enforcer/database/ticket_db_helper.dart';
 import 'package:u_traffic_enforcer/model/form_input_settings.dart';
 import 'package:u_traffic_enforcer/providers/create_ticket_form_notifier.dart';
+import 'package:u_traffic_enforcer/services/auth_service.dart';
 
 import '../../config/enums/ticket_field.dart';
 import '../../config/themes/colors.dart';
 import '../../config/themes/spacing.dart';
+import '../../model/ticket_model.dart';
 import '../../model/violation_model.dart';
 import '../../providers/violations_provider.dart';
 import 'widgets/preview_list_tile.dart';
@@ -45,7 +49,7 @@ class _TicketPreviewState extends State<TicketPreview>
               SizedBox(width: USpace.space12),
               Flexible(
                 child: Text(
-                  "Please make sure that all details are correct and was checked by the driver before printing.",
+                  "Please make sure that all details are correct and was checked by the driver before saving.",
                   overflow: TextOverflow.clip,
                 ),
               ),
@@ -79,10 +83,12 @@ class _TicketPreviewState extends State<TicketPreview>
   void _showDialog() async {
     final value = await QuickAlert.show(
       context: context,
-      type: QuickAlertType.confirm,
+      type: QuickAlertType.warning,
       title: "Save Ticket",
-      text: "Are you sure the ticket is correct?",
+      text:
+          "Once save it cannot be edited anymore.\nAre you sure the ticket is correct?",
       confirmBtnText: "Yes, save",
+      showCancelBtn: true,
       cancelBtnText: "No, cancel",
       barrierDismissible: true,
       onConfirmBtnTap: () {
@@ -95,11 +101,50 @@ class _TicketPreviewState extends State<TicketPreview>
       return;
     }
 
-    await saveTicket();
+    saveTicket();
   }
 
   Future<void> saveTicket() async {
-    print("saving ticket");
+    final form = Provider.of<CreateTicketFormNotifier>(context, listen: false);
+    final enforcer = Provider.of<AuthService>(context, listen: false);
+
+    Map<String, dynamic> data = {
+      'ticketNumber': "",
+      'violationsID': form.selectedViolationsID,
+      'licenseNumber': form.driverFormData[TicketField.licenseNumber],
+      'firstName': form.driverFormData[TicketField.firstName],
+      'middleName': form.driverFormData[TicketField.middleName],
+      'lastName': form.driverFormData[TicketField.lastName],
+      'birthDate': form.driverFormData[TicketField.birthDate],
+      'phone': form.driverFormData[TicketField.phone],
+      'email': form.driverFormData[TicketField.email],
+      'address': form.driverFormData[TicketField.address],
+      'status': TicketStatus.unpaid,
+      'vehicleType': form.vehicleFormData[TicketField.vehicleType],
+      'engineNumber': form.vehicleFormData[TicketField.engineNumber],
+      'chassisNumber': form.vehicleFormData[TicketField.chassisNumber],
+      'plateNumber': form.vehicleFormData[TicketField.plateNumber],
+      'vehicleOwner': form.vehicleFormData[TicketField.vehicleOwner],
+      'vehicleOwnerAddress':
+          form.vehicleFormData[TicketField.vehicleOwnerAddress],
+      'placeOfViolation': "",
+      'violationDateTime': DateTime.now(),
+      'enforcerId': enforcer.currentUser.id,
+      'driverSignature': "",
+    };
+
+    await TicketDBHelper().saveTicket(
+      data,
+    );
+
+    _showSaveSuccessDialog();
+  }
+
+  _showSaveSuccessDialog() async {
+    await QuickAlert.show(
+      context: context,
+      type: QuickAlertType.success,
+    );
   }
 
   @override
@@ -203,8 +248,12 @@ class _TicketPreviewState extends State<TicketPreview>
           children: formData.entries.map((data) {
             String title = data.value;
 
-            if (data.key == TicketField.birthDate) {
+            if (data.key == TicketField.birthDate && data.value != "") {
               title = dateFormat.format(DateTime.parse(data.value));
+            }
+
+            if (title.isEmpty) {
+              title = "N/A";
             }
 
             return PreviewListTile(

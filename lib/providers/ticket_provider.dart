@@ -21,7 +21,7 @@ class TicketProvider extends ChangeNotifier {
     vehicleOwner: "",
     vehicleOwnerAddress: "",
     placeOfViolation: "",
-    violationDateTime: "",
+    violationDateTime: null,
     enforcerId: "",
     driverSignature: "",
     licenseImageUrl: "",
