@@ -161,8 +161,11 @@ class _CreateTicketPageState extends State<CreateTicketPage>
             formData.formSettings[key]!.controller!.text;
       }
     });
-
+    // ignore: avoid_print
     print(formData.driverFormData.toString());
+    // ignore: avoid_print
     print(formData.vehicleFormData.toString());
+
+    Navigator.of(context).pushNamed('/');
   }
 }

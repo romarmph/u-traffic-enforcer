@@ -117,6 +117,6 @@ class _ViolationsListState extends State<ViolationsList> {
     Provider.of<TicketProvider>(context, listen: false)
         .updateTicketField("violationsID", selectedTicket);
 
-    Navigator.pushNamed(context, "/ticket/ticketpreview");
+    Navigator.pushNamed(context, "/ticket/preview");
   }
 }
