@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:u_traffic_enforcer/pages/ticket/create_ticket_page.dart';
 
+import 'config/constants/navigator_key.dart';
+import 'pages/ticket/create_ticket_page.dart';
 import 'config/themes/textstyles.dart';
 import 'pages/ticket/scanned_preview.dart';
 import 'providers/create_ticket_form_notifier.dart';
@@ -61,6 +62,7 @@ class UTrafficEnforcer extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
+        navigatorKey: navigatorKey,
         debugShowCheckedModeBanner: false,
         title: "U-Traffic Enforcer",
         theme: ThemeData(

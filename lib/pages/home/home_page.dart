@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:u_traffic_enforcer/config/utils/nav_utils.dart';
 import '../../config/themes/colors.dart';
 import '../../config/themes/spacing.dart';
 import '../../config/themes/textstyles.dart';
@@ -333,7 +334,6 @@ class _HomePageState extends State<HomePage> {
     // final imagePicker = ImagePickerService.instance;
     // final image = await imagePicker.pickImage();
 
-    Navigator.of(context).pushNamed('/ticket/create');
-    // }
+    goCreateTicket();
   }
 }

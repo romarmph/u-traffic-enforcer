@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:u_traffic_enforcer/config/enums/ticket_field.dart';
+import 'package:u_traffic_enforcer/config/utils/nav_utils.dart';
 import 'package:u_traffic_enforcer/pages/ticket/widgets/driver_details_form.dart';
 import 'package:u_traffic_enforcer/pages/ticket/widgets/vehicle_details_form.dart';
 import 'package:u_traffic_enforcer/providers/create_ticket_form_notifier.dart';
@@ -166,6 +167,6 @@ class _CreateTicketPageState extends State<CreateTicketPage>
     // ignore: avoid_print
     print(formData.vehicleFormData.toString());
 
-    Navigator.of(context).pushNamed('/');
+    goSelectViolation();
   }
 }

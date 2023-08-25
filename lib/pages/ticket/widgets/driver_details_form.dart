@@ -24,7 +24,6 @@ class DriverDetailsForm extends StatelessWidget {
               value: form.noDriver,
               onChanged: (value) {
                 form.setNoDriver(value!);
-                form.clearDriverFields(value);
               },
             ),
             const SizedBox(height: USpace.space12),
