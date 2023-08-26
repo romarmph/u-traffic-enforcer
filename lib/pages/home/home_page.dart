@@ -19,6 +19,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget userNav() {
+    final user = Provider.of<AuthService>(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: USpace.space16,
@@ -26,11 +28,27 @@ class _HomePageState extends State<HomePage> {
       child: Row(
         children: [
           ClipOval(
-            child: Image.network(
-              "https://picsum.photos/200",
-              width: 50,
-              height: 50,
-              fit: BoxFit.cover,
+            child: FutureBuilder(
+              future: StorageService.instance.fetchProfileImage(
+                user.currentUser.id,
+              ),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                }
+
+                if (snapshot.data == null) {
+                  return Image.network(
+                      'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/2048px-User-avatar.svg.png');
+                }
+
+                return Image.memory(
+                  snapshot.data!,
+                  fit: BoxFit.cover,
+                  width: 48,
+                  height: 48,
+                );
+              },
             ),
           ),
           const SizedBox(width: USpace.space16),
