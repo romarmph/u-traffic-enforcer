@@ -21,12 +21,17 @@ export 'package:bluetooth_print/bluetooth_print_model.dart';
 ///
 ///
 
-// config
+// constants
 export 'package:u_traffic_enforcer/config/constants/navigator_key.dart';
+export 'package:u_traffic_enforcer/config/constants/firebase_storage.dart';
+
+// enums
 export 'package:u_traffic_enforcer/config/enums/device_connection.dart';
 export 'package:u_traffic_enforcer/config/enums/field_type.dart';
 export 'package:u_traffic_enforcer/config/enums/ticket_field.dart';
 export 'package:u_traffic_enforcer/config/enums/ticket_status.dart';
+
+// enums extensions
 export 'package:u_traffic_enforcer/config/extensions/input_validator.dart';
 export 'package:u_traffic_enforcer/config/themes/colors.dart';
 export 'package:u_traffic_enforcer/config/themes/spacing.dart';
@@ -73,8 +78,11 @@ export 'package:u_traffic_enforcer/providers/create_ticket_form_notifier.dart';
 export 'package:u_traffic_enforcer/providers/printer_provider.dart';
 export 'package:u_traffic_enforcer/providers/ticket_provider.dart';
 export 'package:u_traffic_enforcer/providers/violations_provider.dart';
+
+// Services
 export 'package:u_traffic_enforcer/services/auth_service.dart';
 export 'package:u_traffic_enforcer/services/image_picker.dart';
+export 'package:u_traffic_enforcer/services/storage_service.dart';
 
 export 'package:u_traffic_enforcer/main.dart';
 export 'package:u_traffic_enforcer/firebase_options.dart';
