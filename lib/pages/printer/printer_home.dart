@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:u_traffic_enforcer/config/extensions/string_date_formatter.dart';
 
 import '../../../config/utils/exports.dart';
 
@@ -105,14 +106,15 @@ class _PrinterHomeState extends State<PrinterHome> {
     Map<String, dynamic> config = {
       'width': 48,
     };
-    final ticket = Provider.of<TicketProvider>(
-      context,
-      listen: false,
-    ).getTicket;
+
+    final ticket =
+        Provider.of<TicketProvider>(context, listen: false).getTicket;
+
     final violationProvider = Provider.of<ViolationProvider>(
       context,
       listen: false,
     );
+
     final dateFormatter = DateFormat("yyyy-MM-dd hh:mm:ss");
 
     List<LineText> list = [];
@@ -232,7 +234,7 @@ class _PrinterHomeState extends State<PrinterHome> {
       LineText(
         type: LineText.TYPE_TEXT,
         content:
-            "Date and Time of Violation:\n  ${ticket.violationDateTime ?? "N/A"}",
+            "Date and Time of Violation:\n  ${ticket.violationDateTime.toString().formtDate}",
         weight: 2,
         height: 2,
         width: 2,
@@ -243,12 +245,12 @@ class _PrinterHomeState extends State<PrinterHome> {
     list.add(
       LineText(
         type: LineText.TYPE_TEXT,
-        content: "Enforcer ID:\n  ${ticket.enforcerId}",
+        content: "Enforcer:\n  ${ticket.enforcerId}\n",
         weight: 2,
         height: 2,
         width: 2,
         align: LineText.ALIGN_LEFT,
-        linefeed: 2,
+        linefeed: 1,
       ),
     );
 

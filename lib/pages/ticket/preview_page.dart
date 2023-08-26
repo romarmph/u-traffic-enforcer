@@ -12,6 +12,7 @@ class TicketPreview extends StatefulWidget {
 class _TicketPreviewState extends State<TicketPreview>
     with SingleTickerProviderStateMixin {
   late TabController tabController;
+  bool _isSaving = false;
 
   @override
   void initState() {
@@ -54,9 +55,17 @@ class _TicketPreviewState extends State<TicketPreview>
               ),
               const SizedBox(width: USpace.space16),
               Expanded(
-                child: ElevatedButton(
-                  onPressed: _showDialog,
-                  child: const Text("Save Ticket"),
+                child: AbsorbPointer(
+                  absorbing: _isSaving,
+                  child: ElevatedButton(
+                    style: _isSaving
+                        ? ElevatedButton.styleFrom(
+                            backgroundColor: UColors.gray400,
+                          )
+                        : null,
+                    onPressed: _showDialog,
+                    child: Text(_isSaving ? "Saving..." : "Save Ticket"),
+                  ),
                 ),
               ),
             ],
@@ -87,7 +96,15 @@ class _TicketPreviewState extends State<TicketPreview>
       return;
     }
 
-    saveTicket();
+    setState(() {
+      _isSaving = true;
+    });
+
+    await saveTicket();
+
+    setState(() {
+      _isSaving = false;
+    });
   }
 
   Future<void> saveTicket() async {
@@ -113,23 +130,31 @@ class _TicketPreviewState extends State<TicketPreview>
       'vehicleOwner': form.vehicleFormData[TicketField.vehicleOwner],
       'vehicleOwnerAddress':
           form.vehicleFormData[TicketField.vehicleOwnerAddress],
-      'placeOfViolation': "",
       'violationDateTime': DateTime.now(),
       'enforcerId': enforcer.currentUser.id,
       'driverSignature': "",
     };
 
-    await TicketDBHelper().saveTicket(
+    final future = await TicketDBHelper().saveTicket(
       data,
     );
 
-    _showSaveSuccessDialog();
+    _showSaveSuccessDialog(future);
   }
 
-  void _showSaveSuccessDialog() async {
+  void _showSaveSuccessDialog(Ticket ticket) async {
+    Provider.of<TicketProvider>(context, listen: false).updateTicket(ticket);
+
     await QuickAlert.show(
       context: context,
       type: QuickAlertType.success,
+      onConfirmBtnTap: () {
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/printer/',
+          (route) => route.isFirst,
+        );
+      },
     );
   }
 

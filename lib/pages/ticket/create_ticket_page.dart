@@ -17,6 +17,24 @@ class _CreateTicketPageState extends State<CreateTicketPage>
     super.initState();
     _tabController = TabController(length: 2, initialIndex: 0, vsync: this);
     _notifier = Provider.of<CreateTicketFormNotifier>(context, listen: false);
+
+    final formSettings = _notifier.formSettings;
+
+    formSettings[TicketField.firstName]!.controller!.text = "Romar";
+    formSettings[TicketField.lastName]!.controller!.text = "Macaraeg";
+    formSettings[TicketField.middleName]!.controller!.text = "Cabangon";
+    formSettings[TicketField.birthDate]!.controller!.text = "1998-11-14";
+    formSettings[TicketField.address]!.controller!.text = "Pinmaludpod";
+    formSettings[TicketField.phone]!.controller!.text = "0918263512";
+    formSettings[TicketField.email]!.controller!.text = "roamr@gmail.com";
+    formSettings[TicketField.licenseNumber]!.controller!.text = "120938197321";
+    formSettings[TicketField.vehicleType]!.controller!.text = "Car";
+    formSettings[TicketField.plateNumber]!.controller!.text = "ABC-123";
+    formSettings[TicketField.engineNumber]!.controller!.text = "DAW31231";
+    formSettings[TicketField.chassisNumber]!.controller!.text = "KJHJ1231";
+    formSettings[TicketField.vehicleOwner]!.controller!.text = "ROMAR MACARAEG";
+    formSettings[TicketField.vehicleOwnerAddress]!.controller!.text =
+        "PINMALUDPOD";
   }
 
   @override

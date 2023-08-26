@@ -1,6 +1,8 @@
 import '../../../config/utils/exports.dart';
 
 class TicketProvider extends ChangeNotifier {
+  Ticket _lastPrintedTicket = Ticket();
+
   Ticket _ticket = Ticket(
     ticketNumber: null,
     violationsID: {},
@@ -25,9 +27,12 @@ class TicketProvider extends ChangeNotifier {
   );
 
   Ticket get getTicket => _ticket;
+  Ticket get lastPrintedTicket => _lastPrintedTicket;
 
   void updateTicket(Ticket ticket) {
     _ticket = ticket;
+    print("TICKET FROM TICKET PROVIDER");
+    print(_ticket);
     notifyListeners();
   }
 }

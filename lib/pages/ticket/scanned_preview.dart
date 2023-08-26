@@ -1,12 +1,5 @@
 import 'dart:io';
-
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../../config/themes/colors.dart';
-import '../../config/themes/spacing.dart';
-import '../../providers/ticket_provider.dart';
-import '../../services/image_picker.dart';
+import '../../config/utils/exports.dart';
 
 class ScannedLicensePreview extends StatefulWidget {
   const ScannedLicensePreview({super.key});
