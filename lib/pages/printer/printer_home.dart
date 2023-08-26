@@ -66,7 +66,8 @@ class _PrinterHomeState extends State<PrinterHome> {
                 if (isConnected != null && isConnected) {
                   _printer.disconnect();
                 }
-                findDevice();
+
+                goPrinterScanner();
               },
               child: const Text("Select Printer"),
             ),
@@ -87,10 +88,6 @@ class _PrinterHomeState extends State<PrinterHome> {
         ),
       ),
     );
-  }
-
-  void findDevice() {
-    Navigator.pushNamed(context, '/printer/scan');
   }
 
   void displayPrinterErrorState() {
@@ -304,7 +301,7 @@ class _PrinterHomeState extends State<PrinterHome> {
     list.add(
       LineText(
         type: LineText.TYPE_BARCODE,
-        content: "1231241231312",
+        content: _formatTicketNumber(ticket.ticketNumber!),
         align: LineText.ALIGN_CENTER,
         width: 12,
         height: 12,
@@ -314,5 +311,9 @@ class _PrinterHomeState extends State<PrinterHome> {
     );
 
     await _printer.printReceipt(config, list);
+  }
+
+  String _formatTicketNumber(int number) {
+    return number.toString().padLeft(12, '0');
   }
 }
