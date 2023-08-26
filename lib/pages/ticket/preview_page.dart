@@ -1,20 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import 'package:quickalert/quickalert.dart';
-import 'package:u_traffic_enforcer/config/enums/ticket_status.dart';
-import 'package:u_traffic_enforcer/database/ticket_db_helper.dart';
-import 'package:u_traffic_enforcer/model/form_input_settings.dart';
-import 'package:u_traffic_enforcer/providers/create_ticket_form_notifier.dart';
-import 'package:u_traffic_enforcer/services/auth_service.dart';
 
-import '../../config/enums/ticket_field.dart';
-import '../../config/themes/colors.dart';
-import '../../config/themes/spacing.dart';
-import '../../model/ticket_model.dart';
-import '../../model/violation_model.dart';
-import '../../providers/violations_provider.dart';
-import 'widgets/preview_list_tile.dart';
+import '../../config/utils/exports.dart';
 
 class TicketPreview extends StatefulWidget {
   const TicketPreview({super.key});
@@ -140,7 +126,7 @@ class _TicketPreviewState extends State<TicketPreview>
     _showSaveSuccessDialog();
   }
 
-  _showSaveSuccessDialog() async {
+  void _showSaveSuccessDialog() async {
     await QuickAlert.show(
       context: context,
       type: QuickAlertType.success,
@@ -149,10 +135,6 @@ class _TicketPreviewState extends State<TicketPreview>
 
   @override
   Widget build(BuildContext context) {
-    final violationsProvider = Provider.of<ViolationProvider>(
-      context,
-      listen: false,
-    );
     return Scaffold(
       appBar: AppBar(
         title: const Text("Ticket Details"),

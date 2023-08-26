@@ -1,11 +1,4 @@
-import 'package:flutter/material.dart';
-
-import 'package:provider/provider.dart';
-
-import '../model/user_model.dart';
-import '../services/auth_service.dart';
-import 'auth/login_page.dart';
-import 'home/home_page.dart';
+import '../config/utils/exports.dart';
 
 class Wrapper extends StatelessWidget {
   const Wrapper({super.key});
@@ -14,7 +7,7 @@ class Wrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
 
-    return StreamBuilder<User?>(
+    return StreamBuilder<UTrafficUser?>(
       stream: authService.user,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.active) {

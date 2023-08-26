@@ -1,13 +1,6 @@
-import 'package:bluetooth_print/bluetooth_print.dart';
-import 'package:bluetooth_print/bluetooth_print_model.dart';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
-import '../../config/themes/colors.dart';
-import '../../config/themes/spacing.dart';
-import '../../providers/ticket_provider.dart';
-import '../../providers/violations_provider.dart';
+import '../../../config/utils/exports.dart';
 
 class PrinterHome extends StatefulWidget {
   const PrinterHome({super.key});

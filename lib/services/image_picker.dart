@@ -1,5 +1,4 @@
-import 'package:image_picker/image_picker.dart';
-import 'package:image_cropper/image_cropper.dart';
+import '../config/utils/exports.dart';
 
 class ImagePickerService {
   ImagePickerService._();

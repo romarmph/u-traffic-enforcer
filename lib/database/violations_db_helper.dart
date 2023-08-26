@@ -1,5 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import '../model/violation_model.dart';
+import '../../config/utils/exports.dart';
 
 class ViolationsDatabase {
   final _firestore = FirebaseFirestore.instance;

@@ -1,4 +1,4 @@
-import 'package:u_traffic_enforcer/config/enums/ticket_status.dart';
+import '../../../config/utils/exports.dart';
 
 class Ticket {
   final String? id;

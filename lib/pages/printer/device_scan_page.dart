@@ -1,11 +1,4 @@
-import 'package:bluetooth_print/bluetooth_print.dart';
-import 'package:bluetooth_print/bluetooth_print_model.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:quickalert/quickalert.dart';
-
-import '../../config/themes/spacing.dart';
-import '../../providers/printer_provider.dart';
+import '../../config/utils/exports.dart';
 
 class DeviceScanPage extends StatefulWidget {
   const DeviceScanPage({super.key});

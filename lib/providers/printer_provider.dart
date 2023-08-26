@@ -1,6 +1,4 @@
-import 'package:bluetooth_print/bluetooth_print.dart';
-import 'package:bluetooth_print/bluetooth_print_model.dart';
-import 'package:flutter/material.dart';
+import '../../../config/utils/exports.dart';
 
 class PrinterProvider extends ChangeNotifier {
   final BluetoothPrint _device = BluetoothPrint.instance;

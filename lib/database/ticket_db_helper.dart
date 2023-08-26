@@ -1,5 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:u_traffic_enforcer/model/ticket_model.dart';
+import '../../../config/utils/exports.dart';
 
 class TicketDBHelper {
   final _firestore = FirebaseFirestore.instance;

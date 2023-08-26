@@ -1,7 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:u_traffic_enforcer/model/ticket_model.dart';
-
-import '../config/enums/ticket_status.dart';
+import '../../../config/utils/exports.dart';
 
 class TicketProvider extends ChangeNotifier {
   Ticket _ticket = Ticket(

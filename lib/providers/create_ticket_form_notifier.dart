@@ -1,10 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:u_traffic_enforcer/config/enums/field_type.dart';
-import 'package:u_traffic_enforcer/config/extensions/input_validator.dart';
-import 'package:u_traffic_enforcer/model/form_input_settings.dart';
-
-import '../config/enums/ticket_field.dart';
+import '../../../config/utils/exports.dart';
 
 class CreateTicketFormNotifier extends ChangeNotifier {
   static final _formatter = FilteringTextInputFormatter.allow(

@@ -1,8 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:u_traffic_enforcer/config/utils/nav_utils.dart';
-import '../../config/themes/colors.dart';
-import '../../config/themes/spacing.dart';
-import '../../config/themes/textstyles.dart';
+import '../../config/utils/exports.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

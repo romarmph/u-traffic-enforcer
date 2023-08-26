@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:u_traffic_enforcer/config/constants/navigator_key.dart';
+import '../../config/utils/exports.dart';
 
 void goHome() {
   Navigator.of(navigatorKey.currentContext!).pushNamed(

@@ -1,11 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:u_traffic_enforcer/config/enums/ticket_field.dart';
-
-import '../../../model/form_input_settings.dart';
-import '../../../providers/create_ticket_form_notifier.dart';
-import 'text_field.dart';
-import '../../../config/themes/spacing.dart';
+import '../../../config/utils/exports.dart';
 
 class DriverDetailsForm extends StatelessWidget {
   const DriverDetailsForm({

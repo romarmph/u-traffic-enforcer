@@ -1,15 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:u_traffic_enforcer/config/enums/ticket_field.dart';
-import 'package:u_traffic_enforcer/config/themes/textstyles.dart';
-import 'package:u_traffic_enforcer/config/utils/nav_utils.dart';
-import 'package:u_traffic_enforcer/providers/create_ticket_form_notifier.dart';
-
-import '../../config/themes/colors.dart';
-import '../../config/themes/spacing.dart';
-import '../../model/violation_model.dart';
-import '../../providers/ticket_provider.dart';
-import '../../providers/violations_provider.dart';
+import '../../config/utils/exports.dart';
 
 class ViolationsList extends StatefulWidget {
   const ViolationsList({super.key});

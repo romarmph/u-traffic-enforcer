@@ -1,14 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:u_traffic_enforcer/config/enums/ticket_field.dart';
-import 'package:u_traffic_enforcer/config/utils/nav_utils.dart';
-import 'package:u_traffic_enforcer/pages/ticket/widgets/driver_details_form.dart';
-import 'package:u_traffic_enforcer/pages/ticket/widgets/vehicle_details_form.dart';
-import 'package:u_traffic_enforcer/providers/create_ticket_form_notifier.dart';
-
-import '../../config/themes/colors.dart';
-import '../../config/themes/spacing.dart';
-// import '../../services/image_picker.dart';
+import '../../../config/utils/exports.dart';
 
 class CreateTicketPage extends StatefulWidget {
   const CreateTicketPage({super.key});
