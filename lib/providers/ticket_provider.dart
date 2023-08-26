@@ -1,17 +1,16 @@
-import 'package:flutter/material.dart';
-import 'package:u_traffic_enforcer/model/ticket_model.dart';
-
-import '../config/enums/ticket_status.dart';
+import '../../../config/utils/exports.dart';
 
 class TicketProvider extends ChangeNotifier {
+  Ticket _lastPrintedTicket = Ticket();
+
   Ticket _ticket = Ticket(
-    ticketNumber: 0,
+    ticketNumber: null,
     violationsID: {},
     licenseNumber: "",
     firstName: "",
     middleName: "",
     lastName: "",
-    birthDate: DateTime.now(),
+    birthDate: null,
     address: "",
     status: TicketStatus.unpaid,
     vehicleType: "",
@@ -21,28 +20,19 @@ class TicketProvider extends ChangeNotifier {
     vehicleOwner: "",
     vehicleOwnerAddress: "",
     placeOfViolation: "",
-    violationDateTime: "",
+    violationDateTime: null,
     enforcerId: "",
     driverSignature: "",
     licenseImageUrl: "",
   );
 
   Ticket get getTicket => _ticket;
-
-  void updateTicketField(String fieldName, dynamic value) {
-    Map<String, dynamic> ticket = _ticket.toJson();
-    ticket[fieldName] = value;
-    _ticket = Ticket.fromJson(ticket);
-    notifyListeners();
-  }
+  Ticket get lastPrintedTicket => _lastPrintedTicket;
 
   void updateTicket(Ticket ticket) {
     _ticket = ticket;
-    notifyListeners();
-  }
-
-  void setLicenseImagePath(String path) {
-    _ticket.licenseImageUrl = path;
+    print("TICKET FROM TICKET PROVIDER");
+    print(_ticket);
     notifyListeners();
   }
 }

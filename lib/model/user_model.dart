@@ -1,8 +1,8 @@
-class User {
+class UTrafficUser {
   final String id;
   final String email;
 
-  const User({
+  const UTrafficUser({
     required this.id,
     required this.email,
   });

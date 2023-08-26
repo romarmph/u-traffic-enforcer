@@ -1,9 +1,9 @@
-import 'package:u_traffic_enforcer/config/enums/ticket_status.dart';
+import '../../../config/utils/exports.dart';
 
 class Ticket {
   final String? id;
   int? ticketNumber;
-  Set<String?> violationsID;
+  Set<String?>? violationsID;
   String? licenseNumber;
   String? firstName;
   String? middleName;
@@ -20,7 +20,7 @@ class Ticket {
   String? vehicleOwner;
   String? vehicleOwnerAddress;
   String? placeOfViolation;
-  String? violationDateTime;
+  DateTime? violationDateTime;
   String? enforcerId;
   String? driverSignature;
   String? licenseImageUrl;
@@ -28,7 +28,7 @@ class Ticket {
   Ticket({
     this.id,
     this.ticketNumber,
-    this.violationsID = const {},
+    this.violationsID,
     this.licenseNumber,
     this.firstName,
     this.middleName,
@@ -60,7 +60,8 @@ class Ticket {
       firstName: json['firstName'],
       middleName: json['middleName'],
       lastName: json['lastName'],
-      birthDate: json['birthDate'],
+      birthDate:
+          json['birthDate'] != "" ? DateTime.parse(json['birthDate']) : null,
       phone: json['phone'],
       email: json['email'],
       address: json['address'],
@@ -80,9 +81,8 @@ class Ticket {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'ticketNumber': ticketNumber,
-      'violationsID': violationsID,
+      'violationsID': violationsID!.toList(),
       'licenseNumber': licenseNumber,
       'firstName': firstName,
       'middleName': middleName,
@@ -91,7 +91,7 @@ class Ticket {
       'phone': phone,
       'email': email,
       'address': address,
-      'status': status,
+      'status': status.toString().split('.').last,
       'vehicleType': vehicleType,
       'engineNumber': engineNumber,
       'chassisNumber': chassisNumber,

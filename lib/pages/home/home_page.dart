@@ -1,7 +1,4 @@
-import 'package:flutter/material.dart';
-import '../../config/themes/colors.dart';
-import '../../config/themes/spacing.dart';
-import '../../config/themes/textstyles.dart';
+import '../../config/utils/exports.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -333,7 +330,6 @@ class _HomePageState extends State<HomePage> {
     // final imagePicker = ImagePickerService.instance;
     // final image = await imagePicker.pickImage();
 
-    Navigator.of(context).pushNamed('/ticket/create');
-    // }
+    goCreateTicket();
   }
 }

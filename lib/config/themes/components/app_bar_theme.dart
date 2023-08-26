@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
-
-import '../colors.dart';
+import '../../../config/utils/exports.dart';
 
 const appBarTheme = AppBarTheme(
   backgroundColor: UColors.white,

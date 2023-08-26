@@ -1,11 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../../config/themes/colors.dart';
-import '../../config/themes/spacing.dart';
-import '../../config/themes/textstyles.dart';
-import '../../model/user_model.dart';
-import '../../services/auth_service.dart';
+import '../../config/utils/exports.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});

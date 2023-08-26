@@ -1,31 +1,4 @@
-import 'package:flutter/material.dart';
-
-import 'package:firebase_core/firebase_core.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
-import 'package:u_traffic_enforcer/pages/ticket/create_ticket_page.dart';
-
-import 'config/themes/textstyles.dart';
-import 'pages/ticket/scanned_preview.dart';
-import 'providers/create_ticket_form_notifier.dart';
-import 'providers/printer_provider.dart';
-import 'config/themes/colors.dart';
-import 'config/themes/components/app_bar_theme.dart';
-import 'config/themes/components/fab.dart';
-import 'config/themes/components/input_decoration.dart';
-import 'config/themes/components/elevated_button.dart';
-import 'config/themes/components/text_button.dart';
-import 'firebase_options.dart';
-import 'pages/auth/login_page.dart';
-import 'pages/auth/register_page.dart';
-import 'pages/printer/device_scan_page.dart';
-import 'pages/printer/printer_home.dart';
-import 'pages/ticket/preview_page.dart';
-import 'pages/ticket/violations_list_page.dart';
-import 'pages/wrapper.dart';
-import 'providers/ticket_provider.dart';
-import 'providers/violations_provider.dart';
-import 'services/auth_service.dart';
+import 'config/utils/exports.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -61,6 +34,7 @@ class UTrafficEnforcer extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
+        navigatorKey: navigatorKey,
         debugShowCheckedModeBanner: false,
         title: "U-Traffic Enforcer",
         theme: ThemeData(
@@ -95,9 +69,9 @@ class UTrafficEnforcer extends StatelessWidget {
           "/auth/login": (context) => const Login(),
           "/auth/register": (context) => const Register(),
           "/ticket/create": (context) => const CreateTicketPage(),
-          "/ticket/violationslist": (context) => const ViolationsList(),
-          "/ticket/ticketpreview": (context) => const TicketPreview(),
-          "/ticket/scannedpreview": (context) => const ScannedLicensePreview(),
+          "/ticket/violations": (context) => const ViolationsList(),
+          "/ticket/preview": (context) => const TicketPreview(),
+          "/ticket/scanpreview": (context) => const ScannedLicensePreview(),
           "/printer/": (context) => const PrinterHome(),
           "/printer/scan": (context) => const DeviceScanPage(),
         },

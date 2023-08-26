@@ -1,10 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:u_traffic_enforcer/config/enums/field_type.dart';
-import 'package:u_traffic_enforcer/config/extensions/input_validator.dart';
-import 'package:u_traffic_enforcer/model/form_input_settings.dart';
-
-import '../config/enums/ticket_field.dart';
+import '../../../config/utils/exports.dart';
 
 class CreateTicketFormNotifier extends ChangeNotifier {
   static final _formatter = FilteringTextInputFormatter.allow(
@@ -14,8 +8,9 @@ class CreateTicketFormNotifier extends ChangeNotifier {
   bool _noDriver = false;
   bool _ownedByDriver = false;
 
-  final Map<TicketField, dynamic> _vehicleFormFields = {
-    TicketField.violationsID: <Set<String>>{},
+  Set<String?> _selectedViolationsID = {};
+
+  final Map<TicketField, dynamic> _vehicleFormData = {
     TicketField.vehicleType: "",
     TicketField.engineNumber: "",
     TicketField.chassisNumber: "",
@@ -24,7 +19,7 @@ class CreateTicketFormNotifier extends ChangeNotifier {
     TicketField.vehicleOwnerAddress: "",
   };
 
-  final Map<TicketField, dynamic> _driverFormFields = {
+  final Map<TicketField, dynamic> _driverFormData = {
     TicketField.licenseNumber: "",
     TicketField.lastName: "",
     TicketField.firstName: "",
@@ -123,11 +118,13 @@ class CreateTicketFormNotifier extends ChangeNotifier {
   GlobalKey get driverFormKey => _driverFormkey;
   GlobalKey get vehicleFormKey => _vehicleFormKey;
 
+  Set<String?> get selectedViolationsID => _selectedViolationsID;
+
   bool get noDriver => _noDriver;
   bool get ownedByDriver => _ownedByDriver;
 
-  Map<TicketField, dynamic> get driverFormData => _driverFormFields;
-  Map<TicketField, dynamic> get vehicleFormData => _vehicleFormFields;
+  Map<TicketField, dynamic> get driverFormData => _driverFormData;
+  Map<TicketField, dynamic> get vehicleFormData => _vehicleFormData;
 
   Map<TicketField, FormSettings> get formSettings => _formSettings;
 
@@ -173,12 +170,12 @@ class CreateTicketFormNotifier extends ChangeNotifier {
   }
 
   void updateDriverFormField(TicketField field, dynamic value) {
-    _driverFormFields[field] = value;
+    _driverFormData[field] = value;
     notifyListeners();
   }
 
   void updateVehicleFormField(TicketField field, dynamic value) {
-    _vehicleFormFields[field] = value;
+    _vehicleFormData[field] = value;
     notifyListeners();
   }
 
@@ -214,10 +211,15 @@ class CreateTicketFormNotifier extends ChangeNotifier {
       value.controller!.clear();
     });
 
-    _driverFormFields.forEach((key, value) {
-      _driverFormFields[key] = "";
+    _driverFormData.forEach((key, value) {
+      _driverFormData[key] = "";
     });
 
     _noDriver = value;
+  }
+
+  void setViolationsID(Set<String?> vioaltionsID) {
+    _selectedViolationsID = vioaltionsID;
+    notifyListeners();
   }
 }

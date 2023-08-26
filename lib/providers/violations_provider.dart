@@ -1,7 +1,4 @@
-import 'package:flutter/material.dart';
-
-import '../database/violations_db_helper.dart';
-import '../model/violation_model.dart';
+import '../../../config/utils/exports.dart';
 
 class ViolationProvider extends ChangeNotifier {
   final _violationsDatabase = ViolationsDatabase();

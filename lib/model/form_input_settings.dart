@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:u_traffic_enforcer/config/enums/field_type.dart';
+import '../../config/utils/exports.dart';
 
 class FormSettings {
   final String label;

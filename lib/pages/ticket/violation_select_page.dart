@@ -1,12 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:u_traffic_enforcer/config/themes/textstyles.dart';
-
-import '../../config/themes/colors.dart';
-import '../../config/themes/spacing.dart';
-import '../../model/violation_model.dart';
-import '../../providers/ticket_provider.dart';
-import '../../providers/violations_provider.dart';
+import '../../config/utils/exports.dart';
 
 class ViolationsList extends StatefulWidget {
   const ViolationsList({super.key});
@@ -40,7 +32,7 @@ class _ViolationsListState extends State<ViolationsList> {
           const SizedBox(width: USpace.space16),
           Expanded(
             child: ElevatedButton(
-              onPressed: goToTicketPreview,
+              onPressed: _previewTicket,
               child: const Text("Next"),
             ),
           ),
@@ -97,8 +89,9 @@ class _ViolationsListState extends State<ViolationsList> {
     );
   }
 
-  void goToTicketPreview() {
+  void _previewTicket() {
     final provider = Provider.of<ViolationProvider>(context, listen: false);
+    final form = Provider.of<CreateTicketFormNotifier>(context, listen: false);
 
     if (provider.getViolations.where((element) => element.isSelected).isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -109,14 +102,13 @@ class _ViolationsListState extends State<ViolationsList> {
       return;
     }
 
-    final List<String?> selectedTicket = provider.getViolations
+    final Set<String?> selectedTicket = provider.getViolations
         .where((element) => element.isSelected)
         .map((e) => e.id)
-        .toList();
+        .toSet();
 
-    Provider.of<TicketProvider>(context, listen: false)
-        .updateTicketField("violationsID", selectedTicket);
+    form.setViolationsID(selectedTicket);
 
-    Navigator.pushNamed(context, "/ticket/ticketpreview");
+    goPreviewTicket();
   }
 }

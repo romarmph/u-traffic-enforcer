@@ -1,29 +1,27 @@
-import 'package:firebase_auth/firebase_auth.dart' as auth;
-import 'package:cloud_firestore/cloud_firestore.dart' as firestore;
-
-import '../model/enforcer_model.dart';
-import '../model/user_model.dart';
+import '../config/utils/exports.dart' as auth;
+import '../config/utils/exports.dart' as firestore;
+import '../config/utils/exports.dart';
 
 class AuthService {
   final auth.FirebaseAuth _firebaseAuth = auth.FirebaseAuth.instance;
   final firestore.FirebaseFirestore _db = firestore.FirebaseFirestore.instance;
 
-  User? _userFromFirebase(auth.User? user) {
+  UTrafficUser? _userFromFirebase(auth.User? user) {
     if (user == null) {
       return null;
     }
 
-    return User(
+    return UTrafficUser(
       id: user.uid,
       email: user.email!,
     );
   }
 
-  User get currentUser {
+  UTrafficUser get currentUser {
     return _userFromFirebase(_firebaseAuth.currentUser)!;
   }
 
-  Stream<User?>? get user {
+  Stream<UTrafficUser?>? get user {
     return _firebaseAuth.authStateChanges().map(_userFromFirebase);
   }
 
@@ -45,7 +43,7 @@ class AuthService {
     return enforcer;
   }
 
-  Future<User?> signInWithEmailAndPassword({
+  Future<UTrafficUser?> signInWithEmailAndPassword({
     required String email,
     required String password,
   }) async {
@@ -60,7 +58,7 @@ class AuthService {
     return _userFromFirebase(userCredential.user);
   }
 
-  Future<User?> createUserWithEmailAndPassword({
+  Future<UTrafficUser?> createUserWithEmailAndPassword({
     required String email,
     required String password,
   }) async {

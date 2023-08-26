@@ -1,13 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:u_traffic_enforcer/config/enums/ticket_field.dart';
-import 'package:u_traffic_enforcer/pages/ticket/widgets/driver_details_form.dart';
-import 'package:u_traffic_enforcer/pages/ticket/widgets/vehicle_details_form.dart';
-import 'package:u_traffic_enforcer/providers/create_ticket_form_notifier.dart';
-
-import '../../config/themes/colors.dart';
-import '../../config/themes/spacing.dart';
-// import '../../services/image_picker.dart';
+import '../../../config/utils/exports.dart';
 
 class CreateTicketPage extends StatefulWidget {
   const CreateTicketPage({super.key});
@@ -26,6 +17,24 @@ class _CreateTicketPageState extends State<CreateTicketPage>
     super.initState();
     _tabController = TabController(length: 2, initialIndex: 0, vsync: this);
     _notifier = Provider.of<CreateTicketFormNotifier>(context, listen: false);
+
+    final formSettings = _notifier.formSettings;
+
+    formSettings[TicketField.firstName]!.controller!.text = "Romar";
+    formSettings[TicketField.lastName]!.controller!.text = "Macaraeg";
+    formSettings[TicketField.middleName]!.controller!.text = "Cabangon";
+    formSettings[TicketField.birthDate]!.controller!.text = "1998-11-14";
+    formSettings[TicketField.address]!.controller!.text = "Pinmaludpod";
+    formSettings[TicketField.phone]!.controller!.text = "0918263512";
+    formSettings[TicketField.email]!.controller!.text = "roamr@gmail.com";
+    formSettings[TicketField.licenseNumber]!.controller!.text = "120938197321";
+    formSettings[TicketField.vehicleType]!.controller!.text = "Car";
+    formSettings[TicketField.plateNumber]!.controller!.text = "ABC-123";
+    formSettings[TicketField.engineNumber]!.controller!.text = "DAW31231";
+    formSettings[TicketField.chassisNumber]!.controller!.text = "KJHJ1231";
+    formSettings[TicketField.vehicleOwner]!.controller!.text = "ROMAR MACARAEG";
+    formSettings[TicketField.vehicleOwnerAddress]!.controller!.text =
+        "PINMALUDPOD";
   }
 
   @override
@@ -161,8 +170,11 @@ class _CreateTicketPageState extends State<CreateTicketPage>
             formData.formSettings[key]!.controller!.text;
       }
     });
-
+    // ignore: avoid_print
     print(formData.driverFormData.toString());
+    // ignore: avoid_print
     print(formData.vehicleFormData.toString());
+
+    goSelectViolation();
   }
 }

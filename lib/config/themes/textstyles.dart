@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import '../../config/utils/exports.dart';
 
 class UTextStyle {
   const UTextStyle();
