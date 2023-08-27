@@ -19,7 +19,7 @@ class Ticket {
   String? plateNumber;
   String? vehicleOwner;
   String? vehicleOwnerAddress;
-  String? placeOfViolation;
+  Map<String, dynamic>? placeOfViolation;
   DateTime? violationDateTime;
   String? enforcerId;
   String? driverSignature;

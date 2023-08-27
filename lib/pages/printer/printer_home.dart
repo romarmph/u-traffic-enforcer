@@ -152,7 +152,7 @@ class _PrinterHomeState extends State<PrinterHome> {
     list.add(
       LineText(
         type: LineText.TYPE_TEXT,
-        content: dateFormatter.format(DateTime.now()),
+        content: dateFormatter.format(ticket.violationDateTime!),
         weight: 2,
         height: 2,
         width: 2,
@@ -219,7 +219,8 @@ class _PrinterHomeState extends State<PrinterHome> {
     list.add(
       LineText(
         type: LineText.TYPE_TEXT,
-        content: "Place of Violation:\n  ${ticket.placeOfViolation ?? "N/A"}",
+        content:
+            "Place of Violation:\n  ${ticket.placeOfViolation!['address'] ?? "N/A"}",
         weight: 2,
         height: 2,
         width: 2,

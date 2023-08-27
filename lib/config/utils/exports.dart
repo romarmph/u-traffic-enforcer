@@ -14,6 +14,8 @@ export 'package:image_picker/image_picker.dart';
 export 'package:quickalert/quickalert.dart';
 export 'package:bluetooth_print/bluetooth_print.dart';
 export 'package:bluetooth_print/bluetooth_print_model.dart';
+export 'package:location/location.dart';
+export 'package:google_geocoding_api/google_geocoding_api.dart';
 
 ///
 ///
@@ -55,6 +57,7 @@ export 'package:u_traffic_enforcer/model/license_detail_model.dart';
 export 'package:u_traffic_enforcer/model/ticket_model.dart';
 export 'package:u_traffic_enforcer/model/violation_model.dart';
 export 'package:u_traffic_enforcer/model/user_model.dart';
+export 'package:u_traffic_enforcer/model/location_model.dart';
 
 // pages
 export 'package:u_traffic_enforcer/pages/auth/login_page.dart';
@@ -83,6 +86,7 @@ export 'package:u_traffic_enforcer/providers/violations_provider.dart';
 export 'package:u_traffic_enforcer/services/auth_service.dart';
 export 'package:u_traffic_enforcer/services/image_picker.dart';
 export 'package:u_traffic_enforcer/services/storage_service.dart';
+export 'package:u_traffic_enforcer/services/location_services.dart';
 
 export 'package:u_traffic_enforcer/main.dart';
 export 'package:u_traffic_enforcer/firebase_options.dart';
