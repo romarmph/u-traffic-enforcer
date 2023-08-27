@@ -41,3 +41,7 @@ void goPrinterScanner() {
     "/printer/scan",
   );
 }
+
+void popCurrent() {
+  Navigator.of(navigatorKey.currentContext!).pop();
+}

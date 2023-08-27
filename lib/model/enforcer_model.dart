@@ -3,7 +3,6 @@ class Enforcer {
   final String firstName;
   final String middleName;
   final String lastName;
-  final String profileImageUrl;
   final String email;
 
   const Enforcer({
@@ -11,7 +10,6 @@ class Enforcer {
     required this.firstName,
     required this.middleName,
     required this.lastName,
-    required this.profileImageUrl,
     required this.email,
   });
 
@@ -21,7 +19,6 @@ class Enforcer {
       "firstName": firstName,
       "middleName": middleName,
       "lastName": lastName,
-      "profileImageUrl": profileImageUrl,
       "email": email,
     };
   }
@@ -32,13 +29,12 @@ class Enforcer {
       firstName: json["firstName"],
       middleName: json["middleName"],
       lastName: json["lastName"],
-      profileImageUrl: json["profileImageUrl"],
       email: json['email'],
     );
   }
 
   @override
   String toString() {
-    return "Enforcer(id: $id, firstName: $firstName, middleName: $middleName, lastName: $lastName, profileImageUrl: $profileImageUrl)";
+    return "Enforcer(id: $id, firstName: $firstName, middleName: $middleName, lastName: $lastName)";
   }
 }

@@ -15,6 +15,7 @@ class Wrapper extends StatelessWidget {
             return const Login();
           }
 
+          setEnforcer(context);
           return const HomePage();
         }
         return const Scaffold(
@@ -24,5 +25,13 @@ class Wrapper extends StatelessWidget {
         );
       },
     );
+  }
+
+  void setEnforcer(BuildContext context) async {
+    final enforcerProvider =
+        Provider.of<EnforcerProvider>(context, listen: false);
+    final enforcer = await EnforcerDBHelper.instance.getEnforcer();
+
+    enforcerProvider.setEnforcer(enforcer);
   }
 }

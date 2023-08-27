@@ -66,7 +66,8 @@ class _PrinterHomeState extends State<PrinterHome> {
                 if (isConnected != null && isConnected) {
                   _printer.disconnect();
                 }
-                findDevice();
+
+                goPrinterScanner();
               },
               child: const Text("Select Printer"),
             ),
@@ -87,10 +88,6 @@ class _PrinterHomeState extends State<PrinterHome> {
         ),
       ),
     );
-  }
-
-  void findDevice() {
-    Navigator.pushNamed(context, '/printer/scan');
   }
 
   void displayPrinterErrorState() {
@@ -114,6 +111,9 @@ class _PrinterHomeState extends State<PrinterHome> {
       context,
       listen: false,
     );
+
+    final enforcer =
+        Provider.of<EnforcerProvider>(context, listen: false).enforcer;
 
     final dateFormatter = DateFormat("yyyy-MM-dd hh:mm:ss");
 
@@ -155,7 +155,7 @@ class _PrinterHomeState extends State<PrinterHome> {
     list.add(
       LineText(
         type: LineText.TYPE_TEXT,
-        content: dateFormatter.format(DateTime.now()),
+        content: dateFormatter.format(ticket.violationDateTime!),
         weight: 2,
         height: 2,
         width: 2,
@@ -222,7 +222,8 @@ class _PrinterHomeState extends State<PrinterHome> {
     list.add(
       LineText(
         type: LineText.TYPE_TEXT,
-        content: "Place of Violation:\n  ${ticket.placeOfViolation ?? "N/A"}",
+        content:
+            "Place of Violation:\n  ${ticket.placeOfViolation!['address'] ?? "N/A"}",
         weight: 2,
         height: 2,
         width: 2,
@@ -245,7 +246,8 @@ class _PrinterHomeState extends State<PrinterHome> {
     list.add(
       LineText(
         type: LineText.TYPE_TEXT,
-        content: "Enforcer:\n  ${ticket.enforcerId}\n",
+        content:
+            "Enforcer:\n  ${enforcer.firstName} ${enforcer.middleName} ${enforcer.lastName}\n",
         weight: 2,
         height: 2,
         width: 2,
@@ -266,8 +268,9 @@ class _PrinterHomeState extends State<PrinterHome> {
       ),
     );
 
-    final driverViolations =
-        violationProvider.getViolations.where((element) => element.isSelected);
+    final List<Violation> driverViolations = violationProvider.getViolations
+        .where((element) => element.isSelected)
+        .toList();
 
     for (final violation in driverViolations) {
       list.add(
@@ -293,6 +296,39 @@ class _PrinterHomeState extends State<PrinterHome> {
         ),
       );
     }
+    list.add(
+      LineText(
+        type: LineText.TYPE_TEXT,
+        content: "--------------------------------",
+        width: 2,
+        weight: 2,
+        linefeed: 1,
+      ),
+    );
+
+    list.add(
+      LineText(
+        type: LineText.TYPE_TEXT,
+        content: "TOTAL FINE:",
+        weight: 4,
+        height: 4,
+        width: 4,
+        align: LineText.ALIGN_LEFT,
+        linefeed: 1,
+      ),
+    );
+
+    list.add(
+      LineText(
+        type: LineText.TYPE_TEXT,
+        content: _getFineTotal(driverViolations).toString(),
+        weight: 4,
+        height: 4,
+        width: 4,
+        align: LineText.ALIGN_RIGHT,
+        linefeed: 1,
+      ),
+    );
 
     list.add(
       LineText(
@@ -304,15 +340,35 @@ class _PrinterHomeState extends State<PrinterHome> {
     list.add(
       LineText(
         type: LineText.TYPE_BARCODE,
-        content: "1231241231312",
+        content: _formatTicketNumber(ticket.ticketNumber!),
         align: LineText.ALIGN_CENTER,
-        width: 12,
-        height: 12,
+        width: 4,
+        height: 4,
         linefeed: 1,
-        weight: 12,
+        weight: 4,
+      ),
+    );
+
+    list.add(
+      LineText(
+        type: LineText.TYPE_TEXT,
+        content: "\n\n",
       ),
     );
 
     await _printer.printReceipt(config, list);
+  }
+
+  String _formatTicketNumber(int number) {
+    return number.toString().padLeft(12, '0');
+  }
+
+  int _getFineTotal(List<Violation> violations) {
+    int total = 0;
+
+    for (var element in violations) {
+      total += element.fine;
+    }
+    return total;
   }
 }

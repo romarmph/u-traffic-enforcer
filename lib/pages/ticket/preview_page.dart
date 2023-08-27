@@ -111,6 +111,13 @@ class _TicketPreviewState extends State<TicketPreview>
     final form = Provider.of<CreateTicketFormNotifier>(context, listen: false);
     final enforcer = Provider.of<AuthService>(context, listen: false);
 
+    QuickAlert.show(
+      context: context,
+      type: QuickAlertType.loading,
+    );
+
+    final location = await LocationServices.instance.getLocation();
+
     Map<String, dynamic> data = {
       'ticketNumber': "",
       'violationsID': form.selectedViolationsID,
@@ -133,11 +140,12 @@ class _TicketPreviewState extends State<TicketPreview>
       'violationDateTime': DateTime.now(),
       'enforcerId': enforcer.currentUser.id,
       'driverSignature': "",
+      'placeOfViolation': location.toJson(),
     };
 
-    final future = await TicketDBHelper().saveTicket(
-      data,
-    );
+    final future = await TicketDBHelper().saveTicket(data);
+
+    popCurrent();
 
     _showSaveSuccessDialog(future);
   }
@@ -148,6 +156,7 @@ class _TicketPreviewState extends State<TicketPreview>
     await QuickAlert.show(
       context: context,
       type: QuickAlertType.success,
+      barrierDismissible: false,
       onConfirmBtnTap: () {
         Navigator.pushNamedAndRemoveUntil(
           context,

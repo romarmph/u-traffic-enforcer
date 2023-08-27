@@ -12,13 +12,14 @@ class TicketDBHelper {
       final ticketDocSnapshot = await transaction.get(ticketCountDocument);
 
       if (!ticketDocSnapshot.exists) {
-        throw Exception('ticketCount document does not exist!');
+        throw Exception('ticketCount-doc-does-not-exist');
       }
 
       int newCount = ticketDocSnapshot.data()!['count'] + 1;
       transaction.update(ticketCountDocument, {'count': newCount});
 
       ticketData['ticketNumber'] = newCount;
+      ticketData['dateCreated'] = DateTime.now();
 
       final Ticket ticket = Ticket.fromJson(ticketData);
 
@@ -34,11 +35,6 @@ class TicketDBHelper {
           ticket.toJson(),
         );
       } else {
-        final List<Map<String, dynamic>> ticketsAsJson =
-            ticketList.map((e) => e as Map<String, dynamic>).toList();
-        print("New ticket: ${ticket.toString()} Existing ticket: ");
-        print("${Ticket.fromJson(ticketsAsJson.first)}");
-
         throw Exception('ticket-already-exists');
       }
 

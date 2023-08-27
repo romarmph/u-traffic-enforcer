@@ -32,6 +32,9 @@ class UTrafficEnforcer extends StatelessWidget {
         ChangeNotifierProvider<CreateTicketFormNotifier>(
           create: (_) => CreateTicketFormNotifier(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => EnforcerProvider(),
+        ),
       ],
       child: MaterialApp(
         navigatorKey: navigatorKey,
