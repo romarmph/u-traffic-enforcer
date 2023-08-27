@@ -112,6 +112,9 @@ class _PrinterHomeState extends State<PrinterHome> {
       listen: false,
     );
 
+    final enforcer =
+        Provider.of<EnforcerProvider>(context, listen: false).enforcer;
+
     final dateFormatter = DateFormat("yyyy-MM-dd hh:mm:ss");
 
     List<LineText> list = [];
@@ -243,7 +246,8 @@ class _PrinterHomeState extends State<PrinterHome> {
     list.add(
       LineText(
         type: LineText.TYPE_TEXT,
-        content: "Enforcer:\n  ${ticket.enforcerId}\n",
+        content:
+            "Enforcer:\n  ${enforcer.firstName} ${enforcer.middleName} ${enforcer.lastName}\n",
         weight: 2,
         height: 2,
         width: 2,

@@ -48,6 +48,7 @@ export 'package:u_traffic_enforcer/config/utils/nav_utils.dart';
 // database
 export 'package:u_traffic_enforcer/database/ticket_db_helper.dart';
 export 'package:u_traffic_enforcer/database/violations_db_helper.dart';
+export 'package:u_traffic_enforcer/database/enforcer_db_helper.dart';
 
 // models
 export 'package:u_traffic_enforcer/model/driver_model.dart';
@@ -81,6 +82,7 @@ export 'package:u_traffic_enforcer/providers/create_ticket_form_notifier.dart';
 export 'package:u_traffic_enforcer/providers/printer_provider.dart';
 export 'package:u_traffic_enforcer/providers/ticket_provider.dart';
 export 'package:u_traffic_enforcer/providers/violations_provider.dart';
+export 'package:u_traffic_enforcer/providers/enforcer_provider.dart';
 
 // Services
 export 'package:u_traffic_enforcer/services/auth_service.dart';
