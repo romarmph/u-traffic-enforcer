@@ -19,6 +19,7 @@ class TicketDBHelper {
       transaction.update(ticketCountDocument, {'count': newCount});
 
       ticketData['ticketNumber'] = newCount;
+      ticketData['dateCreated'] = DateTime.now();
 
       final Ticket ticket = Ticket.fromJson(ticketData);
 

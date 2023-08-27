@@ -24,6 +24,7 @@ class Ticket {
   String? enforcerId;
   String? driverSignature;
   String? licenseImageUrl;
+  DateTime? dateCreated;
 
   Ticket({
     this.id,
@@ -49,6 +50,7 @@ class Ticket {
     this.enforcerId,
     this.driverSignature,
     this.licenseImageUrl,
+    this.dateCreated,
   });
 
   factory Ticket.fromJson(Map<String, dynamic> json) {
@@ -76,6 +78,8 @@ class Ticket {
       violationDateTime: json['violationDateTime'],
       enforcerId: json['enforcerId'],
       driverSignature: json['driverSignature'],
+      licenseImageUrl: json['licenseImageUrl'],
+      dateCreated: json['dateCreated'],
     );
   }
 
@@ -102,6 +106,8 @@ class Ticket {
       'violationDateTime': violationDateTime,
       'enforcerId': enforcerId,
       'driverSignature': driverSignature,
+      'licenseImageUrl': licenseImageUrl,
+      'dateCreated': dateCreated,
     };
   }
 
