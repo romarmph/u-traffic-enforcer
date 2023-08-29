@@ -13,7 +13,7 @@ class LicenseDetail {
   final double? weight;
   final String? dlcodes;
   final String? bloodtype;
-  final String? expirationdate;
+  final DateTime? expirationdate;
   final String? condition;
   final String? licenseImageUrl;
 
@@ -57,5 +57,26 @@ class LicenseDetail {
       condition: json['condition'],
       licenseImageUrl: json['licenseImageUrl'],
     );
+  }
+
+  @override
+  String toString() {
+    return 'License Number: $licensenumber\n'
+        'First Name: $firstName\n'
+        'Middle Name: $middleName\n'
+        'Last Name: $lastName\n'
+        'Suffix: $suffix\n'
+        'Sex: $sex\n'
+        'Birthdate: ${birthdate?.toIso8601String()}\n'
+        'Nationality: $nationality\n'
+        'Address: $address\n'
+        'Agency Code: $agencycode\n'
+        'Height: ${height?.toStringAsFixed(2)}\n'
+        'Weight: ${weight?.toStringAsFixed(2)}\n'
+        'DL Codes: $dlcodes\n'
+        'Blood Type: $bloodtype\n'
+        'Expiration Date: $expirationdate\n'
+        'Condition: $condition\n'
+        'License Image URL: $licenseImageUrl';
   }
 }

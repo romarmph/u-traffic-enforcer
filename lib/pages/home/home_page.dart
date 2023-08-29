@@ -351,11 +351,14 @@ class _HomePageState extends State<HomePage> {
     // final imagePicker = ImagePickerService.instance;
     // final image = await imagePicker.pickImage();
 
-    goCreateTicket();
+    // goCreateTicket();
   }
 
   void test() async {
     final test = ScanApiServices.instance;
-    await test.sendRequest("");
+    final data = await test.sendRequest(
+        'https://media.discordapp.net/attachments/1138674544530440226/1138674683261231164/license.jpeg?width=942&height=588');
+
+    // print(data.toString());
   }
 }

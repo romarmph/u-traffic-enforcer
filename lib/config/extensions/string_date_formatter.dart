@@ -1,6 +1,6 @@
 import 'package:intl/intl.dart';
 
-extension StringDateFomat on String {
+extension StringDate on String {
   String get formtDate {
     try {
       final formatter = DateFormat('EEE, M/d/y');
@@ -10,6 +10,14 @@ extension StringDateFomat on String {
       return formatter.format(date);
     } catch (e) {
       rethrow;
+    }
+  }
+
+  DateTime? get tryParseToDateTime {
+    try {
+      return DateTime.parse(this);
+    } catch (e) {
+      return null;
     }
   }
 }
