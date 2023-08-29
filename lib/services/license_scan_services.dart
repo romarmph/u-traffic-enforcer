@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
+import '../config/utils/exports.dart';
 
 class ScanApiServices {
   ScanApiServices._();
@@ -6,10 +9,8 @@ class ScanApiServices {
   static ScanApiServices get instance => ScanApiServices._();
 
   final _apiKey = "07ba51e882a9549227fb11534e0d04c0";
-  final _testDoc =
-      'https://media.discordapp.net/attachments/1138674544530440226/1138674683261231164/license.jpeg?width=942&height=588';
 
-  Future<void> sendRequest(String docPath) async {
+  Future<LicenseDetail?> sendRequest(String docPath) async {
     var url = Uri.parse(
         'https://api.mindee.net/v1/products/mcromar00/ph-driver-license/v1/predict');
 
@@ -17,17 +18,19 @@ class ScanApiServices {
       ..headers.addAll({
         'Authorization': 'Token $_apiKey',
       })
-      ..files.add(await http.MultipartFile.fromPath(
+      ..files.add(http.MultipartFile.fromString(
         'document',
-        _testDoc,
+        docPath,
       ));
 
     var response = await request.send();
 
-    if (response.statusCode == 200) {
-      print(await response.stream.bytesToString());
+    if (response.statusCode == 201) {
+      final stringResponse = await response.stream.bytesToString();
+      final parsedJson = json.decode(stringResponse);
+      return LicenseDetail.fromJson(parsedJson);
     } else {
-      print(response.reasonPhrase);
+      return null;
     }
   }
 }

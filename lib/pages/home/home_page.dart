@@ -1,3 +1,5 @@
+import 'package:u_traffic_enforcer/services/license_scan_services.dart';
+
 import '../../config/utils/exports.dart';
 
 class HomePage extends StatefulWidget {
@@ -344,10 +346,16 @@ class _HomePageState extends State<HomePage> {
   }
 
   void fabPressed() {
+    test();
     // final imageProvider = Provider.of<TicketProvider>(context, listen: false);
     // final imagePicker = ImagePickerService.instance;
     // final image = await imagePicker.pickImage();
 
     goCreateTicket();
+  }
+
+  void test() async {
+    final test = ScanApiServices.instance;
+    await test.sendRequest("");
   }
 }
