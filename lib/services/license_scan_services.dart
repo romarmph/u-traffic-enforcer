@@ -11,7 +11,7 @@ class ScanApiServices {
 
   final _apiKey = "07ba51e882a9549227fb11534e0d04c0";
 
-  Future<LicenseDetail?> sendRequest(String docPath) async {
+  Future<Map<String, dynamic>?> sendRequest(String docPath) async {
     var url = Uri.parse(
         'https://api.mindee.net/v1/products/mcromar00/ph-driver-license/v1/predict');
 
@@ -60,7 +60,7 @@ class ScanApiServices {
         }
       });
 
-      return LicenseDetail.fromJson(document);
+      return document;
     } else {
       return null;
     }

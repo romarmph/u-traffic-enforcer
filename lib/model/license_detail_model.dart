@@ -2,7 +2,8 @@ class LicenseDetail {
   final String? licensenumber;
   final String? firstName;
   final String? middleName;
-  final String? lastName;
+  final String? lastname;
+  final String? fullname;
   final String? suffix;
   final String? sex;
   final DateTime? birthdate;
@@ -21,7 +22,8 @@ class LicenseDetail {
     this.licensenumber,
     this.firstName,
     this.middleName,
-    this.lastName,
+    this.lastname,
+    this.fullname,
     this.suffix,
     this.sex,
     this.birthdate,
@@ -42,7 +44,8 @@ class LicenseDetail {
       licensenumber: json['licensenumber'],
       firstName: json['firstName'],
       middleName: json['middleName'],
-      lastName: json['lastName'],
+      lastname: json['lastname'],
+      fullname: json['fullname'],
       suffix: json['suffix'],
       sex: json['sex'],
       birthdate: json['birthdate'],
@@ -64,7 +67,8 @@ class LicenseDetail {
     return 'License Number: $licensenumber\n'
         'First Name: $firstName\n'
         'Middle Name: $middleName\n'
-        'Last Name: $lastName\n'
+        'Last Name: $lastname\n'
+        'Full Name: $fullname\n'
         'Suffix: $suffix\n'
         'Sex: $sex\n'
         'Birthdate: ${birthdate?.toIso8601String()}\n'

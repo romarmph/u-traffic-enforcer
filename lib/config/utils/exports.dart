@@ -69,7 +69,6 @@ export 'package:u_traffic_enforcer/pages/printer/device_scan_page.dart';
 export 'package:u_traffic_enforcer/pages/printer/printer_home.dart';
 export 'package:u_traffic_enforcer/pages/ticket/create_ticket_page.dart';
 export 'package:u_traffic_enforcer/pages/ticket/preview_page.dart';
-export 'package:u_traffic_enforcer/pages/ticket/scanned_preview.dart';
 export 'package:u_traffic_enforcer/pages/ticket/violation_select_page.dart';
 export 'package:u_traffic_enforcer/pages/ticket/widgets/driver_details_form.dart';
 export 'package:u_traffic_enforcer/pages/ticket/widgets/preview_list_tile.dart';

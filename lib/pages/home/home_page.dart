@@ -336,29 +336,12 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: fabPressed,
-        label: const Text("New Ticket"),
-        icon: const Icon(Icons.add),
+      floatingActionButton: const FloatingActionButton.extended(
+        onPressed: goCreateTicket,
+        label: Text("New Ticket"),
+        icon: Icon(Icons.add),
       ),
       bottomNavigationBar: bottomNav(),
     );
-  }
-
-  void fabPressed() {
-    test();
-    // final imageProvider = Provider.of<TicketProvider>(context, listen: false);
-    // final imagePicker = ImagePickerService.instance;
-    // final image = await imagePicker.pickImage();
-
-    // goCreateTicket();
-  }
-
-  void test() async {
-    final test = ScanApiServices.instance;
-    final data = await test.sendRequest(
-        'https://media.discordapp.net/attachments/1138674544530440226/1138674683261231164/license.jpeg?width=942&height=588');
-
-    print(data.toString());
   }
 }
