@@ -20,6 +20,8 @@ class DriverDetailsForm extends StatelessWidget {
               },
             ),
             const SizedBox(height: USpace.space12),
+            const ImageScannerButton(),
+            const SizedBox(height: USpace.space12),
             CreateTicketField(
               enabled: !form.noDriver,
               controller: form.formSettings[TicketField.lastName]!.controller!,

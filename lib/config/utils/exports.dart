@@ -74,6 +74,7 @@ export 'package:u_traffic_enforcer/pages/ticket/widgets/driver_details_form.dart
 export 'package:u_traffic_enforcer/pages/ticket/widgets/preview_list_tile.dart';
 export 'package:u_traffic_enforcer/pages/ticket/widgets/text_field.dart';
 export 'package:u_traffic_enforcer/pages/ticket/widgets/vehicle_details_form.dart';
+export 'package:u_traffic_enforcer/pages/ticket/widgets/scanner_button.dart';
 export 'package:u_traffic_enforcer/pages/wrapper.dart';
 
 // providers

@@ -8,6 +8,8 @@ class CreateTicketFormNotifier extends ChangeNotifier {
   bool _noDriver = false;
   bool _ownedByDriver = false;
 
+  String _licenseImagePath = "";
+
   Set<String?> _selectedViolationsID = {};
 
   final Map<TicketField, dynamic> _vehicleFormData = {
@@ -122,6 +124,7 @@ class CreateTicketFormNotifier extends ChangeNotifier {
 
   bool get noDriver => _noDriver;
   bool get ownedByDriver => _ownedByDriver;
+  String get licenseImagePath => _licenseImagePath;
 
   Map<TicketField, dynamic> get driverFormData => _driverFormData;
   Map<TicketField, dynamic> get vehicleFormData => _vehicleFormData;
@@ -220,6 +223,11 @@ class CreateTicketFormNotifier extends ChangeNotifier {
 
   void setViolationsID(Set<String?> vioaltionsID) {
     _selectedViolationsID = vioaltionsID;
+    notifyListeners();
+  }
+
+  void setLicenseImagePath(String path) {
+    _licenseImagePath = path;
     notifyListeners();
   }
 }
