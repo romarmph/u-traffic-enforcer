@@ -57,6 +57,7 @@ class CreateTicketFormNotifier extends ChangeNotifier {
     TicketField.birthDate: FormSettings(
       label: "Birthdate",
       type: TicketFieldType.driver,
+      errorMessage: "Please enter a valid date",
     ),
     TicketField.phone: FormSettings(
       label: "Phone Number",
@@ -117,8 +118,8 @@ class CreateTicketFormNotifier extends ChangeNotifier {
   ///
   ///
 
-  GlobalKey get driverFormKey => _driverFormkey;
-  GlobalKey get vehicleFormKey => _vehicleFormKey;
+  GlobalKey<FormState> get driverFormKey => _driverFormkey;
+  GlobalKey<FormState> get vehicleFormKey => _vehicleFormKey;
 
   Set<String?> get selectedViolationsID => _selectedViolationsID;
 
@@ -147,7 +148,7 @@ class CreateTicketFormNotifier extends ChangeNotifier {
         }
       case TicketField.middleName:
         {
-          return value.isNotNull && !value!.isValidName
+          return value!.isNotEmpty && value.isValidName
               ? _formSettings[field]!.errorMessage
               : null;
         }
@@ -161,14 +162,24 @@ class CreateTicketFormNotifier extends ChangeNotifier {
   }
 
   String? validatePhone(String? value) {
-    return value.isNotNull && !value!.isValidPhone
+    return value!.isNotEmpty && !value.isValidPhone
         ? _formSettings[TicketField.phone]!.errorMessage
         : null;
   }
 
   String? validateEmail(String? value) {
-    return value.isNotNull && !value!.isValidEmail
+    return value!.isNotEmpty && !value.isValidEmail
         ? _formSettings[TicketField.email]!.errorMessage
+        : null;
+  }
+
+  String? validateDate(String? value) {
+    if (value! == " ") {
+      return null;
+    }
+
+    return !value.isValidDate
+        ? _formSettings[TicketField.birthDate]!.errorMessage
         : null;
   }
 
@@ -217,6 +228,8 @@ class CreateTicketFormNotifier extends ChangeNotifier {
     _driverFormData.forEach((key, value) {
       _driverFormData[key] = "";
     });
+
+    _licenseImagePath = "";
 
     _noDriver = value;
   }

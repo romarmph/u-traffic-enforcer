@@ -10,6 +10,9 @@ class CreateTicketField extends StatelessWidget {
     required this.label,
     required this.controller,
     this.keyboardType,
+    this.formatters,
+    this.maxLength,
+    this.hint,
   });
 
   final String? Function(String?)? validator;
@@ -19,14 +22,22 @@ class CreateTicketField extends StatelessWidget {
   final String label;
   final TextEditingController controller;
   final TextInputType? keyboardType;
+  final List<TextInputFormatter>? formatters;
+  final int? maxLength;
+  final String? hint;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      buildCounter: null,
+      maxLength: maxLength,
+      inputFormatters: formatters,
       enabled: enabled,
       validator: validator,
       decoration: InputDecoration(
         labelText: label,
+        hintText: hint,
+        counterText: '',
       ),
       controller: controller,
       keyboardType: keyboardType,

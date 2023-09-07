@@ -14,7 +14,8 @@ class ImagePickerService {
   Future<XFile?> pickImage() async {
     try {
       XFile? image = await _picker.pickImage(
-        source: ImageSource.camera,
+        // source: ImageSource.camera,
+        source: ImageSource.gallery,
         imageQuality: 100,
         preferredCameraDevice: CameraDevice.rear,
       );
@@ -31,6 +32,8 @@ class ImagePickerService {
         sourcePath: image.path,
         compressQuality: 100,
         compressFormat: ImageCompressFormat.jpg,
+        cropStyle: CropStyle.rectangle,
+        aspectRatio: const CropAspectRatio(ratioX: 3, ratioY: 2),
         uiSettings: [
           AndroidUiSettings(
             initAspectRatio: CropAspectRatioPreset.ratio3x2,
@@ -38,7 +41,6 @@ class ImagePickerService {
           ),
         ],
       );
-
       return croppedFile;
     } on Exception {
       rethrow;

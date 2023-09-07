@@ -1,3 +1,8 @@
+import 'package:intl_phone_field/country_picker_dialog.dart';
+import 'package:u_traffic_enforcer/config/extensions/number_format.dart';
+import 'package:u_traffic_enforcer/pages/ticket/widgets/date_picker_field.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
+
 import '../../../config/utils/exports.dart';
 
 class DriverDetailsForm extends StatelessWidget {
@@ -9,6 +14,8 @@ class DriverDetailsForm extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<CreateTicketFormNotifier>(
       builder: (context, form, child) {
+        final formSettings = form.formSettings;
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -24,8 +31,8 @@ class DriverDetailsForm extends StatelessWidget {
             const SizedBox(height: USpace.space12),
             CreateTicketField(
               enabled: !form.noDriver,
-              controller: form.formSettings[TicketField.lastName]!.controller!,
-              label: form.formSettings[TicketField.lastName]!.label,
+              controller: formSettings[TicketField.lastName]!.controller!,
+              label: formSettings[TicketField.lastName]!.label,
               validator: (value) => form.validateName(
                 value,
                 TicketField.lastName,
@@ -35,8 +42,8 @@ class DriverDetailsForm extends StatelessWidget {
             const SizedBox(height: USpace.space12),
             CreateTicketField(
               enabled: !form.noDriver,
-              controller: form.formSettings[TicketField.firstName]!.controller!,
-              label: form.formSettings[TicketField.firstName]!.label,
+              controller: formSettings[TicketField.firstName]!.controller!,
+              label: formSettings[TicketField.firstName]!.label,
               validator: (value) => form.validateName(
                 value,
                 TicketField.firstName,
@@ -46,9 +53,8 @@ class DriverDetailsForm extends StatelessWidget {
             const SizedBox(height: USpace.space12),
             CreateTicketField(
               enabled: !form.noDriver,
-              controller:
-                  form.formSettings[TicketField.middleName]!.controller!,
-              label: form.formSettings[TicketField.middleName]!.label,
+              controller: formSettings[TicketField.middleName]!.controller!,
+              label: formSettings[TicketField.middleName]!.label,
               validator: (value) => form.validateName(
                 value,
                 TicketField.middleName,
@@ -56,37 +62,47 @@ class DriverDetailsForm extends StatelessWidget {
               onChanged: (value) {},
             ),
             const SizedBox(height: USpace.space12),
-            _buildDatePickerInput(context, form),
+            const DatePickerField(
+              field: TicketField.birthDate,
+            ),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
               enabled: !form.noDriver,
-              controller: form.formSettings[TicketField.address]!.controller!,
-              label: form.formSettings[TicketField.address]!.label,
-              validator: (value) => form.validateName(
-                value,
-                TicketField.address,
+              controller: formSettings[TicketField.address]!.controller!,
+              label: formSettings[TicketField.address]!.label,
+              onChanged: (value) {},
+            ),
+            const SizedBox(height: USpace.space12),
+            // CreateTicketField(
+            //   maxLength: 11,
+            //   formatters: [NumberTextInputFormatter()],
+            //   enabled: !form.noDriver,
+            //   controller: formSettings[TicketField.phone]!.controller!,
+            //   label: formSettings[TicketField.phone]!.label,
+            //   hint: 'Example: 09xxxxxxx',
+            //   keyboardType: const TextInputType.numberWithOptions(),
+            //   validator: (value) => form.validatePhone(
+            //     value,
+            //   ),
+            //   onChanged: (value) {},
+            // ),
+            IntlPhoneField(
+              enabled: !form.noDriver,
+              controller: formSettings[TicketField.phone]!.controller!,
+              keyboardType: const TextInputType.numberWithOptions(),
+              initialCountryCode: 'PH',
+              decoration: const InputDecoration(
+                counterText: '',
               ),
               onChanged: (value) {},
             ),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
               enabled: !form.noDriver,
-              controller: form.formSettings[TicketField.phone]!.controller!,
-              label: form.formSettings[TicketField.phone]!.label,
-              validator: (value) => form.validateName(
+              controller: formSettings[TicketField.email]!.controller!,
+              label: formSettings[TicketField.email]!.label,
+              validator: (value) => form.validateEmail(
                 value,
-                TicketField.phone,
-              ),
-              onChanged: (value) {},
-            ),
-            const SizedBox(height: USpace.space12),
-            CreateTicketField(
-              enabled: !form.noDriver,
-              controller: form.formSettings[TicketField.email]!.controller!,
-              label: form.formSettings[TicketField.email]!.label,
-              validator: (value) => form.validateName(
-                value,
-                TicketField.email,
               ),
               onChanged: (value) {},
             ),
@@ -95,41 +111,13 @@ class DriverDetailsForm extends StatelessWidget {
             const SizedBox(height: USpace.space12),
             CreateTicketField(
               enabled: !form.noDriver,
-              controller:
-                  form.formSettings[TicketField.licenseNumber]!.controller!,
-              label: form.formSettings[TicketField.licenseNumber]!.label,
+              controller: formSettings[TicketField.licenseNumber]!.controller!,
+              label: formSettings[TicketField.licenseNumber]!.label,
               validator: (value) => null,
               onChanged: (value) {},
             ),
           ],
         );
-      },
-    );
-  }
-
-  Widget _buildDatePickerInput(
-    BuildContext context,
-    CreateTicketFormNotifier form,
-  ) {
-    FormSettings formSettings = form.formSettings[TicketField.birthDate]!;
-    return TextFormField(
-      readOnly: true,
-      decoration: InputDecoration(
-        labelText: formSettings.label,
-      ),
-      controller: formSettings.controller,
-      onTap: () async {
-        final date = await showDatePicker(
-          context: context,
-          initialDate: DateTime.now(),
-          firstDate: DateTime(1900),
-          lastDate: DateTime.now(),
-        );
-
-        if (date != null) {
-          formSettings.controller!.text = date.toString();
-          form.driverFormData[TicketField.birthDate] = date;
-        }
       },
     );
   }

@@ -1,7 +1,8 @@
+import 'package:email_validator/email_validator.dart';
+
 extension InputValidator on String {
   bool get isValidEmail {
-    final emailRegExp = RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
-    return emailRegExp.hasMatch(this);
+    return EmailValidator.validate(this);
   }
 
   bool get isValidName {
@@ -13,6 +14,16 @@ extension InputValidator on String {
   bool get isValidPhone {
     final phoneRegExp = RegExp(r"^(?:[+0]9)?[0-9]{10}$");
     return phoneRegExp.hasMatch(this);
+  }
+
+  bool get isValidDate {
+    try {
+      DateTime.parse(this);
+
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }
 
