@@ -41,8 +41,15 @@ final inputDecorationTheme = InputDecorationTheme(
   focusedErrorBorder: OutlineInputBorder(
     borderRadius: BorderRadius.circular(USpace.space8),
     borderSide: const BorderSide(
-      color: UColors.red100,
+      color: UColors.blue400,
       width: 2,
+    ),
+  ),
+  disabledBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(USpace.space8),
+    borderSide: const BorderSide(
+      width: 0,
+      color: UColors.gray100,
     ),
   ),
 );

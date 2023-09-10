@@ -20,19 +20,46 @@ class VehiecleDetailsForm extends StatelessWidget {
             _buildVehicleTypeInput(context, form),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
-              label: form.formSettings[TicketField.plateNumber]!.label,
+              decoration: InputDecoration(
+                labelText: form.formSettings[TicketField.plateNumber]!.label,
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.help),
+                  onPressed: () {
+                    QuickAlert.show(
+                      context: context,
+                      type: QuickAlertType.info,
+                      title: 'Valid Formats',
+                      text: '''
+LLL-DDD (e.g., ABC-123)
+LLL-DDDD (e.g., ABC-1234)
+LLL DDDD (e.g., ABC 1234)
+LLLDDDD (e.g., ABC1234)
+XXXX-XXXXXXX (e.g., 1234-5678901)
+XX-XXXX (e.g., AB-1234)
+
+Letters can be uppercase or lowercase.''',
+                    );
+                  },
+                ),
+              ),
+              validator: (value) => form.validatePlateNumber(value),
               controller:
                   form.formSettings[TicketField.plateNumber]!.controller!,
             ),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
-              label: form.formSettings[TicketField.engineNumber]!.label,
+              decoration: InputDecoration(
+                labelText: form.formSettings[TicketField.engineNumber]!.label,
+              ),
+              validator: (value) => form.validateEngineNumber(value),
               controller:
                   form.formSettings[TicketField.engineNumber]!.controller!,
             ),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
-              label: form.formSettings[TicketField.chassisNumber]!.label,
+              decoration: InputDecoration(
+                labelText: form.formSettings[TicketField.chassisNumber]!.label,
+              ),
               controller:
                   form.formSettings[TicketField.chassisNumber]!.controller!,
             ),
@@ -63,7 +90,9 @@ class VehiecleDetailsForm extends StatelessWidget {
             CreateTicketField(
               enabled: !form.noDriver,
               readOnly: form.ownedByDriver,
-              label: form.formSettings[TicketField.vehicleOwner]!.label,
+              decoration: InputDecoration(
+                labelText: form.formSettings[TicketField.vehicleOwner]!.label,
+              ),
               controller:
                   form.formSettings[TicketField.vehicleOwner]!.controller!,
             ),
@@ -71,7 +100,10 @@ class VehiecleDetailsForm extends StatelessWidget {
             CreateTicketField(
               enabled: !form.noDriver,
               readOnly: form.ownedByDriver,
-              label: form.formSettings[TicketField.vehicleOwnerAddress]!.label,
+              decoration: InputDecoration(
+                labelText:
+                    form.formSettings[TicketField.vehicleOwnerAddress]!.label,
+              ),
               controller: form
                   .formSettings[TicketField.vehicleOwnerAddress]!.controller!,
             ),
@@ -92,6 +124,7 @@ class VehiecleDetailsForm extends StatelessWidget {
         labelText: "Vehicle Type",
       ),
       controller: formSettings.controller,
+      validator: (value) => form.validateVehicleType(value),
       onTap: () async {
         final type = await showDialog(
           context: context,

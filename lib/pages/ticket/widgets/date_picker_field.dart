@@ -1,3 +1,5 @@
+import 'package:u_traffic_enforcer/config/extensions/string_date_formatter.dart';
+
 import '../../../config/utils/exports.dart';
 
 class DatePickerField extends StatelessWidget {
@@ -19,6 +21,7 @@ class DatePickerField extends StatelessWidget {
       ),
       controller: formSetting.controller,
       validator: (value) => form.validateDate(value),
+      onChanged: (value) => form.driverFormKey.currentState!.validate(),
       onTap: () async {
         final date = await showDatePicker(
           context: context,
@@ -28,11 +31,14 @@ class DatePickerField extends StatelessWidget {
         );
 
         if (date != null) {
-          formSetting.controller!.text = date.toString().split(' ').first;
-          form.driverFormData[field] = date;
+          formSetting.controller!.text =
+              date.toString().split(' ').first.formtDate;
+          form.driverFormData[field] = date.toString().split(' ').first;
         } else {
           formSetting.controller!.clear();
         }
+
+        form.driverFormKey.currentState!.validate();
       },
     );
   }

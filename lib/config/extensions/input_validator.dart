@@ -1,4 +1,5 @@
 import 'package:email_validator/email_validator.dart';
+import 'package:intl/intl.dart';
 
 extension InputValidator on String {
   bool get isValidEmail {
@@ -6,8 +7,7 @@ extension InputValidator on String {
   }
 
   bool get isValidName {
-    final nameRegExp =
-        RegExp(r"^\s*([A-Za-z]{1,}([\.,] |[-']| ))+[A-Za-z]+\.?\s*$");
+    final nameRegExp = RegExp(r"^\s*([a-zA-Z]+([\.,] |[-']| ))*[a-zA-Z]+\s*$");
     return nameRegExp.hasMatch(this);
   }
 
@@ -19,10 +19,15 @@ extension InputValidator on String {
   bool get isValidDate {
     try {
       DateTime.parse(this);
-
       return true;
-    } catch (e) {
-      return false;
+    } on FormatException {
+      try {
+        final formatedDateParser = DateFormat('MMMM d, y');
+        formatedDateParser.parse(this);
+        return true;
+      } on FormatException {
+        return false;
+      }
     }
   }
 }

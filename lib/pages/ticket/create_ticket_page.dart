@@ -16,8 +16,18 @@ class _CreateTicketPageState extends State<CreateTicketPage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, initialIndex: 0, vsync: this);
-
     _notifier = Provider.of<CreateTicketFormNotifier>(context, listen: false);
+
+    _tabController.addListener(() {
+      if (_tabController.index == 1) {
+        if (!_notifier.noDriver) {
+          if (!_notifier.driverFormKey.currentState!.validate()) {
+            _tabController.animateTo(0);
+            return;
+          }
+        }
+      }
+    });
   }
 
   @override
@@ -116,13 +126,21 @@ class _CreateTicketPageState extends State<CreateTicketPage>
           Expanded(
             child: ElevatedButton(
               onPressed: () {
-                if (_tabController.index == 0) {
-                  if (state.driverFormKey.currentState!.validate()) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Processing Data')),
-                    );
+                if (!state.noDriver) {
+                  if (!state.driverFormKey.currentState!.validate()) {
+                    _tabController.animateTo(0);
+                    return;
                   }
-                  // _tabController.animateTo(1);
+                }
+
+                if (_tabController.index == 0) {
+                  _tabController.animateTo(1);
+                  return;
+                }
+
+                if (_tabController.index == 1) {
+                  if (!state.vehicleFormKey.currentState!.validate()) {}
+
                   return;
                 }
 
@@ -159,10 +177,6 @@ class _CreateTicketPageState extends State<CreateTicketPage>
             formData.formSettings[key]!.controller!.text;
       }
     });
-    // ignore: avoid_print
-    print(formData.driverFormData.toString());
-    // ignore: avoid_print
-    print(formData.vehicleFormData.toString());
 
     goSelectViolation();
   }

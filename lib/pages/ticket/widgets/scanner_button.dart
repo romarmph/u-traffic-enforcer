@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:u_traffic_enforcer/config/extensions/string_date_formatter.dart';
 import 'package:u_traffic_enforcer/services/license_scan_services.dart';
 
 import '../../../config/utils/exports.dart';
@@ -136,7 +137,7 @@ class _ImageScannerButtonState extends State<ImageScannerButton> {
 
       if (data['birthdate'].toString().isNotEmpty) {
         form.formSettings[TicketField.birthDate]!.controller!.text =
-            data['birthdate'].toString().split(' ').first;
+            data['birthdate'].toString().split(' ').first.formtDate;
       }
 
       popCurrent();

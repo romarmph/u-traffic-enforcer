@@ -7,38 +7,33 @@ class CreateTicketField extends StatelessWidget {
     this.onChanged,
     this.enabled,
     this.readOnly = false,
-    required this.label,
     required this.controller,
     this.keyboardType,
     this.formatters,
     this.maxLength,
-    this.hint,
+    this.decoration,
   });
 
   final String? Function(String?)? validator;
   final void Function(String value)? onChanged;
   final bool? enabled;
   final bool readOnly;
-  final String label;
   final TextEditingController controller;
   final TextInputType? keyboardType;
   final List<TextInputFormatter>? formatters;
   final int? maxLength;
-  final String? hint;
+  final InputDecoration? decoration;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       buildCounter: null,
       maxLength: maxLength,
       inputFormatters: formatters,
       enabled: enabled,
       validator: validator,
-      decoration: InputDecoration(
-        labelText: label,
-        hintText: hint,
-        counterText: '',
-      ),
+      decoration: decoration,
       controller: controller,
       keyboardType: keyboardType,
       readOnly: readOnly,
