@@ -3,6 +3,19 @@ import '../../../config/utils/exports.dart';
 class TicketDBHelper {
   final _firestore = FirebaseFirestore.instance;
 
+  Stream<List<Map<String, dynamic>>> getTicketsByEnforcerId(String enforcerID) {
+    return FirebaseFirestore.instance
+        .collection('tickets')
+        .where('enforcerId', isEqualTo: enforcerID)
+        .orderBy('dateCreated', descending: true)
+        .snapshots()
+        .map((QuerySnapshot snapshot) {
+      return snapshot.docs.map((DocumentSnapshot document) {
+        return document.data() as Map<String, dynamic>;
+      }).toList();
+    });
+  }
+
   Future<dynamic> saveTicket(Map<String, dynamic> ticketData) async {
     final counterCollection = _firestore.collection('counters');
     final ticketCountDocument = counterCollection.doc('ticketCounter');
