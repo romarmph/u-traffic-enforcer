@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:u_traffic_enforcer/config/extensions/string_date_formatter.dart';
 import 'package:u_traffic_enforcer/services/license_scan_services.dart';
 

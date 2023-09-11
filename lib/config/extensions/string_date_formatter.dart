@@ -15,8 +15,8 @@ extension StringDate on String {
 
   String reverseFormatDate() {
     try {
-      final inputFormatter = DateFormat('MM-dd-yyyy');
-      final outputFormatter = DateFormat('MMMM d, y');
+      final inputFormatter = DateFormat('MMMM d, y');
+      final outputFormatter = DateFormat('yyyy-MM-dd');
 
       final date = inputFormatter.parse(this);
       final formattedDate = outputFormatter.format(date);

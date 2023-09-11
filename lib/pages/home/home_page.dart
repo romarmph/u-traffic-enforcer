@@ -1,5 +1,3 @@
-import 'package:u_traffic_enforcer/services/license_scan_services.dart';
-
 import '../../config/utils/exports.dart';
 
 class HomePage extends StatefulWidget {

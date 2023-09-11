@@ -32,9 +32,6 @@ class CreateTicketFormNotifier extends ChangeNotifier {
     TicketField.address: "",
   };
 
-  final _driverFormkey = GlobalKey<FormState>();
-  final _vehicleFormKey = GlobalKey<FormState>();
-
   final Map<TicketField, FormSettings> _formSettings = {
     TicketField.firstName: FormSettings(
       label: "First Name",
@@ -118,9 +115,6 @@ class CreateTicketFormNotifier extends ChangeNotifier {
   ///
   ///
 
-  GlobalKey<FormState> get driverFormKey => _driverFormkey;
-  GlobalKey<FormState> get vehicleFormKey => _vehicleFormKey;
-
   Set<String?> get selectedViolationsID => _selectedViolationsID;
 
   bool get noDriver => _noDriver;
@@ -172,8 +166,6 @@ class CreateTicketFormNotifier extends ChangeNotifier {
   }
 
   String? validatePhone(String? value) {
-    print("phone value: ${value}");
-
     if (!value!.isValidPhone) {
       return 'Phone number must be valid.';
     }
@@ -201,9 +193,20 @@ class CreateTicketFormNotifier extends ChangeNotifier {
     return null;
   }
 
-  String? validateLicenseNumber(String? value) {
+  String? validateAddress(String? value) {
+    if (value == " ") {
+      return null;
+    }
+
     if (value == null || value.isEmpty) {
-      return 'License number is required';
+      return 'Address is required.';
+    }
+    return null;
+  }
+
+  String? validateLicenseNumber(String? value) {
+    if (value == " " || value!.isEmpty) {
+      return null;
     }
     final licenseNumberRegex = RegExp(r'^[A-Z]\d{2}-\d{2}-\d{6}$');
     if (!licenseNumberRegex.hasMatch(value)) {

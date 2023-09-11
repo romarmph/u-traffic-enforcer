@@ -235,7 +235,7 @@ class _PrinterHomeState extends State<PrinterHome> {
       LineText(
         type: LineText.TYPE_TEXT,
         content:
-            "Date and Time of Violation:\n  ${ticket.violationDateTime.toString().formtDate}",
+            "Date and Time of Violation:\n  ${ticket.violationDateTime.toString().formtDate} ${ticket.violationDateTime.toString().split(" ")[1].split('.')[0]}",
         weight: 2,
         height: 2,
         width: 2,

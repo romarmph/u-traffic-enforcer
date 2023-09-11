@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import '../config/utils/exports.dart';
 
 class ImagePickerService {
@@ -14,8 +12,8 @@ class ImagePickerService {
   Future<XFile?> pickImage() async {
     try {
       XFile? image = await _picker.pickImage(
-        // source: ImageSource.camera,
-        source: ImageSource.gallery,
+        source: ImageSource.camera,
+        // source: ImageSource.gallery,
         imageQuality: 100,
         preferredCameraDevice: CameraDevice.rear,
       );
@@ -47,8 +45,7 @@ class ImagePickerService {
     }
   }
 
-  File rename(XFile file, String name) {
-    String path = file.path;
+  File rename(String path, String name) {
     int lastSeparater = path.lastIndexOf(Platform.pathSeparator);
     String newPath = "${path.substring(0, lastSeparater + 1)}$name.jpg";
 

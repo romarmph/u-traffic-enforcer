@@ -21,7 +21,6 @@ class DatePickerField extends StatelessWidget {
       ),
       controller: formSetting.controller,
       validator: (value) => form.validateDate(value),
-      onChanged: (value) => form.driverFormKey.currentState!.validate(),
       onTap: () async {
         final date = await showDatePicker(
           context: context,
@@ -37,8 +36,6 @@ class DatePickerField extends StatelessWidget {
         } else {
           formSetting.controller!.clear();
         }
-
-        form.driverFormKey.currentState!.validate();
       },
     );
   }

@@ -1,3 +1,4 @@
+import 'package:u_traffic_enforcer/pages/ticket/widgets/address_form.dart';
 import 'package:u_traffic_enforcer/pages/ticket/widgets/date_picker_field.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 
@@ -7,6 +8,7 @@ class DriverDetailsForm extends StatelessWidget {
   const DriverDetailsForm({
     super.key,
   });
+
 
   @override
   Widget build(BuildContext context) {
@@ -74,11 +76,10 @@ class DriverDetailsForm extends StatelessWidget {
                 TicketField.middleName,
               ),
               onChanged: (value) {
-                form.driverFormKey.currentState!.validate();
               },
             ),
             const SizedBox(height: USpace.space12),
-            const DatePickerField(
+            DatePickerField(
               field: TicketField.birthDate,
             ),
             const SizedBox(height: USpace.space12),
@@ -92,6 +93,21 @@ class DriverDetailsForm extends StatelessWidget {
                   color: !form.noDriver ? UColors.gray400 : UColors.gray200,
                 ),
               ),
+              readOnly: true,
+              validator: (value) => form.validateAddress(value),
+              onTap: () async {
+                final address = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AddressForm(),
+                  ),
+                );
+
+                if (address != null) {
+                  form.formSettings[TicketField.address]!.controller!.text =
+                      address.toString();
+                }
+              },
             ),
             const SizedBox(height: USpace.space12),
             IntlPhoneField(
@@ -120,7 +136,6 @@ class DriverDetailsForm extends StatelessWidget {
                 value,
               ),
               onChanged: (value) {
-                form.driverFormKey.currentState!.validate();
               },
             ),
             const SizedBox(height: USpace.space12),

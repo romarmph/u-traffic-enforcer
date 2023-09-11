@@ -1,7 +1,7 @@
 import '../../../config/utils/exports.dart';
 
 class TicketProvider extends ChangeNotifier {
-  Ticket _lastPrintedTicket = Ticket();
+  final Ticket _lastPrintedTicket = Ticket();
 
   Ticket _ticket = Ticket(
     ticketNumber: null,
@@ -31,8 +31,7 @@ class TicketProvider extends ChangeNotifier {
 
   void updateTicket(Ticket ticket) {
     _ticket = ticket;
-    print("TICKET FROM TICKET PROVIDER");
-    print(_ticket);
+
     notifyListeners();
   }
 }

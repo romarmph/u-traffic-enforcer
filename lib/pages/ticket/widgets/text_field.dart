@@ -12,6 +12,7 @@ class CreateTicketField extends StatelessWidget {
     this.formatters,
     this.maxLength,
     this.decoration,
+    this.onTap,
   });
 
   final String? Function(String?)? validator;
@@ -23,6 +24,7 @@ class CreateTicketField extends StatelessWidget {
   final List<TextInputFormatter>? formatters;
   final int? maxLength;
   final InputDecoration? decoration;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +40,7 @@ class CreateTicketField extends StatelessWidget {
       keyboardType: keyboardType,
       readOnly: readOnly,
       onChanged: onChanged,
+      onTap: onTap,
     );
   }
 }
