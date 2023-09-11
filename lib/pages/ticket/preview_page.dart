@@ -1,4 +1,4 @@
-import 'package:intl/intl.dart';
+import 'package:u_traffic_enforcer/config/extensions/string_date_formatter.dart';
 
 import '../../config/utils/exports.dart';
 
@@ -88,7 +88,6 @@ class _TicketPreviewState extends State<TicketPreview>
       barrierDismissible: true,
       onConfirmBtnTap: () {
         Navigator.of(context).pop(true);
-        // Navigator.of(context).pushNamed("/printer/");
       },
     );
 
@@ -114,6 +113,7 @@ class _TicketPreviewState extends State<TicketPreview>
     QuickAlert.show(
       context: context,
       type: QuickAlertType.loading,
+      text: 'Saving ticket...',
     );
 
     final location = await LocationServices.instance.getLocation();
@@ -125,7 +125,9 @@ class _TicketPreviewState extends State<TicketPreview>
       'firstName': form.driverFormData[TicketField.firstName],
       'middleName': form.driverFormData[TicketField.middleName],
       'lastName': form.driverFormData[TicketField.lastName],
-      'birthDate': form.driverFormData[TicketField.birthDate],
+      'birthDate': form.driverFormData[TicketField.birthDate]
+          .toString()
+          .reverseFormatDate(),
       'phone': form.driverFormData[TicketField.phone],
       'email': form.driverFormData[TicketField.email],
       'address': form.driverFormData[TicketField.address],
@@ -144,6 +146,9 @@ class _TicketPreviewState extends State<TicketPreview>
     };
 
     final future = await TicketDBHelper().saveTicket(data);
+
+    await renameAndUpload(
+        form.licenseImagePath, future.ticketNumber.toString());
 
     popCurrent();
 
@@ -254,8 +259,6 @@ class _TicketPreviewState extends State<TicketPreview>
     Map<TicketField, dynamic> formData,
     Map<TicketField, dynamic> formSettings,
   ) {
-    final dateFormat = DateFormat("MMMM dd, yyyy");
-
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(USpace.space8),
@@ -265,7 +268,7 @@ class _TicketPreviewState extends State<TicketPreview>
             String title = data.value;
 
             if (data.key == TicketField.birthDate && data.value != "") {
-              title = dateFormat.format(DateTime.parse(data.value));
+              title = data.value;
             }
 
             if (title.isEmpty) {
@@ -280,5 +283,27 @@ class _TicketPreviewState extends State<TicketPreview>
         ),
       ),
     );
+  }
+
+  Future<void> renameAndUpload(String oldPath, String newName) async {
+    final newFile = ImagePickerService.instance.rename(
+      oldPath,
+      newName,
+    );
+
+    // Create a reference to the location you want to upload to in Firebase Storage
+    FirebaseStorage storage = FirebaseStorage.instance;
+    Reference ref = storage.ref().child('licenseImage/$newName.jpg');
+
+    // Upload the file to Firebase Storage
+    UploadTask uploadTask = ref.putFile(newFile);
+
+    // Check for any errors
+    try {
+      await uploadTask;
+      print('Upload complete!');
+    } on FirebaseException catch (e) {
+      print(e);
+    }
   }
 }

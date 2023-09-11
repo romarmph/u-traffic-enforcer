@@ -70,7 +70,7 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
           const Spacer(),
-          notificationBtn(),
+          // notificationBtn(),
         ],
       ),
     );
@@ -251,21 +251,41 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget recentTicketsList() {
+    final enforcer = Provider.of<EnforcerProvider>(context, listen: false);
+
     return Expanded(
-      child: ListView.builder(
-        itemCount: 5,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(
-              "Ticket #123456",
-              style: const UTextStyle().textbasefontmedium.copyWith(
-                    color: UColors.gray600,
-                  ),
-            ),
-          );
-        },
-      ),
-    );
+        child: StreamBuilder<List<Map<String, dynamic>>>(
+      stream: TicketDBHelper().getTicketsByEnforcerId(enforcer.enforcer.id!),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (snapshot.hasError) {
+          print(snapshot.error);
+          return const Center(child: Text("Error fetching tickets"));
+        }
+
+        snapshot.data!.forEach((ticket) {
+          print(ticket.runtimeType);
+        });
+
+        final List<Ticket> tickets =
+            snapshot.data!.map((ticket) => Ticket.fromJson(ticket)).toList();
+
+        return ListView.builder(
+          itemCount: tickets.length,
+          itemBuilder: (context, index) {
+            Ticket ticket = tickets[index];
+            return ListTile(
+              title: Text(
+                ticket.ticketNumber!.toString(),
+              ),
+            );
+          },
+        );
+      },
+    ));
   }
 
   Widget recentTicketView() {
@@ -334,20 +354,12 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: fabPressed,
-        label: const Text("New Ticket"),
-        icon: const Icon(Icons.add),
+      floatingActionButton: const FloatingActionButton.extended(
+        onPressed: goCreateTicket,
+        label: Text("New Ticket"),
+        icon: Icon(Icons.add),
       ),
       bottomNavigationBar: bottomNav(),
     );
-  }
-
-  void fabPressed() {
-    // final imageProvider = Provider.of<TicketProvider>(context, listen: false);
-    // final imagePicker = ImagePickerService.instance;
-    // final image = await imagePicker.pickImage();
-
-    goCreateTicket();
   }
 }

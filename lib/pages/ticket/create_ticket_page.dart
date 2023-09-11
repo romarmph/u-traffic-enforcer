@@ -11,6 +11,7 @@ class _CreateTicketPageState extends State<CreateTicketPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   late CreateTicketFormNotifier _notifier;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -18,23 +19,7 @@ class _CreateTicketPageState extends State<CreateTicketPage>
     _tabController = TabController(length: 2, initialIndex: 0, vsync: this);
     _notifier = Provider.of<CreateTicketFormNotifier>(context, listen: false);
 
-    final formSettings = _notifier.formSettings;
-
-    formSettings[TicketField.firstName]!.controller!.text = "Romar";
-    formSettings[TicketField.lastName]!.controller!.text = "Macaraeg";
-    formSettings[TicketField.middleName]!.controller!.text = "Cabangon";
-    formSettings[TicketField.birthDate]!.controller!.text = "1998-11-14";
-    formSettings[TicketField.address]!.controller!.text = "Pinmaludpod";
-    formSettings[TicketField.phone]!.controller!.text = "0918263512";
-    formSettings[TicketField.email]!.controller!.text = "roamr@gmail.com";
-    formSettings[TicketField.licenseNumber]!.controller!.text = "120938197321";
-    formSettings[TicketField.vehicleType]!.controller!.text = "Car";
-    formSettings[TicketField.plateNumber]!.controller!.text = "ABC-123";
-    formSettings[TicketField.engineNumber]!.controller!.text = "DAW31231";
-    formSettings[TicketField.chassisNumber]!.controller!.text = "KJHJ1231";
-    formSettings[TicketField.vehicleOwner]!.controller!.text = "ROMAR MACARAEG";
-    formSettings[TicketField.vehicleOwnerAddress]!.controller!.text =
-        "PINMALUDPOD";
+    _tabController.addListener(() {});
   }
 
   @override
@@ -46,7 +31,6 @@ class _CreateTicketPageState extends State<CreateTicketPage>
 
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<CreateTicketFormNotifier>();
     return Scaffold(
       appBar: AppBar(
         title: const Text("Create Ticket"),
@@ -60,13 +44,13 @@ class _CreateTicketPageState extends State<CreateTicketPage>
           children: [
             _buildTabs(),
             Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  SingleChildScrollView(
-                    child: Form(
-                      key: state.driverFormKey,
-                      child: const Column(
+              child: Form(
+                key: _formKey,
+                child: TabBarView(
+                  controller: _tabController,
+                  children: const [
+                    SingleChildScrollView(
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(height: USpace.space12),
@@ -75,11 +59,8 @@ class _CreateTicketPageState extends State<CreateTicketPage>
                         ],
                       ),
                     ),
-                  ),
-                  SingleChildScrollView(
-                    child: Form(
-                      key: state.vehicleFormKey,
-                      child: const Column(
+                    SingleChildScrollView(
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(height: USpace.space12),
@@ -88,8 +69,8 @@ class _CreateTicketPageState extends State<CreateTicketPage>
                         ],
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],
@@ -132,12 +113,16 @@ class _CreateTicketPageState extends State<CreateTicketPage>
           Expanded(
             child: ElevatedButton(
               onPressed: () {
-                if (_tabController.index == 0) {
+                if (_formKey.currentState!.validate() &&
+                    _tabController.index == 0) {
                   _tabController.animateTo(1);
                   return;
                 }
 
-                getFieldValues();
+                if (_formKey.currentState!.validate() &&
+                    _tabController.index == 1) {
+                  getFieldValues();
+                }
               },
               child: const Text("Next"),
             ),
@@ -150,6 +135,15 @@ class _CreateTicketPageState extends State<CreateTicketPage>
   Widget _buildTabs() {
     return TabBar(
       controller: _tabController,
+      onTap: (index) {
+        if (index == 1 && !_formKey.currentState!.validate()) {
+          // Prevent the tab change
+          _tabController.animateTo(0);
+        } else {
+          // Allow the tab change
+          _tabController.animateTo(index);
+        }
+      },
       tabs: const [
         Tab(text: "Driver Details"),
         Tab(text: "Vehicle Details"),
@@ -170,10 +164,6 @@ class _CreateTicketPageState extends State<CreateTicketPage>
             formData.formSettings[key]!.controller!.text;
       }
     });
-    // ignore: avoid_print
-    print(formData.driverFormData.toString());
-    // ignore: avoid_print
-    print(formData.vehicleFormData.toString());
 
     goSelectViolation();
   }

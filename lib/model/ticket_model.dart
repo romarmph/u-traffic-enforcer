@@ -54,20 +54,29 @@ class Ticket {
   });
 
   factory Ticket.fromJson(Map<String, dynamic> json) {
+    Timestamp? violationDateTime = json['violationDateTime'];
+    Timestamp? dateCreated = json['dateCreated'];
+    Timestamp? birthDate = json['birthDate'];
+
+    TicketStatus status = TicketStatus.values.firstWhere(
+      (e) => e.toString() == 'TicketStatus.${json['status']}',
+    );
+
     return Ticket(
       id: json['id'],
       ticketNumber: json['ticketNumber'],
-      violationsID: json['violationsID'],
+      violationsID: json['violationsID'] != null
+          ? Set<String>.from(json['violationsID'])
+          : null,
       licenseNumber: json['licenseNumber'],
       firstName: json['firstName'],
       middleName: json['middleName'],
       lastName: json['lastName'],
-      birthDate:
-          json['birthDate'] != "" ? DateTime.parse(json['birthDate']) : null,
+      birthDate: birthDate!.toDate(),
       phone: json['phone'],
       email: json['email'],
       address: json['address'],
-      status: json['status'],
+      status: status,
       vehicleType: json['vehicleType'],
       engineNumber: json['engineNumber'],
       chassisNumber: json['chassisNumber'],
@@ -75,11 +84,11 @@ class Ticket {
       vehicleOwner: json['vehicleOwner'],
       vehicleOwnerAddress: json['vehicleOwnerAddress'],
       placeOfViolation: json['placeOfViolation'],
-      violationDateTime: json['violationDateTime'],
+      violationDateTime: violationDateTime!.toDate(),
       enforcerId: json['enforcerId'],
       driverSignature: json['driverSignature'],
       licenseImageUrl: json['licenseImageUrl'],
-      dateCreated: json['dateCreated'],
+      dateCreated: dateCreated!.toDate(),
     );
   }
 

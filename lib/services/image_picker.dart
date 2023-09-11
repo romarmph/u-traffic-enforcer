@@ -10,26 +10,45 @@ class ImagePickerService {
   ImageSource get defaultImageSource => ImageSource.camera;
 
   Future<XFile?> pickImage() async {
-    XFile? image = await _picker.pickImage(
-      source: ImageSource.camera,
-    );
+    try {
+      XFile? image = await _picker.pickImage(
+        source: ImageSource.camera,
+        // source: ImageSource.gallery,
+        imageQuality: 100,
+        preferredCameraDevice: CameraDevice.rear,
+      );
 
-    return XFile(image!.path);
+      return image;
+    } on Exception {
+      rethrow;
+    }
   }
 
   Future<CroppedFile?> cropImage(XFile image) async {
-    CroppedFile? croppedFile = await ImageCropper().cropImage(
-      sourcePath: image.path,
-      compressQuality: 100,
-      compressFormat: ImageCompressFormat.jpg,
-      uiSettings: [
-        AndroidUiSettings(
-          initAspectRatio: CropAspectRatioPreset.ratio4x3,
-          lockAspectRatio: true,
-        ),
-      ],
-    );
+    try {
+      CroppedFile? croppedFile = await ImageCropper().cropImage(
+        sourcePath: image.path,
+        compressQuality: 100,
+        compressFormat: ImageCompressFormat.jpg,
+        cropStyle: CropStyle.rectangle,
+        aspectRatio: const CropAspectRatio(ratioX: 3, ratioY: 2),
+        uiSettings: [
+          AndroidUiSettings(
+            initAspectRatio: CropAspectRatioPreset.ratio3x2,
+            lockAspectRatio: true,
+          ),
+        ],
+      );
+      return croppedFile;
+    } on Exception {
+      rethrow;
+    }
+  }
 
-    return croppedFile;
+  File rename(String path, String name) {
+    int lastSeparater = path.lastIndexOf(Platform.pathSeparator);
+    String newPath = "${path.substring(0, lastSeparater + 1)}$name.jpg";
+
+    return File(path).renameSync(newPath);
   }
 }

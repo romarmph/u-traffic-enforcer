@@ -24,12 +24,6 @@ void goPreviewTicket() {
   );
 }
 
-void goPreviewLicense() {
-  Navigator.of(navigatorKey.currentContext!).pushNamed(
-    "/ticket/scanpreview",
-  );
-}
-
 void goPrinter() {
   Navigator.of(navigatorKey.currentContext!).pushNamed(
     "/printer/",

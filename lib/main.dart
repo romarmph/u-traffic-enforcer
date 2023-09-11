@@ -74,7 +74,6 @@ class UTrafficEnforcer extends StatelessWidget {
           "/ticket/create": (context) => const CreateTicketPage(),
           "/ticket/violations": (context) => const ViolationsList(),
           "/ticket/preview": (context) => const TicketPreview(),
-          "/ticket/scanpreview": (context) => const ScannedLicensePreview(),
           "/printer/": (context) => const PrinterHome(),
           "/printer/scan": (context) => const DeviceScanPage(),
         },

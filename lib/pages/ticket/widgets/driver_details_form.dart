@@ -1,3 +1,7 @@
+import 'package:u_traffic_enforcer/pages/ticket/widgets/address_form.dart';
+import 'package:u_traffic_enforcer/pages/ticket/widgets/date_picker_field.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
+
 import '../../../config/utils/exports.dart';
 
 class DriverDetailsForm extends StatelessWidget {
@@ -5,10 +9,13 @@ class DriverDetailsForm extends StatelessWidget {
     super.key,
   });
 
+
   @override
   Widget build(BuildContext context) {
     return Consumer<CreateTicketFormNotifier>(
       builder: (context, form, child) {
+        final formSettings = form.formSettings;
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -20,114 +27,134 @@ class DriverDetailsForm extends StatelessWidget {
               },
             ),
             const SizedBox(height: USpace.space12),
+            const ImageScannerButton(),
+            const SizedBox(height: USpace.space12),
             CreateTicketField(
               enabled: !form.noDriver,
-              controller: form.formSettings[TicketField.lastName]!.controller!,
-              label: form.formSettings[TicketField.lastName]!.label,
+              controller: formSettings[TicketField.lastName]!.controller!,
+              decoration: InputDecoration(
+                fillColor: !form.noDriver ? UColors.gray100 : UColors.gray50,
+                labelText: formSettings[TicketField.lastName]!.label,
+                labelStyle: TextStyle(
+                  color: !form.noDriver ? UColors.gray400 : UColors.gray200,
+                ),
+              ),
               validator: (value) => form.validateName(
                 value,
                 TicketField.lastName,
               ),
-              onChanged: (value) {},
             ),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
               enabled: !form.noDriver,
-              controller: form.formSettings[TicketField.firstName]!.controller!,
-              label: form.formSettings[TicketField.firstName]!.label,
+              controller: formSettings[TicketField.firstName]!.controller!,
+              decoration: InputDecoration(
+                fillColor: !form.noDriver ? UColors.gray100 : UColors.gray50,
+                labelText: formSettings[TicketField.firstName]!.label,
+                labelStyle: TextStyle(
+                  color: !form.noDriver ? UColors.gray400 : UColors.gray200,
+                ),
+              ),
               validator: (value) => form.validateName(
                 value,
                 TicketField.firstName,
               ),
-              onChanged: (value) {},
             ),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
               enabled: !form.noDriver,
-              controller:
-                  form.formSettings[TicketField.middleName]!.controller!,
-              label: form.formSettings[TicketField.middleName]!.label,
+              controller: formSettings[TicketField.middleName]!.controller!,
+              decoration: InputDecoration(
+                fillColor: !form.noDriver ? UColors.gray100 : UColors.gray50,
+                labelText: formSettings[TicketField.middleName]!.label,
+                labelStyle: TextStyle(
+                  color: !form.noDriver ? UColors.gray400 : UColors.gray200,
+                ),
+              ),
               validator: (value) => form.validateName(
                 value,
                 TicketField.middleName,
               ),
-              onChanged: (value) {},
+              onChanged: (value) {
+              },
             ),
             const SizedBox(height: USpace.space12),
-            _buildDatePickerInput(context, form),
-            const SizedBox(height: USpace.space12),
-            CreateTicketField(
-              enabled: !form.noDriver,
-              controller: form.formSettings[TicketField.address]!.controller!,
-              label: form.formSettings[TicketField.address]!.label,
-              validator: (value) => form.validateName(
-                value,
-                TicketField.address,
-              ),
-              onChanged: (value) {},
+            DatePickerField(
+              field: TicketField.birthDate,
             ),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
               enabled: !form.noDriver,
-              controller: form.formSettings[TicketField.phone]!.controller!,
-              label: form.formSettings[TicketField.phone]!.label,
-              validator: (value) => form.validateName(
-                value,
-                TicketField.phone,
+              controller: formSettings[TicketField.address]!.controller!,
+              decoration: InputDecoration(
+                fillColor: !form.noDriver ? UColors.gray100 : UColors.gray50,
+                labelText: formSettings[TicketField.address]!.label,
+                labelStyle: TextStyle(
+                  color: !form.noDriver ? UColors.gray400 : UColors.gray200,
+                ),
               ),
-              onChanged: (value) {},
+              readOnly: true,
+              validator: (value) => form.validateAddress(value),
+              onTap: () async {
+                final address = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AddressForm(),
+                  ),
+                );
+
+                if (address != null) {
+                  form.formSettings[TicketField.address]!.controller!.text =
+                      address.toString();
+                }
+              },
+            ),
+            const SizedBox(height: USpace.space12),
+            IntlPhoneField(
+              enabled: !form.noDriver,
+              controller: formSettings[TicketField.phone]!.controller!,
+              keyboardType: const TextInputType.numberWithOptions(),
+              initialCountryCode: 'PH',
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              decoration: const InputDecoration(
+                counterText: '',
+              ),
+              validator: (value) => form.validatePhone(value!.number),
             ),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
               enabled: !form.noDriver,
-              controller: form.formSettings[TicketField.email]!.controller!,
-              label: form.formSettings[TicketField.email]!.label,
-              validator: (value) => form.validateName(
-                value,
-                TicketField.email,
+              controller: formSettings[TicketField.email]!.controller!,
+              decoration: InputDecoration(
+                fillColor: !form.noDriver ? UColors.gray100 : UColors.gray50,
+                labelText: formSettings[TicketField.email]!.label,
+                labelStyle: TextStyle(
+                  color: !form.noDriver ? UColors.gray400 : UColors.gray200,
+                ),
               ),
-              onChanged: (value) {},
+              validator: (value) => form.validateEmail(
+                value,
+              ),
+              onChanged: (value) {
+              },
             ),
             const SizedBox(height: USpace.space12),
             const Text("License Number"),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
               enabled: !form.noDriver,
-              controller:
-                  form.formSettings[TicketField.licenseNumber]!.controller!,
-              label: form.formSettings[TicketField.licenseNumber]!.label,
-              validator: (value) => null,
-              onChanged: (value) {},
+              controller: formSettings[TicketField.licenseNumber]!.controller!,
+              decoration: InputDecoration(
+                fillColor: !form.noDriver ? UColors.gray100 : UColors.gray50,
+                labelText: formSettings[TicketField.licenseNumber]!.label,
+                labelStyle: TextStyle(
+                  color: !form.noDriver ? UColors.gray400 : UColors.gray200,
+                ),
+              ),
+              validator: (value) => form.validateLicenseNumber(value),
             ),
           ],
         );
-      },
-    );
-  }
-
-  Widget _buildDatePickerInput(
-    BuildContext context,
-    CreateTicketFormNotifier form,
-  ) {
-    FormSettings formSettings = form.formSettings[TicketField.birthDate]!;
-    return TextFormField(
-      readOnly: true,
-      decoration: InputDecoration(
-        labelText: formSettings.label,
-      ),
-      controller: formSettings.controller,
-      onTap: () async {
-        final date = await showDatePicker(
-          context: context,
-          initialDate: DateTime.now(),
-          firstDate: DateTime(1900),
-          lastDate: DateTime.now(),
-        );
-
-        if (date != null) {
-          formSettings.controller!.text = date.toString();
-          form.driverFormData[TicketField.birthDate] = date;
-        }
       },
     );
   }

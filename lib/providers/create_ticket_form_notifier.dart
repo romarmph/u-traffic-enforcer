@@ -8,6 +8,8 @@ class CreateTicketFormNotifier extends ChangeNotifier {
   bool _noDriver = false;
   bool _ownedByDriver = false;
 
+  String _licenseImagePath = "";
+
   Set<String?> _selectedViolationsID = {};
 
   final Map<TicketField, dynamic> _vehicleFormData = {
@@ -29,9 +31,6 @@ class CreateTicketFormNotifier extends ChangeNotifier {
     TicketField.email: "",
     TicketField.address: "",
   };
-
-  final _driverFormkey = GlobalKey<FormState>();
-  final _vehicleFormKey = GlobalKey<FormState>();
 
   final Map<TicketField, FormSettings> _formSettings = {
     TicketField.firstName: FormSettings(
@@ -55,6 +54,7 @@ class CreateTicketFormNotifier extends ChangeNotifier {
     TicketField.birthDate: FormSettings(
       label: "Birthdate",
       type: TicketFieldType.driver,
+      errorMessage: "Please enter a valid date",
     ),
     TicketField.phone: FormSettings(
       label: "Phone Number",
@@ -115,13 +115,11 @@ class CreateTicketFormNotifier extends ChangeNotifier {
   ///
   ///
 
-  GlobalKey get driverFormKey => _driverFormkey;
-  GlobalKey get vehicleFormKey => _vehicleFormKey;
-
   Set<String?> get selectedViolationsID => _selectedViolationsID;
 
   bool get noDriver => _noDriver;
   bool get ownedByDriver => _ownedByDriver;
+  String get licenseImagePath => _licenseImagePath;
 
   Map<TicketField, dynamic> get driverFormData => _driverFormData;
   Map<TicketField, dynamic> get vehicleFormData => _vehicleFormData;
@@ -138,35 +136,127 @@ class CreateTicketFormNotifier extends ChangeNotifier {
     switch (field) {
       case TicketField.firstName:
         {
-          return value.isNotNull && !value!.isValidName
-              ? _formSettings[field]!.errorMessage
-              : null;
+          if (value == null || value.isEmpty) {
+            return 'First name is required.';
+          }
+          if (!value.isValidName) {
+            return 'First name must be valid.';
+          }
+          return null;
         }
+
       case TicketField.middleName:
         {
-          return value.isNotNull && !value!.isValidName
-              ? _formSettings[field]!.errorMessage
-              : null;
+          if (value!.isNotEmpty && !value.isValidName) {
+            return 'Middle name must be valid.';
+          }
+          return null;
         }
       default:
         {
-          return value.isNotNull && !value!.isValidName
-              ? _formSettings[TicketField.lastName]!.errorMessage
-              : null;
+          if (value == null || value.isEmpty) {
+            return 'Last name is required.';
+          }
+          if (!value.isValidName) {
+            return 'Last name must be valid.';
+          }
+          return null;
         }
     }
   }
 
   String? validatePhone(String? value) {
-    return value.isNotNull && !value!.isValidPhone
-        ? _formSettings[TicketField.phone]!.errorMessage
-        : null;
+    if (!value!.isValidPhone) {
+      return 'Phone number must be valid.';
+    }
+    return null;
   }
 
   String? validateEmail(String? value) {
-    return value.isNotNull && !value!.isValidEmail
-        ? _formSettings[TicketField.email]!.errorMessage
-        : null;
+    if (value != null && value.isNotEmpty && !value.isValidEmail) {
+      return 'Email must be valid.';
+    }
+    return null;
+  }
+
+  String? validateDate(String? value) {
+    if (value == " ") {
+      return null;
+    }
+
+    if (value == null || value.isEmpty) {
+      return 'Date of birth is required.';
+    }
+    if (!value.isValidDate) {
+      return 'Date of birth must be valid.';
+    }
+    return null;
+  }
+
+  String? validateAddress(String? value) {
+    if (value == " ") {
+      return null;
+    }
+
+    if (value == null || value.isEmpty) {
+      return 'Address is required.';
+    }
+    return null;
+  }
+
+  String? validateLicenseNumber(String? value) {
+    if (value == " " || value!.isEmpty) {
+      return null;
+    }
+    final licenseNumberRegex = RegExp(r'^[A-Z]\d{2}-\d{2}-\d{6}$');
+    if (!licenseNumberRegex.hasMatch(value)) {
+      return 'Invalid license number format';
+    }
+    return null;
+  }
+
+  String? validateVehicleType(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Vehicle Type is required';
+    }
+
+    return null;
+  }
+
+  String? validatePlateNumber(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Plate number is required';
+    }
+
+    RegExp r1 = RegExp(r'^[A-Za-z]{3}[- ]?\d{3,4}$');
+    RegExp r2 = RegExp(r'^\d{4}-\d{7}$');
+    RegExp r3 = RegExp(r'^[A-Za-z]{2}-\d{4}$');
+
+    if (r1.hasMatch(value) || r2.hasMatch(value) || r3.hasMatch(value)) {
+      return null;
+    } else {
+      return 'Invalid format. Click the help icon (?) for more info';
+    }
+  }
+
+  String? validateEngineNumber(String? input) {
+    RegExp r = RegExp(r'^[A-Za-z0-9- ]{0,17}$');
+
+    if (r.hasMatch(input!)) {
+      return null;
+    } else {
+      return 'Invalid engine number format';
+    }
+  }
+
+  String? validateChassisNumber(String? input) {
+    RegExp r = RegExp(r'^[A-Za-z0-9- ]{0,17}$');
+
+    if (r.hasMatch(input!)) {
+      return null;
+    } else {
+      return 'Invalid chassis number format';
+    }
   }
 
   void updateDriverFormField(TicketField field, dynamic value) {
@@ -215,11 +305,18 @@ class CreateTicketFormNotifier extends ChangeNotifier {
       _driverFormData[key] = "";
     });
 
+    _licenseImagePath = "";
+
     _noDriver = value;
   }
 
   void setViolationsID(Set<String?> vioaltionsID) {
     _selectedViolationsID = vioaltionsID;
+    notifyListeners();
+  }
+
+  void setLicenseImagePath(String path) {
+    _licenseImagePath = path;
     notifyListeners();
   }
 }
