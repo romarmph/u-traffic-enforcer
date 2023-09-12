@@ -15,8 +15,20 @@ class Wrapper extends StatelessWidget {
             return const Login();
           }
 
-          setEnforcer(context);
-          return const HomePage();
+          return FutureBuilder(
+            future: setEnforcer(context),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                return const HomePage();
+              } else {
+                return const Scaffold(
+                  body: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              }
+            },
+          );
         }
         return const Scaffold(
           body: Center(
@@ -27,7 +39,7 @@ class Wrapper extends StatelessWidget {
     );
   }
 
-  void setEnforcer(BuildContext context) async {
+  Future<void> setEnforcer(BuildContext context) async {
     final enforcerProvider =
         Provider.of<EnforcerProvider>(context, listen: false);
     final enforcer = await EnforcerDBHelper.instance.getEnforcer();
