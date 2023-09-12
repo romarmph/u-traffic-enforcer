@@ -304,7 +304,6 @@ class _TicketPreviewState extends State<TicketPreview>
     // Check for any errors
     try {
       await uploadTask;
-      print('Upload complete!');
     } on FirebaseException catch (e) {
       print(e);
     }

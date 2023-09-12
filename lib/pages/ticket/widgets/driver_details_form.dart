@@ -9,7 +9,6 @@ class DriverDetailsForm extends StatelessWidget {
     super.key,
   });
 
-
   @override
   Widget build(BuildContext context) {
     return Consumer<CreateTicketFormNotifier>(
@@ -75,11 +74,10 @@ class DriverDetailsForm extends StatelessWidget {
                 value,
                 TicketField.middleName,
               ),
-              onChanged: (value) {
-              },
+              onChanged: (value) {},
             ),
             const SizedBox(height: USpace.space12),
-            DatePickerField(
+            const DatePickerField(
               field: TicketField.birthDate,
             ),
             const SizedBox(height: USpace.space12),
@@ -135,8 +133,7 @@ class DriverDetailsForm extends StatelessWidget {
               validator: (value) => form.validateEmail(
                 value,
               ),
-              onChanged: (value) {
-              },
+              onChanged: (value) {},
             ),
             const SizedBox(height: USpace.space12),
             const Text("License Number"),
