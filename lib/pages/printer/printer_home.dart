@@ -29,32 +29,39 @@ class _PrinterHomeState extends State<PrinterHome> {
               child: StreamBuilder<int>(
                 stream: _printer.state,
                 builder: (context, snapshot) {
-                  // ignore: avoid_print
-                  print("PRINTER STATE: ${snapshot.data}");
+                  return FutureBuilder(
+                    future: _printer.isConnected,
+                    builder: (context, snapshot) {
+                      if (snapshot.data == null) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
 
-                  if (snapshot.data != null &&
-                      (snapshot.data == 12 || snapshot.data == 1)) {
-                    return Container(
-                      padding: const EdgeInsets.all(USpace.space12),
-                      decoration: BoxDecoration(
-                        color: UColors.green200,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Center(
-                        child: Text("Printer is connected."),
-                      ),
-                    );
-                  }
+                      if (snapshot.data!) {
+                        return Container(
+                          padding: const EdgeInsets.all(USpace.space12),
+                          decoration: BoxDecoration(
+                            color: UColors.green200,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Center(
+                            child: Text("Printer is connected."),
+                          ),
+                        );
+                      }
 
-                  return Container(
-                    padding: const EdgeInsets.all(USpace.space12),
-                    decoration: BoxDecoration(
-                      color: UColors.red200,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Center(
-                      child: Text("Printer is not connected."),
-                    ),
+                      return Container(
+                        padding: const EdgeInsets.all(USpace.space12),
+                        decoration: BoxDecoration(
+                          color: UColors.red200,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Center(
+                          child: Text("Printer is not connected."),
+                        ),
+                      );
+                    },
                   );
                 },
               ),
@@ -155,7 +162,7 @@ class _PrinterHomeState extends State<PrinterHome> {
     list.add(
       LineText(
         type: LineText.TYPE_TEXT,
-        content: dateFormatter.format(ticket.violationDateTime!),
+        content: dateFormatter.format(DateTime.now()),
         weight: 2,
         height: 2,
         width: 2,
