@@ -1,4 +1,5 @@
 import '../../config/utils/exports.dart';
+import '../../pages/home/recent_ticket_view.dart';
 
 void goHome() {
   Navigator.of(navigatorKey.currentContext!).pushNamed(
@@ -38,4 +39,12 @@ void goPrinterScanner() {
 
 void popCurrent() {
   Navigator.of(navigatorKey.currentContext!).pop();
+}
+
+void viewRecentTicket(Ticket ticket, BuildContext context) {
+  Navigator.of(context).push(
+    MaterialPageRoute(
+      builder: (context) => RecentTicketView(ticket: ticket),
+    ),
+  );
 }

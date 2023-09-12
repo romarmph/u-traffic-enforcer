@@ -280,6 +280,9 @@ class _HomePageState extends State<HomePage> {
                     ),
               ),
               subtitle: Text('${ticket.firstName!} ${ticket.lastName!}'),
+              onTap: () {
+                viewRecentTicket(ticket, context);
+              },
             );
           },
         );
@@ -295,6 +298,7 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          const SizedBox(height: USpace.space16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -305,7 +309,7 @@ class _HomePageState extends State<HomePage> {
                     ),
               ),
               const Spacer(),
-              viewAllBtn(),
+              // viewAllBtn(),
             ],
           ),
           recentTicketsList(),
