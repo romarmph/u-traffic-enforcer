@@ -38,7 +38,7 @@ class Ticket {
     this.phone,
     this.email,
     this.address,
-    this.status,
+    this.status = TicketStatus.unpaid,
     this.vehicleType,
     this.engineNumber,
     this.chassisNumber,
@@ -54,12 +54,25 @@ class Ticket {
   });
 
   factory Ticket.fromJson(Map<String, dynamic> json) {
-    Timestamp? violationDateTime = json['violationDateTime'];
-    Timestamp? dateCreated = json['dateCreated'];
-    Timestamp? birthDate = json['birthDate'];
+    Timestamp? violationDateTime = json['violationDateTime'] is DateTime
+        ? Timestamp.fromDate(json['violationDateTime'])
+        : json['violationDateTime'];
+    Timestamp? dateCreated = json['dateCreated'] is DateTime
+        ? Timestamp.fromDate(json['dateCreated'])
+        : json['dateCreated'];
+    Timestamp? birthDate;
+    if (json['birthDate'] is String) {
+      DateTime dateTime = DateTime.parse(json['birthDate']);
+      birthDate = Timestamp.fromDate(dateTime);
+    } else if (json['birthDate'] is DateTime) {
+      birthDate = Timestamp.fromDate(json['birthDate']);
+    } else {
+      birthDate = json['birthDate'];
+    }
 
     TicketStatus status = TicketStatus.values.firstWhere(
       (e) => e.toString() == 'TicketStatus.${json['status']}',
+      orElse: () => TicketStatus.unpaid, // replace with your default status
     );
 
     return Ticket(

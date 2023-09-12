@@ -262,13 +262,8 @@ class _HomePageState extends State<HomePage> {
         }
 
         if (snapshot.hasError) {
-          print(snapshot.error);
           return const Center(child: Text("Error fetching tickets"));
         }
-
-        snapshot.data!.forEach((ticket) {
-          print(ticket.runtimeType);
-        });
 
         final List<Ticket> tickets =
             snapshot.data!.map((ticket) => Ticket.fromJson(ticket)).toList();
@@ -279,8 +274,12 @@ class _HomePageState extends State<HomePage> {
             Ticket ticket = tickets[index];
             return ListTile(
               title: Text(
-                ticket.ticketNumber!.toString(),
+                'Ticket # ${ticket.ticketNumber!.toString()}',
+                style: const UTextStyle().textbasefontmedium.copyWith(
+                      color: UColors.gray700,
+                    ),
               ),
+              subtitle: Text('${ticket.firstName!} ${ticket.lastName!}'),
             );
           },
         );
