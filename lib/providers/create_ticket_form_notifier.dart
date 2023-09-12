@@ -224,15 +224,11 @@ class CreateTicketFormNotifier extends ChangeNotifier {
   }
 
   String? validatePlateNumber(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Plate number is required';
-    }
-
     RegExp r1 = RegExp(r'^[A-Za-z]{3}[- ]?\d{3,4}$');
     RegExp r2 = RegExp(r'^\d{4}-\d{7}$');
     RegExp r3 = RegExp(r'^[A-Za-z]{2}-\d{4}$');
 
-    if (r1.hasMatch(value) || r2.hasMatch(value) || r3.hasMatch(value)) {
+    if (r1.hasMatch(value!) || r2.hasMatch(value) || r3.hasMatch(value)) {
       return null;
     } else {
       return 'Invalid format. Click the help icon (?) for more info';
