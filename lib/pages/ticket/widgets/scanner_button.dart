@@ -74,7 +74,9 @@ class _ImageScannerButtonState extends State<ImageScannerButton> {
 
   Future<void> onTap() async {
     final form = Provider.of<CreateTicketFormNotifier>(context, listen: false);
-    showLoading();
+    showLoading(
+      'Scanning License',
+    );
     final XFile? image = await ImagePickerService.instance.pickImage();
 
     if (image == null) {

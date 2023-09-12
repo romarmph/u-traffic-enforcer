@@ -224,8 +224,8 @@ class CreateTicketFormNotifier extends ChangeNotifier {
   }
 
   String? validatePlateNumber(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Plate number is required';
+    if (value == " " || value!.isEmpty) {
+      return null;
     }
 
     RegExp r1 = RegExp(r'^[A-Za-z]{3}[- ]?\d{3,4}$');

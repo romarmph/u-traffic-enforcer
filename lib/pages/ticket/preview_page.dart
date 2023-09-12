@@ -111,10 +111,10 @@ class _TicketPreviewState extends State<TicketPreview>
     final enforcer = Provider.of<AuthService>(context, listen: false);
 
     QuickAlert.show(
-      context: context,
-      type: QuickAlertType.loading,
-      text: 'Saving ticket...',
-    );
+        context: context,
+        type: QuickAlertType.loading,
+        text: 'Saving ticket...',
+        barrierDismissible: false);
 
     final location = await LocationServices.instance.getLocation();
 
@@ -147,8 +147,11 @@ class _TicketPreviewState extends State<TicketPreview>
 
     final future = await TicketDBHelper().saveTicket(data);
 
-    await renameAndUpload(
-        form.licenseImagePath, future.ticketNumber.toString());
+    try {
+      await renameAndUpload(form.licenseImagePath, future.id!);
+    } catch (e) {
+      print(e);
+    }
 
     popCurrent();
 
@@ -301,7 +304,6 @@ class _TicketPreviewState extends State<TicketPreview>
     // Check for any errors
     try {
       await uploadTask;
-      print('Upload complete!');
     } on FirebaseException catch (e) {
       print(e);
     }

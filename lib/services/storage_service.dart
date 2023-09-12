@@ -16,7 +16,6 @@ class StorageService {
       final Uint8List? data = await profileImagesRef.getData(oneMegabyte);
       return data;
     } on FirebaseException catch (e) {
-      print(e);
       if (e.code == 'object-not-found') {
         print("The requested file doesn't exist.");
       } else if (e.code == 'unauthenticated') {
