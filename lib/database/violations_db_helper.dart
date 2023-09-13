@@ -10,4 +10,12 @@ class ViolationsDatabase {
               .toList(),
         );
   }
+
+  Future<List<Violation>> getViolations() async {
+    final snapshot = await _firestore.collection('violations').get();
+
+    return snapshot.docs
+        .map((doc) => Violation.fromJson(doc.data(), doc.id))
+        .toList();
+  }
 }

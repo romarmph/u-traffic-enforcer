@@ -20,4 +20,9 @@ class ViolationProvider extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  void setViolations(List<Violation> violations) {
+    _violationsList = violations;
+    notifyListeners();
+  }
 }
