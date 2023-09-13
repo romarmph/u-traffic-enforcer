@@ -19,6 +19,7 @@ class Wrapper extends StatelessWidget {
             future: setEnforcer(context),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
+                load(context);
                 return const HomePage();
               } else {
                 return const Scaffold(
@@ -45,5 +46,15 @@ class Wrapper extends StatelessWidget {
     final enforcer = await EnforcerDBHelper.instance.getEnforcer();
 
     enforcerProvider.setEnforcer(enforcer);
+  }
+
+  void load(BuildContext context) async {
+    final violationsProvider = Provider.of<ViolationProvider>(
+      context,
+      listen: false,
+    );
+    final violations = await ViolationsDatabase().getViolations();
+
+    violationsProvider.setViolations(violations);
   }
 }
