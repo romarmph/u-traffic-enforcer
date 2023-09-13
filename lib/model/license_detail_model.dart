@@ -1,86 +1,91 @@
-class LicenseDetail {
-  final String? licensenumber;
-  final String? firstName;
-  final String? middleName;
-  final String? lastname;
-  final String? fullname;
-  final String? suffix;
-  final String? sex;
-  final DateTime? birthdate;
-  final String? nationality;
-  final String? address;
-  final String? agencycode;
-  final double? height;
-  final double? weight;
-  final String? dlcodes;
-  final String? bloodtype;
-  final DateTime? expirationdate;
-  final String? condition;
-  final String? licenseImageUrl;
+import 'package:u_traffic_enforcer/config/utils/exports.dart';
 
-  LicenseDetail({
-    this.licensenumber,
-    this.firstName,
-    this.middleName,
-    this.lastname,
-    this.fullname,
-    this.suffix,
-    this.sex,
-    this.birthdate,
-    this.nationality,
-    this.address,
-    this.agencycode,
-    this.height,
-    this.weight,
-    this.dlcodes,
-    this.bloodtype,
-    this.expirationdate,
-    this.condition,
-    this.licenseImageUrl,
+class LicenseDetails {
+  String? licenseID;
+  String? userID;
+  Timestamp? dateCreated;
+  final String licenseNumber;
+  final Timestamp expirationDate;
+  final String firstName;
+  final String middleName;
+  final String lastName;
+  final String address;
+  final String nationality;
+  final String sex;
+  final Timestamp birthdate;
+  final double height;
+  final double weight;
+  final String agencyCode;
+  final String dlcodes;
+  final String conditions;
+  final String bloodType;
+  final String eyesColor;
+
+  LicenseDetails({
+    this.userID,
+    this.licenseID,
+    this.dateCreated,
+    required this.licenseNumber,
+    required this.expirationDate,
+    required this.firstName,
+    required this.middleName,
+    required this.lastName,
+    required this.address,
+    required this.nationality,
+    required this.sex,
+    required this.birthdate,
+    required this.height,
+    required this.weight,
+    required this.agencyCode,
+    required this.dlcodes,
+    required this.conditions,
+    required this.bloodType,
+    required this.eyesColor,
   });
 
-  factory LicenseDetail.fromJson(Map<String, dynamic> json) {
-    return LicenseDetail(
-      licensenumber: json['licensenumber'],
-      firstName: json['firstName'],
-      middleName: json['middleName'],
-      lastname: json['lastname'],
-      fullname: json['fullname'],
-      suffix: json['suffix'],
-      sex: json['sex'],
-      birthdate: json['birthdate'],
-      nationality: json['nationality'],
-      address: json['address'],
-      agencycode: json['agencycode'],
-      height: json['height'],
-      weight: json['weight'],
-      dlcodes: json['dlcodes'],
-      bloodtype: json['bloodtype'],
-      expirationdate: json['expirationdate'],
-      condition: json['condition'],
-      licenseImageUrl: json['licenseImageUrl'],
-    );
+  Map<String, dynamic> toJson() {
+    return {
+      "licenseNumber": licenseNumber,
+      "expirationDate": expirationDate,
+      "dateCreated": dateCreated,
+      "firstName": firstName,
+      "middleName": middleName,
+      "lastName": lastName,
+      "address": address,
+      "nationality": nationality,
+      "sex": sex,
+      "birthdate": birthdate,
+      "height": height,
+      "weight": weight,
+      "agencyCode": agencyCode,
+      "dlcodes": dlcodes,
+      "conditions": conditions,
+      "bloodType": bloodType,
+      "eyesColor": eyesColor,
+      "userID": userID,
+    };
   }
 
-  @override
-  String toString() {
-    return 'License Number: $licensenumber\n'
-        'First Name: $firstName\n'
-        'Middle Name: $middleName\n'
-        'Last Name: $lastname\n'
-        'Full Name: $fullname\n'
-        'Suffix: $suffix\n'
-        'Sex: $sex\n'
-        'Birthdate: ${birthdate?.toIso8601String()}\n'
-        'Nationality: $nationality\n'
-        'Address: $address\n'
-        'Agency Code: $agencycode\n'
-        'Height: ${height?.toStringAsFixed(2)}\n'
-        'Weight: ${weight?.toStringAsFixed(2)}\n'
-        'DL Codes: $dlcodes\n'
-        'Blood Type: $bloodtype\n'
-        'Expiration Date: $expirationdate\n'
-        'Condition: $condition\n'
-        'License Image URL: $licenseImageUrl';
+  factory LicenseDetails.fromJson(Map<String, dynamic> json) {
+    return LicenseDetails(
+      licenseNumber: json["licenseNumber"],
+      expirationDate: json["expirationDate"],
+      dateCreated: json["dateCreated"],
+      firstName: json["firstName"],
+      middleName: json["middleName"],
+      lastName: json["lastName"],
+      address: json["address"],
+      nationality: json["nationality"],
+      sex: json["sex"],
+      birthdate: json["birthdate"],
+      height: json["height"],
+      weight: json["weight"],
+      agencyCode: json["agencyCode"],
+      dlcodes: json["dlcodes"],
+      conditions: json["conditions"],
+      bloodType: json['bloodType'],
+      eyesColor: json['eyesColor'],
+      userID: json['userID'],
+    );
   }
 }

@@ -254,6 +254,18 @@ class _PrinterHomeState extends State<PrinterHome> {
       LineText(
         type: LineText.TYPE_TEXT,
         content:
+            "Ticket Due Date:\n  ${ticket.violationDateTime!.add(const Duration(days: 7)).toString().formtDate} ${ticket.violationDateTime.toString().split(" ")[1].split('.')[0]}",
+        weight: 2,
+        height: 2,
+        width: 2,
+        align: LineText.ALIGN_LEFT,
+        linefeed: 1,
+      ),
+    );
+    list.add(
+      LineText(
+        type: LineText.TYPE_TEXT,
+        content:
             "Enforcer:\n  ${enforcer.firstName} ${enforcer.middleName} ${enforcer.lastName}\n",
         weight: 2,
         height: 2,
