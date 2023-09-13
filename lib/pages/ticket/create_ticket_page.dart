@@ -1,7 +1,12 @@
 import '../../../config/utils/exports.dart';
 
 class CreateTicketPage extends StatefulWidget {
-  const CreateTicketPage({super.key});
+  const CreateTicketPage({
+    super.key,
+    this.licenseDetail,
+  });
+
+  final LicenseDetails? licenseDetail;
 
   @override
   State<CreateTicketPage> createState() => _CreateTicketPageState();
@@ -18,6 +23,21 @@ class _CreateTicketPageState extends State<CreateTicketPage>
     super.initState();
     _tabController = TabController(length: 2, initialIndex: 0, vsync: this);
     _notifier = Provider.of<CreateTicketFormNotifier>(context, listen: false);
+
+    if (widget.licenseDetail != null) {
+      _notifier.formSettings[TicketField.licenseNumber]!.controller!.text =
+          widget.licenseDetail!.licenseNumber;
+      _notifier.formSettings[TicketField.firstName]!.controller!.text =
+          widget.licenseDetail!.firstName;
+      _notifier.formSettings[TicketField.middleName]!.controller!.text =
+          widget.licenseDetail!.middleName;
+      _notifier.formSettings[TicketField.lastName]!.controller!.text =
+          widget.licenseDetail!.lastName;
+      _notifier.formSettings[TicketField.address]!.controller!.text =
+          widget.licenseDetail!.address;
+      _notifier.formSettings[TicketField.birthDate]!.controller!.text =
+          widget.licenseDetail!.birthdate.toDate().toString();
+    }
 
     _tabController.addListener(() {});
   }

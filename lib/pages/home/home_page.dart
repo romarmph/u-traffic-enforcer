@@ -1,3 +1,6 @@
+import 'package:u_traffic_enforcer/pages/home/qr_code_scanner/qr_code_scanner.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+
 import '../../config/utils/exports.dart';
 
 class HomePage extends StatefulWidget {
@@ -353,7 +356,46 @@ class _HomePageState extends State<HomePage> {
             userNav(),
             const SizedBox(height: USpace.space16),
             miniDashboard(),
-            Expanded(child: recentTicketView()),
+            const SizedBox(height: USpace.space8),
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(
+            //     horizontal: USpace.space16,
+            //   ),
+            //   child: OutlinedButton.icon(
+            //     onPressed: () async {
+            //       String barcodeScanRes =
+            //           await FlutterBarcodeScanner.scanBarcode(
+            //         '#ff6666',
+            //         'Cancel',
+            //         true,
+            //         ScanMode.QR,
+            //       );
+
+            //       final licenseNumber = barcodeScanRes.split(':')[0];
+            //       final uid = barcodeScanRes.split(':')[1];
+
+            //       await FirebaseFirestore.instance
+            //           .collection('licenses')
+            //           .where('userID', isEqualTo: uid)
+            //           .where('licenseNumber', isEqualTo: licenseNumber)
+            //           .get()
+            //           .then(
+            //         (value) {
+            //           final license = LicenseDetails.fromJson(
+            //             value.docs.first.data(),
+            //           );
+
+            //           goCreateTicketWithLicense(license);
+            //         },
+            //       );
+            //     },
+            //     label: const Text("Scan QR"),
+            //     icon: const Icon(Icons.qr_code_scanner_outlined),
+            //   ),
+            // ),
+            Expanded(
+              child: recentTicketView(),
+            ),
           ],
         ),
       ),
@@ -363,6 +405,16 @@ class _HomePageState extends State<HomePage> {
         icon: Icon(Icons.add),
       ),
       bottomNavigationBar: bottomNav(),
+    );
+  }
+
+  void goCreateTicketWithLicense(LicenseDetails licenseDetails) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => CreateTicketPage(
+          licenseDetail: licenseDetails,
+        ),
+      ),
     );
   }
 }
