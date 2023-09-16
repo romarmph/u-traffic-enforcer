@@ -15,29 +15,25 @@ class CreateTicketPage extends StatefulWidget {
 class _CreateTicketPageState extends State<CreateTicketPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  late CreateTicketFormNotifier _notifier;
   final _formKey = GlobalKey<FormState>();
+
+  final _nameController = TextEditingController();
+  final _addressController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _licenseNumberController = TextEditingController();
+  final _birthDateController = TextEditingController();
+  final _plateNumberController = TextEditingController();
+  final _engineNumberController = TextEditingController();
+  final _chassisNumberController = TextEditingController();
+  final _vehicleOwnerController = TextEditingController();
+  final _vehicleOwnerAddressController = TextEditingController();
+  final _vehicleTypeController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, initialIndex: 0, vsync: this);
-    _notifier = Provider.of<CreateTicketFormNotifier>(context, listen: false);
-
-    if (widget.licenseDetail != null) {
-      _notifier.formSettings[TicketField.licenseNumber]!.controller!.text =
-          widget.licenseDetail!.licenseNumber;
-      _notifier.formSettings[TicketField.firstName]!.controller!.text =
-          widget.licenseDetail!.firstName;
-      _notifier.formSettings[TicketField.middleName]!.controller!.text =
-          widget.licenseDetail!.middleName;
-      _notifier.formSettings[TicketField.lastName]!.controller!.text =
-          widget.licenseDetail!.lastName;
-      _notifier.formSettings[TicketField.address]!.controller!.text =
-          widget.licenseDetail!.address;
-      _notifier.formSettings[TicketField.birthDate]!.controller!.text =
-          widget.licenseDetail!.birthdate.toDate().toString();
-    }
 
     _tabController.addListener(() {});
   }
@@ -45,7 +41,6 @@ class _CreateTicketPageState extends State<CreateTicketPage>
   @override
   void dispose() {
     _tabController.dispose();
-    _notifier.clearDriverFields();
     super.dispose();
   }
 
@@ -68,14 +63,21 @@ class _CreateTicketPageState extends State<CreateTicketPage>
                 key: _formKey,
                 child: TabBarView(
                   controller: _tabController,
-                  children: const [
+                  children: [
                     SingleChildScrollView(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(height: USpace.space12),
-                          DriverDetailsForm(),
-                          SizedBox(height: USpace.space12),
+                          const SizedBox(height: USpace.space12),
+                          DriverDetailsForm(
+                            nameController: _nameController,
+                            addressController: _addressController,
+                            phoneController: _phoneController,
+                            emailController: _emailController,
+                            licenseNumberController: _licenseNumberController,
+                            birthDateController: _birthDateController,
+                          ),
+                          const SizedBox(height: USpace.space12),
                         ],
                       ),
                     ),
@@ -83,9 +85,17 @@ class _CreateTicketPageState extends State<CreateTicketPage>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(height: USpace.space12),
-                          VehiecleDetailsForm(),
-                          SizedBox(height: USpace.space12),
+                          const SizedBox(height: USpace.space12),
+                          VehiecleDetailsForm(
+                            plateNumberController: _plateNumberController,
+                            engineNumberController: _engineNumberController,
+                            chassisNumberController: _chassisNumberController,
+                            vehicleOwnerController: _vehicleOwnerController,
+                            vehicleOwnerAddressController:
+                                _vehicleOwnerAddressController,
+                            vehicleTypeController: _vehicleTypeController,
+                          ),
+                          const SizedBox(height: USpace.space12),
                         ],
                       ),
                     ),
@@ -132,18 +142,7 @@ class _CreateTicketPageState extends State<CreateTicketPage>
           const SizedBox(width: USpace.space16),
           Expanded(
             child: ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate() &&
-                    _tabController.index == 0) {
-                  _tabController.animateTo(1);
-                  return;
-                }
-
-                if (_formKey.currentState!.validate() &&
-                    _tabController.index == 1) {
-                  getFieldValues();
-                }
-              },
+              onPressed: () {},
               child: const Text("Next"),
             ),
           ),
@@ -169,22 +168,5 @@ class _CreateTicketPageState extends State<CreateTicketPage>
         Tab(text: "Vehicle Details"),
       ],
     );
-  }
-
-  void getFieldValues() {
-    final formData =
-        Provider.of<CreateTicketFormNotifier>(context, listen: false);
-    formData.driverFormData.forEach((key, value) {
-      formData.driverFormData[key] =
-          formData.formSettings[key]!.controller!.text;
-    });
-    formData.vehicleFormData.forEach((key, value) {
-      if (key != TicketField.violationsID) {
-        formData.vehicleFormData[key] =
-            formData.formSettings[key]!.controller!.text;
-      }
-    });
-
-    goSelectViolation();
   }
 }

@@ -107,55 +107,32 @@ class _TicketPreviewState extends State<TicketPreview>
   }
 
   Future<void> saveTicket() async {
-    final form = Provider.of<CreateTicketFormNotifier>(context, listen: false);
-    final enforcer = Provider.of<AuthService>(context, listen: false);
+    // final form = Provider.of<CreateTicketFormNotifier>(context, listen: false);
+    // final enforcer = Provider.of<AuthService>(context, listen: false);
 
-    QuickAlert.show(
-        context: context,
-        type: QuickAlertType.loading,
-        text: 'Saving ticket...',
-        barrierDismissible: false);
+    // QuickAlert.show(
+    //     context: context,
+    //     type: QuickAlertType.loading,
+    //     text: 'Saving ticket...',
+    //     barrierDismissible: false);
 
-    final location = await LocationServices.instance.getLocation();
+    // final location = await LocationServices.instance.getLocation();
 
-    Map<String, dynamic> data = {
-      'ticketNumber': "",
-      'violationsID': form.selectedViolationsID,
-      'licenseNumber': form.driverFormData[TicketField.licenseNumber],
-      'firstName': form.driverFormData[TicketField.firstName],
-      'middleName': form.driverFormData[TicketField.middleName],
-      'lastName': form.driverFormData[TicketField.lastName],
-      'birthDate': form.driverFormData[TicketField.birthDate]
-          .toString()
-          .reverseFormatDate(),
-      'phone': form.driverFormData[TicketField.phone],
-      'email': form.driverFormData[TicketField.email],
-      'address': form.driverFormData[TicketField.address],
-      'status': TicketStatus.unpaid,
-      'vehicleType': form.vehicleFormData[TicketField.vehicleType],
-      'engineNumber': form.vehicleFormData[TicketField.engineNumber],
-      'chassisNumber': form.vehicleFormData[TicketField.chassisNumber],
-      'plateNumber': form.vehicleFormData[TicketField.plateNumber],
-      'vehicleOwner': form.vehicleFormData[TicketField.vehicleOwner],
-      'vehicleOwnerAddress':
-          form.vehicleFormData[TicketField.vehicleOwnerAddress],
-      'violationDateTime': DateTime.now(),
-      'enforcerId': enforcer.currentUser.id,
-      'driverSignature': "",
-      'placeOfViolation': location.toJson(),
-    };
+    // Ticket ticket = Ticket(
+    //   fullname:
+    // );
 
-    final future = await TicketDBHelper().saveTicket(data);
+    // final future = await TicketDBHelper.instance.createTicket(ticket);
 
-    try {
-      await renameAndUpload(form.licenseImagePath, future.id!);
-    } catch (e) {
-      print(e);
-    }
+    // try {
+    //   await renameAndUpload(form.licenseImagePath, future.id!);
+    // } catch (e) {
+    //   print(e);
+    // }
 
-    popCurrent();
+    // popCurrent();
 
-    _showSaveSuccessDialog(future);
+    // _showSaveSuccessDialog(future);
   }
 
   void _showSaveSuccessDialog(Ticket ticket) async {
@@ -183,10 +160,6 @@ class _TicketPreviewState extends State<TicketPreview>
       ),
       body: Consumer<CreateTicketFormNotifier>(
         builder: (context, form, child) {
-          final driverForm = form.driverFormData;
-          final vehicleForm = form.vehicleFormData;
-          final formSettings = form.formSettings;
-
           return Column(
             children: [
               TabBar(
@@ -197,8 +170,8 @@ class _TicketPreviewState extends State<TicketPreview>
                 child: TabBarView(
                   controller: tabController,
                   children: [
-                    _buildDetails(driverForm, formSettings),
-                    _buildDetails(vehicleForm, formSettings),
+                    _buildDetails(),
+                    _buildDetails(),
                     _buildViolationsView(),
                   ],
                 ),
@@ -258,31 +231,28 @@ class _TicketPreviewState extends State<TicketPreview>
     );
   }
 
-  Widget _buildDetails(
-    Map<TicketField, dynamic> formData,
-    Map<TicketField, dynamic> formSettings,
-  ) {
+  Widget _buildDetails() {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(USpace.space8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: formData.entries.map((data) {
-            String title = data.value;
+          // children: formData.entries.map((data) {
+          //   String title = data.value;
 
-            if (data.key == TicketField.birthDate && data.value != "") {
-              title = data.value;
-            }
+          //   if (data.key == TicketField.birthDate && data.value != "") {
+          //     title = data.value;
+          //   }
 
-            if (title.isEmpty) {
-              title = "N/A";
-            }
+          //   if (title.isEmpty) {
+          //     title = "N/A";
+          //   }
 
-            return PreviewListTile(
-              title: title,
-              subtitle: formSettings[data.key].label,
-            );
-          }).toList(),
+          //   return PreviewListTile(
+          //     title: title,
+          //     subtitle: formSettings[data.key].label,
+          //   );
+          // }).toList(),
         ),
       ),
     );
@@ -294,14 +264,11 @@ class _TicketPreviewState extends State<TicketPreview>
       newName,
     );
 
-    // Create a reference to the location you want to upload to in Firebase Storage
     FirebaseStorage storage = FirebaseStorage.instance;
     Reference ref = storage.ref().child('licenseImage/$newName.jpg');
 
-    // Upload the file to Firebase Storage
     UploadTask uploadTask = ref.putFile(newFile);
 
-    // Check for any errors
     try {
       await uploadTask;
     } on FirebaseException catch (e) {

@@ -16,4 +16,12 @@ class ULocation {
       'long': long,
     };
   }
+
+  factory ULocation.fromJson(Map<String, dynamic> json) {
+    return ULocation(
+      address: json['address'],
+      lat: json['lat'],
+      long: json['long'],
+    );
+  }
 }

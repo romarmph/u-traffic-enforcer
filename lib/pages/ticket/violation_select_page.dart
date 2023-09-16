@@ -107,8 +107,6 @@ class _ViolationsListState extends State<ViolationsList> {
         .map((e) => e.id)
         .toSet();
 
-    form.setViolationsID(selectedTicket);
-
     goPreviewTicket();
   }
 }

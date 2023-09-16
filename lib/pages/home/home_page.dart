@@ -1,6 +1,3 @@
-import 'package:u_traffic_enforcer/pages/home/qr_code_scanner/qr_code_scanner.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-
 import '../../config/utils/exports.dart';
 
 class HomePage extends StatefulWidget {
@@ -33,7 +30,7 @@ class _HomePageState extends State<HomePage> {
           ClipOval(
             child: FutureBuilder(
               future: StorageService.instance.fetchProfileImage(
-                user.currentUser.id,
+                user.currentUser.uid,
               ),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -255,10 +252,13 @@ class _HomePageState extends State<HomePage> {
 
   Widget recentTicketsList() {
     final enforcer = Provider.of<EnforcerProvider>(context, listen: false);
+    final ticketDB = TicketDBHelper.instance;
 
     return Expanded(
         child: StreamBuilder<List<Map<String, dynamic>>>(
-      stream: TicketDBHelper().getTicketsByEnforcerId(enforcer.enforcer.id!),
+      stream: ticketDB.getTicketsByEnforcerId(
+        enforcer.enforcer.id,
+      ),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -282,7 +282,7 @@ class _HomePageState extends State<HomePage> {
                       color: UColors.gray700,
                     ),
               ),
-              subtitle: Text('${ticket.firstName!} ${ticket.lastName!}'),
+              subtitle: Text(ticket.driverName),
               onTap: () {
                 viewRecentTicket(ticket, context);
               },

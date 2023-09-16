@@ -31,11 +31,11 @@ export 'package:dropdown_textfield/dropdown_textfield.dart';
 // constants
 export 'package:u_traffic_enforcer/config/constants/navigator_key.dart';
 export 'package:u_traffic_enforcer/config/constants/firebase_storage.dart';
+export 'package:u_traffic_enforcer/config/constants/plate_number_formats.dart';
 
 // enums
 export 'package:u_traffic_enforcer/config/enums/device_connection.dart';
 export 'package:u_traffic_enforcer/config/enums/field_type.dart';
-export 'package:u_traffic_enforcer/config/enums/ticket_field.dart';
 export 'package:u_traffic_enforcer/config/enums/ticket_status.dart';
 
 // enums extensions
@@ -58,11 +58,9 @@ export 'package:u_traffic_enforcer/database/enforcer_db_helper.dart';
 // models
 export 'package:u_traffic_enforcer/model/driver_model.dart';
 export 'package:u_traffic_enforcer/model/enforcer_model.dart';
-export 'package:u_traffic_enforcer/model/form_input_settings.dart';
 export 'package:u_traffic_enforcer/model/license_detail_model.dart';
 export 'package:u_traffic_enforcer/model/ticket_model.dart';
 export 'package:u_traffic_enforcer/model/violation_model.dart';
-export 'package:u_traffic_enforcer/model/user_model.dart';
 export 'package:u_traffic_enforcer/model/location_model.dart';
 export 'package:u_traffic_enforcer/model/barangays.dart';
 export 'package:u_traffic_enforcer/model/city.dart';
@@ -91,6 +89,7 @@ export 'package:u_traffic_enforcer/providers/printer_provider.dart';
 export 'package:u_traffic_enforcer/providers/ticket_provider.dart';
 export 'package:u_traffic_enforcer/providers/violations_provider.dart';
 export 'package:u_traffic_enforcer/providers/enforcer_provider.dart';
+export 'package:u_traffic_enforcer/providers/image_provider.dart';
 
 // Services
 export 'package:u_traffic_enforcer/services/auth_service.dart';

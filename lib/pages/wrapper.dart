@@ -7,7 +7,7 @@ class Wrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
 
-    return StreamBuilder<UTrafficUser?>(
+    return StreamBuilder<User?>(
       stream: authService.user,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.active) {

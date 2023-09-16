@@ -1,26 +1,28 @@
-import 'package:u_traffic_enforcer/config/extensions/string_date_formatter.dart';
+import 'package:u_traffic_enforcer/config/extensions/date_time_extension.dart';
 
 import '../../../config/utils/exports.dart';
 
 class DatePickerField extends StatelessWidget {
   const DatePickerField({
     super.key,
-    required this.field,
+    required this.controller,
+    required this.label,
+    this.validator,
   });
 
-  final TicketField field;
+  final TextEditingController controller;
+  final String label;
+  final String? Function(String?)? validator;
 
   @override
   Widget build(BuildContext context) {
-    final form = Provider.of<CreateTicketFormNotifier>(context, listen: false);
-    final formSetting = form.formSettings[field];
     return TextFormField(
       readOnly: true,
       decoration: InputDecoration(
-        labelText: formSetting!.label,
+        labelText: label,
       ),
-      controller: formSetting.controller,
-      validator: (value) => form.validateDate(value),
+      controller: controller,
+      validator: validator,
       onTap: () async {
         final date = await showDatePicker(
           context: context,
@@ -30,11 +32,7 @@ class DatePickerField extends StatelessWidget {
         );
 
         if (date != null) {
-          formSetting.controller!.text =
-              date.toString().split(' ').first.formtDate;
-          form.driverFormData[field] = date.toString().split(' ').first;
-        } else {
-          formSetting.controller!.clear();
+          controller.text = date.toAmericanDate;
         }
       },
     );

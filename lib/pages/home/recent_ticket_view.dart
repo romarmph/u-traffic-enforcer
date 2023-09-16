@@ -61,35 +61,27 @@ class _RecentTicketViewState extends State<RecentTicketView>
                   ListView(
                     children: [
                       PreviewListTile(
-                        title: widget.ticket.licenseNumber!,
+                        title: widget.ticket.licenseNumber,
                         subtitle: 'License Number',
                       ),
                       PreviewListTile(
-                        title: widget.ticket.firstName!,
-                        subtitle: 'First Name',
+                        title: widget.ticket.driverName,
+                        subtitle: 'Driver Name',
                       ),
                       PreviewListTile(
-                        title: widget.ticket.middleName!,
-                        subtitle: 'Middle Name',
-                      ),
-                      PreviewListTile(
-                        title: widget.ticket.lastName!,
+                        title: widget.ticket.birthDate.toString().formtDate,
                         subtitle: 'Last Name',
                       ),
                       PreviewListTile(
-                        title: widget.ticket.birthDate!.toString().formtDate,
-                        subtitle: 'Last Name',
-                      ),
-                      PreviewListTile(
-                        title: widget.ticket.address!,
+                        title: widget.ticket.address,
                         subtitle: 'Address',
                       ),
                       PreviewListTile(
-                        title: widget.ticket.phone!,
+                        title: widget.ticket.phone,
                         subtitle: 'Contact Number',
                       ),
                       PreviewListTile(
-                        title: widget.ticket.email!,
+                        title: widget.ticket.email,
                         subtitle: 'Email Address',
                       ),
                     ],
@@ -97,27 +89,27 @@ class _RecentTicketViewState extends State<RecentTicketView>
                   ListView(
                     children: [
                       PreviewListTile(
-                        title: widget.ticket.vehicleType!,
+                        title: widget.ticket.vehicleType,
                         subtitle: 'Vehicle Type',
                       ),
                       PreviewListTile(
-                        title: widget.ticket.plateNumber!,
+                        title: widget.ticket.plateNumber,
                         subtitle: 'Plate Number',
                       ),
                       PreviewListTile(
-                        title: widget.ticket.engineNumber!,
+                        title: widget.ticket.engineNumber,
                         subtitle: 'Engine Number',
                       ),
                       PreviewListTile(
-                        title: widget.ticket.chassisNumber!,
+                        title: widget.ticket.chassisNumber,
                         subtitle: 'Chassis Number',
                       ),
                       PreviewListTile(
-                        title: widget.ticket.vehicleOwner!,
+                        title: widget.ticket.vehicleOwner,
                         subtitle: 'Vehicle Owner',
                       ),
                       PreviewListTile(
-                        title: widget.ticket.vehicleOwnerAddress!,
+                        title: widget.ticket.vehicleOwnerAddress,
                         subtitle: 'Vehicle Owner Address',
                       ),
                     ],
@@ -127,8 +119,7 @@ class _RecentTicketViewState extends State<RecentTicketView>
                       final List<Violation> selected = [];
 
                       for (final violation in value.getViolations) {
-                        if (widget.ticket.violationsID!
-                            .contains(violation.id)) {
+                        if (widget.ticket.violationsID.contains(violation.id)) {
                           selected.add(violation);
                         }
                       }
@@ -161,22 +152,23 @@ class _RecentTicketViewState extends State<RecentTicketView>
                   ListView(
                     children: [
                       PreviewListTile(
-                        title: widget.ticket.violationDateTime!
+                        title: widget.ticket.violationDateTime
                             .toString()
                             .formtDate,
                         subtitle: 'Violation Date',
                       ),
                       PreviewListTile(
-                        title:
-                            timeFormat.format(widget.ticket.violationDateTime!),
+                        title: timeFormat.format(
+                          widget.ticket.violationDateTime.toDate(),
+                        ),
                         subtitle: 'Violation Date',
                       ),
                       PreviewListTile(
-                        title: widget.ticket.placeOfViolation!['address'],
+                        title: widget.ticket.violationPlace.address,
                         subtitle: 'Place of Violation',
                       ),
                       PreviewListTile(
-                        title: formatStatus(widget.ticket.status!),
+                        title: formatStatus(widget.ticket.status),
                         subtitle: 'Ticket Status',
                       ),
                     ],

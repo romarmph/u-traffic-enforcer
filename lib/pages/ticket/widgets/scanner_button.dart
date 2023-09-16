@@ -15,6 +15,10 @@ class ImageScannerButton extends StatefulWidget {
 class _ImageScannerButtonState extends State<ImageScannerButton> {
   @override
   Widget build(BuildContext context) {
+    final imageProvider = Provider.of<UTrafficImageProvider>(
+      context,
+    );
+
     return GestureDetector(
       onTap: () async {
         await onTap();
@@ -36,7 +40,7 @@ class _ImageScannerButtonState extends State<ImageScannerButton> {
           child: Center(
             child: Consumer<CreateTicketFormNotifier>(
               builder: (context, form, widget) {
-                if (form.licenseImagePath.isEmpty) {
+                if (imageProvider.licenseImagePath.isEmpty) {
                   return const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -60,7 +64,7 @@ class _ImageScannerButtonState extends State<ImageScannerButton> {
                 return ClipRRect(
                   borderRadius: BorderRadius.circular(USpace.space12),
                   child: Image.file(
-                    File(form.licenseImagePath),
+                    File(imageProvider.licenseImagePath),
                     fit: BoxFit.contain,
                   ),
                 );
@@ -73,7 +77,8 @@ class _ImageScannerButtonState extends State<ImageScannerButton> {
   }
 
   Future<void> onTap() async {
-    final form = Provider.of<CreateTicketFormNotifier>(context, listen: false);
+    final imageProvider =
+        Provider.of<UTrafficImageProvider>(context, listen: false);
     showLoading(
       'Scanning License',
     );
@@ -82,7 +87,7 @@ class _ImageScannerButtonState extends State<ImageScannerButton> {
     if (image == null) {
       popCurrent();
 
-      if (form.licenseImagePath.isEmpty) {
+      if (imageProvider.licenseImagePath.isEmpty) {
         showError(
           "Please take an image of the Driver's License",
           "No License Image",
@@ -105,40 +110,10 @@ class _ImageScannerButtonState extends State<ImageScannerButton> {
       return;
     }
 
-    form.setLicenseImagePath(cropped.path);
+    imageProvider.setLicenseImagePath(cropped.path);
     final scanApi = LicenseScanServices.instance;
     try {
       final data = await scanApi.sendRequest(cropped.path);
-
-      if (data!['lastname'].toString().isNotEmpty) {
-        form.formSettings[TicketField.lastName]!.controller!.text =
-            data['lastname'];
-      }
-
-      if (data['fullname'].toString().isNotEmpty) {
-        if (data['fullname'].toString().contains(',')) {
-          form.formSettings[TicketField.firstName]!.controller!.text =
-              data['fullname'].toString().split(',')[1];
-        } else {
-          form.formSettings[TicketField.firstName]!.controller!.text =
-              data['fullname'];
-        }
-      }
-
-      if (data['licensenumber'].toString().isNotEmpty) {
-        form.formSettings[TicketField.licenseNumber]!.controller!.text =
-            data['licensenumber'];
-      }
-
-      if (data['address'].toString().isNotEmpty) {
-        form.formSettings[TicketField.address]!.controller!.text =
-            data['address'];
-      }
-
-      if (data['birthdate'].toString().isNotEmpty) {
-        form.formSettings[TicketField.birthDate]!.controller!.text =
-            data['birthdate'].toString().split(' ').first.formtDate;
-      }
 
       popCurrent();
       showSuccess();

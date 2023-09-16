@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:u_traffic_enforcer/config/extensions/string_date_formatter.dart';
+import 'package:u_traffic_enforcer/config/extensions/timestamp_extension.dart';
 
 import '../../../config/utils/exports.dart';
 
@@ -111,8 +112,7 @@ class _PrinterHomeState extends State<PrinterHome> {
       'width': 48,
     };
 
-    final ticket =
-        Provider.of<TicketProvider>(context, listen: false).getTicket;
+    final ticket = Provider.of<TicketProvider>(context, listen: false).ticket;
 
     final violationProvider = Provider.of<ViolationProvider>(
       context,
@@ -173,8 +173,7 @@ class _PrinterHomeState extends State<PrinterHome> {
     list.add(
       LineText(
         type: LineText.TYPE_TEXT,
-        content:
-            "Name:\n  ${ticket.firstName ?? 'N/A'} ${ticket.middleName ?? ''} ${ticket.lastName ?? ""}",
+        content: "Name:\n  ${ticket.driverName}",
         weight: 2,
         height: 2,
         width: 2,
@@ -185,7 +184,7 @@ class _PrinterHomeState extends State<PrinterHome> {
     list.add(
       LineText(
         type: LineText.TYPE_TEXT,
-        content: "Address:\n  ${ticket.address ?? "N/A"}",
+        content: "Address:\n  ${ticket.address}",
         weight: 2,
         height: 2,
         width: 2,
@@ -196,7 +195,7 @@ class _PrinterHomeState extends State<PrinterHome> {
     list.add(
       LineText(
         type: LineText.TYPE_TEXT,
-        content: "License Number:\n  ${ticket.licenseNumber ?? "N/A"}",
+        content: "License Number:\n  ${ticket.licenseNumber}",
         weight: 2,
         height: 2,
         width: 2,
@@ -207,7 +206,7 @@ class _PrinterHomeState extends State<PrinterHome> {
     list.add(
       LineText(
         type: LineText.TYPE_TEXT,
-        content: "Plate Number:\n  ${ticket.plateNumber ?? "N/A"}",
+        content: "Plate Number:\n  ${ticket.plateNumber}",
         weight: 2,
         height: 2,
         width: 2,
@@ -218,7 +217,7 @@ class _PrinterHomeState extends State<PrinterHome> {
     list.add(
       LineText(
         type: LineText.TYPE_TEXT,
-        content: "Vehicle Type:\n  ${ticket.vehicleType ?? "N/A"}",
+        content: "Vehicle Type:\n  ${ticket.vehicleType}",
         weight: 2,
         height: 2,
         width: 2,
@@ -229,8 +228,7 @@ class _PrinterHomeState extends State<PrinterHome> {
     list.add(
       LineText(
         type: LineText.TYPE_TEXT,
-        content:
-            "Place of Violation:\n  ${ticket.placeOfViolation!['address'] ?? "N/A"}",
+        content: "Place of Violation:\n  ${ticket.violationPlace.address}",
         weight: 2,
         height: 2,
         width: 2,
@@ -254,7 +252,7 @@ class _PrinterHomeState extends State<PrinterHome> {
       LineText(
         type: LineText.TYPE_TEXT,
         content:
-            "Ticket Due Date:\n  ${ticket.violationDateTime!.add(const Duration(days: 7)).toString().formtDate} ${ticket.violationDateTime.toString().split(" ")[1].split('.')[0]}",
+            "Ticket Due Date:\n  ${ticket.violationDateTime.toAmericanData}",
         weight: 2,
         height: 2,
         width: 2,
