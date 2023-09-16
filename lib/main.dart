@@ -20,6 +20,9 @@ class UTrafficEnforcer extends StatelessWidget {
         Provider<AuthService>(
           create: (_) => AuthService(),
         ),
+        Provider<FormValidators>(
+          create: (_) => FormValidators(),
+        ),
         ChangeNotifierProvider<PrinterProvider>(
           create: (_) => PrinterProvider(),
         ),

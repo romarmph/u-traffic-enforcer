@@ -8,15 +8,18 @@ class DatePickerField extends StatelessWidget {
     required this.controller,
     required this.label,
     this.validator,
+    this.enabled,
   });
 
   final TextEditingController controller;
   final String label;
   final String? Function(String?)? validator;
+  final bool? enabled;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      enabled: enabled,
       readOnly: true,
       decoration: InputDecoration(
         labelText: label,

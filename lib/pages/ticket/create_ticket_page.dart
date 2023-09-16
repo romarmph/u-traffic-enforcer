@@ -15,6 +15,8 @@ class CreateTicketPage extends StatefulWidget {
 class _CreateTicketPageState extends State<CreateTicketPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  late CreateTicketFormNotifier _formNotifier;
+
   final _formKey = GlobalKey<FormState>();
 
   final _nameController = TextEditingController();
@@ -30,17 +32,56 @@ class _CreateTicketPageState extends State<CreateTicketPage>
   final _vehicleOwnerAddressController = TextEditingController();
   final _vehicleTypeController = TextEditingController();
 
+  String _cancelButtonText = "Cancel";
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, initialIndex: 0, vsync: this);
+    _formNotifier = Provider.of<CreateTicketFormNotifier>(
+      context,
+      listen: false,
+    );
 
-    _tabController.addListener(() {});
+    _tabController.addListener(() {
+      if (_tabController.index == 0) {
+        setState(() {
+          _cancelButtonText = "Cancel";
+        });
+      } else {
+        setState(() {
+          _cancelButtonText = "Back";
+        });
+      }
+    });
+
+    _formNotifier.addListener(() {
+      if (_formNotifier.isDriverNotPresent) {
+        _nameController.clear();
+        _addressController.clear();
+        _phoneController.clear();
+        _emailController.clear();
+        _licenseNumberController.clear();
+        _birthDateController.clear();
+        _vehicleOwnerAddressController.clear();
+        _vehicleOwnerController.clear();
+        _formNotifier.setIsVehicleOwnedByDriver(false);
+      }
+
+      if (_formNotifier.isVehicleOwnedByDriver) {
+        _vehicleOwnerController.text = _nameController.text;
+        _vehicleOwnerAddressController.text = _addressController.text;
+      } else {
+        _vehicleOwnerController.clear();
+        _vehicleOwnerAddressController.clear();
+      }
+    });
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    _formNotifier.reset();
     super.dispose();
   }
 
@@ -133,16 +174,14 @@ class _CreateTicketPageState extends State<CreateTicketPage>
         children: [
           Expanded(
             child: TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text("Cancel"),
+              onPressed: _handleBackButtonClick,
+              child: Text(_cancelButtonText),
             ),
           ),
           const SizedBox(width: USpace.space16),
           Expanded(
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: _handleNextButtonClick,
               child: const Text("Next"),
             ),
           ),
@@ -168,5 +207,19 @@ class _CreateTicketPageState extends State<CreateTicketPage>
         Tab(text: "Vehicle Details"),
       ],
     );
+  }
+
+  void _handleBackButtonClick() {
+    if (_tabController.index == 0) {
+      Navigator.pop(context);
+    } else {
+      _tabController.animateTo(_tabController.index - 1);
+    }
+  }
+
+  void _handleNextButtonClick() {
+    if (_formKey.currentState!.validate()) {
+      print('valid');
+    }
   }
 }

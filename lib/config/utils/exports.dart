@@ -90,6 +90,7 @@ export 'package:u_traffic_enforcer/providers/ticket_provider.dart';
 export 'package:u_traffic_enforcer/providers/violations_provider.dart';
 export 'package:u_traffic_enforcer/providers/enforcer_provider.dart';
 export 'package:u_traffic_enforcer/providers/image_provider.dart';
+export 'package:u_traffic_enforcer/providers/form_validator_provider.dart';
 
 // Services
 export 'package:u_traffic_enforcer/services/auth_service.dart';

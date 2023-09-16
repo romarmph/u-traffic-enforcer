@@ -1,4 +1,3 @@
-import 'package:u_traffic_enforcer/config/extensions/string_date_formatter.dart';
 import 'package:u_traffic_enforcer/services/license_scan_services.dart';
 
 import '../../../config/utils/exports.dart';
@@ -19,61 +18,65 @@ class _ImageScannerButtonState extends State<ImageScannerButton> {
       context,
     );
 
-    return GestureDetector(
-      onTap: () async {
-        await onTap();
-      },
-      child: AspectRatio(
-        aspectRatio: 3 / 2,
-        child: Container(
-          decoration: BoxDecoration(
-            color: UColors.gray100,
-            borderRadius: BorderRadius.circular(
-              USpace.space12,
+    return Consumer<CreateTicketFormNotifier>(builder: (context, form, child) {
+      return GestureDetector(
+        onTap: () async {
+          if (form.isDriverNotPresent) return;
+
+          await onTap();
+        },
+        child: AspectRatio(
+          aspectRatio: 3 / 2,
+          child: Container(
+            decoration: BoxDecoration(
+              color: UColors.gray100,
+              borderRadius: BorderRadius.circular(
+                USpace.space12,
+              ),
+              border: Border.all(
+                color: UColors.gray200,
+                width: 2,
+                strokeAlign: BorderSide.strokeAlignInside,
+              ),
             ),
-            border: Border.all(
-              color: UColors.gray200,
-              width: 2,
-              strokeAlign: BorderSide.strokeAlignInside,
-            ),
-          ),
-          child: Center(
-            child: Consumer<CreateTicketFormNotifier>(
-              builder: (context, form, widget) {
-                if (imageProvider.licenseImagePath.isEmpty) {
-                  return const Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.image,
-                        color: UColors.gray400,
-                        size: 48,
-                      ),
-                      SizedBox(height: USpace.space12),
-                      Text(
-                        "Tap here to scan license",
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w500,
+            child: Center(
+              child: Consumer<CreateTicketFormNotifier>(
+                builder: (context, form, widget) {
+                  if (imageProvider.licenseImagePath.isEmpty) {
+                    return const Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.image,
                           color: UColors.gray400,
+                          size: 48,
                         ),
-                      )
-                    ],
+                        SizedBox(height: USpace.space12),
+                        Text(
+                          "Tap here to scan license",
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w500,
+                            color: UColors.gray400,
+                          ),
+                        )
+                      ],
+                    );
+                  }
+                  return ClipRRect(
+                    borderRadius: BorderRadius.circular(USpace.space12),
+                    child: Image.file(
+                      File(imageProvider.licenseImagePath),
+                      fit: BoxFit.contain,
+                    ),
                   );
-                }
-                return ClipRRect(
-                  borderRadius: BorderRadius.circular(USpace.space12),
-                  child: Image.file(
-                    File(imageProvider.licenseImagePath),
-                    fit: BoxFit.contain,
-                  ),
-                );
-              },
+                },
+              ),
             ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   Future<void> onTap() async {

@@ -84,20 +84,20 @@ class VehiecleDetailsForm extends StatelessWidget {
                   flex: 1,
                   child: CheckboxListTile(
                     title: const Text("Owned by Driver"),
-                    // enabled: !form.noDriver,
+                    enabled: !form.isDriverNotPresent,
                     contentPadding: const EdgeInsets.all(0),
                     dense: true,
                     visualDensity: VisualDensity.compact,
-                    value: false,
-                    onChanged: (value) {},
+                    value: form.isVehicleOwnedByDriver,
+                    onChanged: (value) {
+                      form.setIsVehicleOwnedByDriver(value!);
+                    },
                   ),
                 ),
               ],
             ),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
-              // enabled: !form.noDriver,
-              // readOnly: form.ownedByDriver,
               decoration: const InputDecoration(
                 labelText: 'Vehicle Owner',
               ),
@@ -105,8 +105,6 @@ class VehiecleDetailsForm extends StatelessWidget {
             ),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
-              // enabled: !form.noDriver,
-              // readOnly: form.ownedByDriver,
               decoration: const InputDecoration(
                 labelText: 'Vehicle Owner Address',
               ),

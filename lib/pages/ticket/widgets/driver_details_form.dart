@@ -24,20 +24,25 @@ class DriverDetailsForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final formValidator = Provider.of<FormValidators>(context);
+
     return Consumer<CreateTicketFormNotifier>(
       builder: (context, form, child) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // CheckboxListTile(
-            //   title: const Text("No Driver"),
-            //   value: form.noDriver,
-            //   onChanged: (value) {},
-            // ),
+            CheckboxListTile(
+              title: const Text("No Driver"),
+              value: form.isDriverNotPresent,
+              onChanged: (value) {
+                form.setIsDriverNotPresent(value!);
+              },
+            ),
             const SizedBox(height: USpace.space12),
             const ImageScannerButton(),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
+              enabled: !form.isDriverNotPresent,
               controller: nameController,
               decoration: const InputDecoration(
                 fillColor: UColors.gray100,
@@ -46,20 +51,19 @@ class DriverDetailsForm extends StatelessWidget {
                   color: UColors.gray400,
                 ),
               ),
-              validator: (value) {
-                return null;
-              },
+              onChanged: (value) => form.setDriverName(value),
+              validator: formValidator.validateName,
             ),
-
             const SizedBox(height: USpace.space12),
             DatePickerField(
-                controller: birthDateController,
-                label: "Birthdate",
-                validator: (value) {
-                  return null;
-                }),
+              enabled: !form.isDriverNotPresent,
+              controller: birthDateController,
+              label: "Birthdate",
+              validator: formValidator.validateBithdate,
+            ),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
+              enabled: !form.isDriverNotPresent,
               controller: addressController,
               decoration: const InputDecoration(
                 fillColor: UColors.gray100,
@@ -69,9 +73,8 @@ class DriverDetailsForm extends StatelessWidget {
                 ),
               ),
               readOnly: true,
-              validator: (value) {
-                return null;
-              },
+              validator: formValidator.validateAddress,
+              onChanged: (value) => form.setDriverAddress(value),
               onTap: () async {
                 final address = await Navigator.push(
                   context,
@@ -87,6 +90,7 @@ class DriverDetailsForm extends StatelessWidget {
             ),
             const SizedBox(height: USpace.space12),
             IntlPhoneField(
+              enabled: !form.isDriverNotPresent,
               controller: phoneController,
               keyboardType: const TextInputType.numberWithOptions(),
               initialCountryCode: 'PH',
@@ -101,6 +105,7 @@ class DriverDetailsForm extends StatelessWidget {
             ),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
+              enabled: !form.isDriverNotPresent,
               controller: emailController,
               decoration: const InputDecoration(
                 fillColor: UColors.gray100,
@@ -109,14 +114,13 @@ class DriverDetailsForm extends StatelessWidget {
                   color: UColors.gray400,
                 ),
               ),
-              validator: (value) {
-                return null;
-              },
+              validator: formValidator.validateEmail,
             ),
             const SizedBox(height: USpace.space12),
             const Text("License Number"),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
+              enabled: !form.isDriverNotPresent,
               controller: licenseNumberController,
               decoration: const InputDecoration(
                 fillColor: UColors.gray100,
@@ -125,9 +129,7 @@ class DriverDetailsForm extends StatelessWidget {
                   color: UColors.gray400,
                 ),
               ),
-              validator: (value) {
-                return null;
-              },
+              validator: formValidator.validateLicenseNumber,
             ),
           ],
         );
