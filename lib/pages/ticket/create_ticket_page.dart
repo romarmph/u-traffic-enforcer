@@ -101,100 +101,109 @@ class _CreateTicketPageState extends State<CreateTicketPage>
     }
   }
 
+  void clearField() {
+    _nameController.clear();
+    _addressController.clear();
+    _phoneController.clear();
+    _emailController.clear();
+    _licenseNumberController.clear();
+    _birthDateController.clear();
+    _plateNumberController.clear();
+    _engineNumberController.clear();
+    _chassisNumberController.clear();
+    _vehicleOwnerController.clear();
+    _vehicleOwnerAddressController.clear();
+    _vehicleTypeController.clear();
+    _scannedDetails.clearDetails();
+    _imageProvider.reset();
+    _formNotifier.reset();
+  }
+
   @override
   void dispose() {
     _tabController.dispose();
-    _formNotifier.reset();
 
-    _nameController.dispose();
-    _addressController.dispose();
-    _phoneController.dispose();
-    _emailController.dispose();
-    _licenseNumberController.dispose();
-    _birthDateController.dispose();
-    _plateNumberController.dispose();
-    _engineNumberController.dispose();
-    _chassisNumberController.dispose();
-    _vehicleOwnerController.dispose();
-    _vehicleOwnerAddressController.dispose();
-    _vehicleTypeController.dispose();
-    _scannedDetails.clearDetails();
-    _imageProvider.reset();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Create Ticket"),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          _buildTabs(),
-          Expanded(
-            child: Form(
-              key: _formKey,
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.all(USpace.space16),
-                      child: Consumer<ScannedDetails>(
-                          builder: (context, details, child) {
-                        if (details.details.isNotEmpty) {
-                          _nameController.text =
-                              details.details['fullname'] ?? "";
-                          _addressController.text =
-                              details.details['address'] ?? "";
+    return WillPopScope(
+      onWillPop: () async {
+        clearField();
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Create Ticket"),
+        ),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            _buildTabs(),
+            Expanded(
+              child: Form(
+                key: _formKey,
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.all(USpace.space16),
+                        child: Consumer<ScannedDetails>(
+                            builder: (context, details, child) {
+                          if (details.details.isNotEmpty) {
+                            _nameController.text =
+                                details.details['fullname'] ?? "";
+                            _addressController.text =
+                                details.details['address'] ?? "";
 
-                          _licenseNumberController.text =
-                              details.details['licensenumber'] ?? "";
-                          _birthDateController.text = details
-                                      .details['birthdate'] !=
-                                  null
-                              ? DateTime.parse(
-                                      details.details['birthdate'].toString())
-                                  .toAmericanDate
-                              : "";
-                        }
-                        return DriverDetailsForm(
-                          nameController: _nameController,
-                          addressController: _addressController,
-                          phoneController: _phoneController,
-                          emailController: _emailController,
-                          licenseNumberController: _licenseNumberController,
-                          birthDateController: _birthDateController,
-                        );
-                      }),
-                    ),
-                  ),
-                  SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.all(USpace.space16),
-                      child: VehiecleDetailsForm(
-                        plateNumberController: _plateNumberController,
-                        engineNumberController: _engineNumberController,
-                        chassisNumberController: _chassisNumberController,
-                        vehicleOwnerController: _vehicleOwnerController,
-                        vehicleOwnerAddressController:
-                            _vehicleOwnerAddressController,
-                        vehicleTypeController: _vehicleTypeController,
+                            _licenseNumberController.text =
+                                details.details['licensenumber'] ?? "";
+                            _birthDateController.text = details
+                                        .details['birthdate'] !=
+                                    null
+                                ? DateTime.parse(
+                                        details.details['birthdate'].toString())
+                                    .toAmericanDate
+                                : "";
+                          }
+                          return DriverDetailsForm(
+                            nameController: _nameController,
+                            addressController: _addressController,
+                            phoneController: _phoneController,
+                            emailController: _emailController,
+                            licenseNumberController: _licenseNumberController,
+                            birthDateController: _birthDateController,
+                          );
+                        }),
                       ),
                     ),
-                  ),
-                ],
+                    SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.all(USpace.space16),
+                        child: VehiecleDetailsForm(
+                          plateNumberController: _plateNumberController,
+                          engineNumberController: _engineNumberController,
+                          chassisNumberController: _chassisNumberController,
+                          vehicleOwnerController: _vehicleOwnerController,
+                          vehicleOwnerAddressController:
+                              _vehicleOwnerAddressController,
+                          vehicleTypeController: _vehicleTypeController,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
+        bottomNavigationBar: _buildActionButtons(),
       ),
-      bottomNavigationBar: _buildActionButtons(),
     );
   }
 

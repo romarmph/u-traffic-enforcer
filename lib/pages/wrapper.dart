@@ -1,3 +1,5 @@
+import 'package:u_traffic_enforcer/pages/home_wrapper.dart';
+
 import '../config/utils/exports.dart';
 
 class Wrapper extends StatelessWidget {
@@ -65,7 +67,7 @@ class Wrapper extends StatelessWidget {
                 );
               }
 
-              return const HomePage();
+              return const ViewWrapper();
             },
           );
         }

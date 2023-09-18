@@ -1,3 +1,5 @@
+import 'package:firebase_cached_image/firebase_cached_image.dart';
+import 'package:u_traffic_enforcer/pages/common/bottom_nav.dart';
 import '../../config/utils/exports.dart';
 
 class HomePage extends StatefulWidget {
@@ -18,9 +20,33 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget userNav() {
-    final user = Provider.of<AuthService>(context);
+  Widget getProfileImage() {
+    final enforcer = Provider.of<EnforcerProvider>(context);
 
+    List<String> fileExtensions = ['jpg', 'jpeg', 'png'];
+
+    String baseurl = "gs://u-traffic.appspot.com/profileImage";
+    FirebaseUrl url = FirebaseUrl('');
+    for (var item in fileExtensions) {
+      try {
+        url = FirebaseUrl('$baseurl/${enforcer.enforcer.id}.$item');
+      } on Exception catch (e) {
+        // ignore: avoid_print
+        print(e);
+      }
+    }
+
+    return Image(
+      image: FirebaseImageProvider(
+        url,
+      ),
+      fit: BoxFit.cover,
+      width: 48,
+      height: 48,
+    );
+  }
+
+  Widget userNav() {
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: USpace.space16,
@@ -28,29 +54,9 @@ class _HomePageState extends State<HomePage> {
       child: Row(
         children: [
           ClipOval(
-            child: FutureBuilder(
-              future: StorageService.instance.fetchProfileImage(
-                user.currentUser.uid,
-              ),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                }
-
-                if (snapshot.data == null) {
-                  return Image.network(
-                      'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/2048px-User-avatar.svg.png');
-                }
-
-                return Image.memory(
-                  snapshot.data!,
-                  fit: BoxFit.cover,
-                  width: 48,
-                  height: 48,
-                );
-              },
-            ),
+            child: getProfileImage(),
           ),
+
           const SizedBox(width: USpace.space16),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -323,30 +329,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  int currentIndex = 0;
-  Widget bottomNav() {
-    return BottomNavigationBar(
-      currentIndex: currentIndex,
-      onTap: (index) {
-        setState(() {
-          currentIndex = index;
-        });
-      },
-      selectedItemColor: UColors.blue700,
-      unselectedItemColor: UColors.gray600,
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home_outlined),
-          label: "Home",
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.settings_outlined),
-          label: "Settings",
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -397,7 +379,7 @@ class _HomePageState extends State<HomePage> {
         label: Text("New Ticket"),
         icon: Icon(Icons.add),
       ),
-      bottomNavigationBar: bottomNav(),
+      bottomNavigationBar: const BottomNav(),
     );
   }
 

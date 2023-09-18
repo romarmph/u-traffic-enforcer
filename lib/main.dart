@@ -1,4 +1,3 @@
-
 import 'config/utils/exports.dart';
 
 void main() async {
@@ -48,6 +47,9 @@ class UTrafficEnforcer extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => VehicleTypeProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => NavIndexProvider(),
+        ),
       ],
       child: MaterialApp(
         navigatorKey: navigatorKey,
@@ -82,6 +84,7 @@ class UTrafficEnforcer extends StatelessWidget {
         initialRoute: "/",
         routes: {
           "/": (context) => const Wrapper(),
+          "/settings": (context) => const SettingsPage(),
           "/auth/login": (context) => const Login(),
           "/auth/register": (context) => const Register(),
           "/ticket/create": (context) => const CreateTicketPage(),

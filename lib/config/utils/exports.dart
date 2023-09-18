@@ -80,6 +80,7 @@ export 'package:u_traffic_enforcer/model/qr_details.dart';
 export 'package:u_traffic_enforcer/pages/auth/login_page.dart';
 export 'package:u_traffic_enforcer/pages/auth/register_page.dart';
 export 'package:u_traffic_enforcer/pages/home/home_page.dart';
+export 'package:u_traffic_enforcer/pages/settings/settings_page.dart';
 export 'package:u_traffic_enforcer/pages/home/widgets/menu_button.dart';
 export 'package:u_traffic_enforcer/pages/printer/device_scan_page.dart';
 export 'package:u_traffic_enforcer/pages/printer/printer_home.dart';
@@ -93,6 +94,9 @@ export 'package:u_traffic_enforcer/pages/ticket/widgets/vehicle_details_form.dar
 export 'package:u_traffic_enforcer/pages/ticket/widgets/scanner_button.dart';
 export 'package:u_traffic_enforcer/pages/wrapper.dart';
 
+// Routes
+export 'package:u_traffic_enforcer/config/routes.dart';
+
 // providers
 export 'package:u_traffic_enforcer/providers/create_ticket_form_notifier.dart';
 export 'package:u_traffic_enforcer/providers/printer_provider.dart';
@@ -103,6 +107,7 @@ export 'package:u_traffic_enforcer/providers/image_provider.dart';
 export 'package:u_traffic_enforcer/providers/form_validator_provider.dart';
 export 'package:u_traffic_enforcer/providers/scanned_details_provider.dart';
 export 'package:u_traffic_enforcer/providers/vehicle_type_provider.dart';
+export 'package:u_traffic_enforcer/providers/nav_index_provider.dart';
 
 // Services
 export 'package:u_traffic_enforcer/services/auth_service.dart';
