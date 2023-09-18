@@ -14,4 +14,9 @@ class ScannedDetails extends ChangeNotifier {
     _details = {};
     notifyListeners();
   }
+
+  void onChange(String key, String value) {
+    _details[key] = value;
+    notifyListeners();
+  }
 }

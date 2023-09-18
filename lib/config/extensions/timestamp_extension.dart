@@ -26,15 +26,13 @@ extension TimestampExtension on Timestamp {
     }
   }
 
-  String get formattedDueDate {
+  Timestamp get getDueDate {
     try {
-      final formatter = DateFormat('MMMM d, y');
-
       final date = toDate().add(const Duration(
         days: 7,
       ));
 
-      return formatter.format(date);
+      return Timestamp.fromDate(date);
     } catch (e) {
       rethrow;
     }

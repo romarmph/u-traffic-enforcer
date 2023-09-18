@@ -1,3 +1,5 @@
+import 'package:u_traffic_enforcer/config/extensions/timestamp_extension.dart';
+
 import '../../../config/utils/exports.dart';
 
 class TicketProvider extends ChangeNotifier {
@@ -20,6 +22,7 @@ class TicketProvider extends ChangeNotifier {
     status: TicketStatus.unpaid,
     birthDate: Timestamp.now(),
     dateCreated: Timestamp.now(),
+    ticketDueDate: Timestamp.now().getDueDate,
     violationDateTime: Timestamp.now(),
     violationPlace: const ULocation(
       address: "",

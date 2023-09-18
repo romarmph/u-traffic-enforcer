@@ -1,7 +1,4 @@
 import 'package:intl/intl.dart';
-import 'package:u_traffic_enforcer/config/extensions/date_time_extension.dart';
-import 'package:u_traffic_enforcer/config/extensions/string_date_formatter.dart';
-import 'package:u_traffic_enforcer/config/extensions/timestamp_extension.dart';
 
 import '../../../config/utils/exports.dart';
 
@@ -251,7 +248,7 @@ class _PrinterHomeState extends State<PrinterHome> {
       LineText(
         type: LineText.TYPE_TEXT,
         content:
-            "Ticket Due Date:\n  ${ticket.violationDateTime.formattedDueDate}",
+            "Ticket Due Date:\n  ${ticket.violationDateTime.getDueDate.toAmericanDate}",
         weight: 2,
         height: 2,
         width: 2,

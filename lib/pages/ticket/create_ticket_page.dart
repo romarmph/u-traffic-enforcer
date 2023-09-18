@@ -1,5 +1,6 @@
 import 'package:u_traffic_enforcer/config/extensions/date_time_extension.dart';
-import 'package:u_traffic_enforcer/config/extensions/string_date_formatter.dart';
+
+import 'package:u_traffic_enforcer/config/extensions/timestamp_extension.dart';
 
 import '../../../config/utils/exports.dart';
 
@@ -16,7 +17,7 @@ class CreateTicketPage extends StatefulWidget {
 }
 
 class _CreateTicketPageState extends State<CreateTicketPage>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   late TabController _tabController;
   late CreateTicketFormNotifier _formNotifier;
   late ScannedDetails _scannedDetails;
@@ -124,6 +125,7 @@ class _CreateTicketPageState extends State<CreateTicketPage>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Create Ticket"),
@@ -238,15 +240,6 @@ class _CreateTicketPageState extends State<CreateTicketPage>
   Widget _buildTabs() {
     return TabBar(
       controller: _tabController,
-      onTap: (index) {
-        if (index == 1 && !_formKey.currentState!.validate()) {
-          // Prevent the tab change
-          _tabController.animateTo(0);
-        } else {
-          // Allow the tab change
-          _tabController.animateTo(index);
-        }
-      },
       tabs: const [
         Tab(text: "Driver Details"),
         Tab(text: "Vehicle Details"),
@@ -265,6 +258,7 @@ class _CreateTicketPageState extends State<CreateTicketPage>
   void _handleNextButtonClick() {
     if (_tabController.index == 0 && _formKey.currentState!.validate()) {
       _tabController.animateTo(1);
+      return;
     }
 
     if (_tabController.index == 1 && _formKey.currentState!.validate()) {
@@ -304,6 +298,7 @@ class _CreateTicketPageState extends State<CreateTicketPage>
       enforcerName: enforcerName,
       status: TicketStatus.unpaid,
       dateCreated: Timestamp.now(),
+      ticketDueDate: Timestamp.now().getDueDate,
       violationDateTime: Timestamp.now(),
       violationPlace: location,
       violationsID: [],
@@ -315,4 +310,7 @@ class _CreateTicketPageState extends State<CreateTicketPage>
 
     goSelectViolation();
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

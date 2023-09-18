@@ -25,6 +25,7 @@ class DriverDetailsForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final formValidator = Provider.of<FormValidators>(context);
+    final scannedDetails = Provider.of<ScannedDetails>(context);
 
     return Consumer<CreateTicketFormNotifier>(
       builder: (context, form, child) {
@@ -54,7 +55,10 @@ class DriverDetailsForm extends StatelessWidget {
                   color: UColors.gray400,
                 ),
               ),
-              onChanged: (value) => form.setDriverName(value),
+              onChanged: (value) {
+                form.setDriverName(value);
+                scannedDetails.onChange('fullname', value);
+              },
               validator: formValidator.validateName,
             ),
             const SizedBox(height: USpace.space12),
@@ -63,6 +67,10 @@ class DriverDetailsForm extends StatelessWidget {
               controller: birthDateController,
               label: "Birthdate",
               validator: formValidator.validateBithdate,
+              onChanged: (value) => scannedDetails.onChange(
+                'birthdate',
+                value,
+              ),
             ),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
@@ -80,7 +88,10 @@ class DriverDetailsForm extends StatelessWidget {
               ),
               readOnly: true,
               validator: formValidator.validateAddress,
-              onChanged: (value) => form.setDriverAddress(value),
+              onChanged: (value) {
+                form.setDriverAddress(value);
+                scannedDetails.onChange('address', value);
+              },
               onTap: () async {
                 final address = await Navigator.push(
                   context,
@@ -139,6 +150,10 @@ class DriverDetailsForm extends StatelessWidget {
                 ),
               ),
               validator: formValidator.validateLicenseNumber,
+              onChanged: (value) => scannedDetails.onChange(
+                'license_number',
+                value,
+              ),
             ),
           ],
         );

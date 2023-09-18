@@ -40,9 +40,27 @@ class Wrapper extends StatelessWidget {
               }
 
               if (snapshot.hasError || snapshot.data == false) {
-                return const Scaffold(
+                return Scaffold(
                   body: Center(
-                    child: Text("Error loading data"),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.error,
+                          color: UColors.red400,
+                          size: USpace.space28,
+                        ),
+                        const SizedBox(height: USpace.space16),
+                        const Text("Error loading data"),
+                        const SizedBox(height: USpace.space16),
+                        ElevatedButton(
+                          onPressed: () {
+                            SystemNavigator.pop();
+                          },
+                          child: const Text("Close App"),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               }

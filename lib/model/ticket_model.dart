@@ -18,6 +18,7 @@ class Ticket {
   final String enforcerName;
   final Timestamp birthDate;
   final Timestamp dateCreated;
+  final Timestamp ticketDueDate;
   final Timestamp violationDateTime;
   final List<String?> violationsID;
   final ULocation violationPlace;
@@ -42,6 +43,7 @@ class Ticket {
     required this.status,
     required this.birthDate,
     required this.dateCreated,
+    required this.ticketDueDate,
     required this.violationDateTime,
     required this.violationPlace,
     required this.violationsID,
@@ -67,6 +69,7 @@ class Ticket {
       status: json['status'],
       birthDate: json['birthDate'],
       dateCreated: json['dateCreated'],
+      ticketDueDate: json['ticketDueDate'],
       violationDateTime: json['violationDateTime'],
       violationPlace: ULocation.fromJson(json['violationPlace']),
       violationsID: json['violationsID'],
@@ -92,6 +95,7 @@ class Ticket {
       'status': status.toString().split('.').last,
       'birthDate': birthDate,
       'dateCreated': dateCreated,
+      'ticketDueDate': ticketDueDate,
       'violationDateTime': violationDateTime,
       'violationPlace': violationPlace.toJson(),
       'violationsID': violationsID,
@@ -134,6 +138,7 @@ class Ticket {
     TicketStatus? status,
     Timestamp? birthDate,
     Timestamp? dateCreated,
+    Timestamp? ticketDueDate,
     Timestamp? violationDateTime,
     ULocation? violationPlace,
     List<String?>? violationsID,
@@ -157,6 +162,7 @@ class Ticket {
       status: status ?? this.status,
       birthDate: birthDate ?? this.birthDate,
       dateCreated: dateCreated ?? this.dateCreated,
+      ticketDueDate: ticketDueDate ?? this.ticketDueDate,
       violationDateTime: violationDateTime ?? this.violationDateTime,
       violationPlace: violationPlace ?? this.violationPlace,
       violationsID: violationsID ?? this.violationsID,
