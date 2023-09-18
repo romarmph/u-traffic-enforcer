@@ -1,4 +1,4 @@
-import 'package:u_traffic_enforcer/config/utils/exports.dart';
+import '../config/utils/exports.dart';
 
 class LicenseDetails {
   String? licenseID;
@@ -6,9 +6,7 @@ class LicenseDetails {
   Timestamp? dateCreated;
   final String licenseNumber;
   final Timestamp expirationDate;
-  final String firstName;
-  final String middleName;
-  final String lastName;
+  final String driverName;
   final String address;
   final String nationality;
   final String sex;
@@ -27,9 +25,7 @@ class LicenseDetails {
     this.dateCreated,
     required this.licenseNumber,
     required this.expirationDate,
-    required this.firstName,
-    required this.middleName,
-    required this.lastName,
+    required this.driverName,
     required this.address,
     required this.nationality,
     required this.sex,
@@ -48,9 +44,7 @@ class LicenseDetails {
       "licenseNumber": licenseNumber,
       "expirationDate": expirationDate,
       "dateCreated": dateCreated,
-      "firstName": firstName,
-      "middleName": middleName,
-      "lastName": lastName,
+      "driverName": driverName,
       "address": address,
       "nationality": nationality,
       "sex": sex,
@@ -71,9 +65,7 @@ class LicenseDetails {
       licenseNumber: json["licenseNumber"],
       expirationDate: json["expirationDate"],
       dateCreated: json["dateCreated"],
-      firstName: json["firstName"],
-      middleName: json["middleName"],
-      lastName: json["lastName"],
+      driverName: json["driverName"],
       address: json["address"],
       nationality: json["nationality"],
       sex: json["sex"],

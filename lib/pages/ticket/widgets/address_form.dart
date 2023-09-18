@@ -107,16 +107,12 @@ class _AddressFormState extends State<AddressForm> {
 
   @override
   Widget build(BuildContext context) {
-    // Device height
     final double deviceHeight = MediaQuery.of(context).size.height;
 
-    // status bar height
     final double statusBarHeight = MediaQuery.of(context).padding.top;
 
-    // app bar height
     final double appBarHeight = AppBar().preferredSize.height;
 
-    // height of the body
     final double bodyHeight = deviceHeight - (statusBarHeight + appBarHeight);
 
     return Scaffold(
@@ -232,6 +228,9 @@ class _AddressFormState extends State<AddressForm> {
                       ),
                       const SizedBox(height: USpace.space12),
                       TextFormField(
+                        inputFormatters: [
+                          UpperCaseTextFormatter(),
+                        ],
                         controller: _streetController,
                         decoration: const InputDecoration(
                           labelText: "Street",
@@ -239,6 +238,9 @@ class _AddressFormState extends State<AddressForm> {
                       ),
                       const SizedBox(height: USpace.space12),
                       TextFormField(
+                        inputFormatters: [
+                          UpperCaseTextFormatter(),
+                        ],
                         controller: _numberController,
                         decoration: const InputDecoration(
                           labelText: "House No./Building",

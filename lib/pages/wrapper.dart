@@ -15,19 +15,39 @@ class Wrapper extends StatelessWidget {
             return const Login();
           }
 
-          return FutureBuilder(
-            future: setEnforcer(context),
+          return FutureBuilder<bool>(
+            future: loadData(context),
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                load(context);
-                return const HomePage();
-              } else {
-                return const Scaffold(
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Scaffold(
                   body: Center(
-                    child: CircularProgressIndicator(),
+                    child: Padding(
+                      padding: const EdgeInsets.all(USpace.space32),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Loading data...",
+                            style: const UTextStyle().textlgfontmedium,
+                          ),
+                          const SizedBox(height: USpace.space16),
+                          const LinearProgressIndicator(),
+                        ],
+                      ),
+                    ),
                   ),
                 );
               }
+
+              if (snapshot.hasError || snapshot.data == false) {
+                return const Scaffold(
+                  body: Center(
+                    child: Text("Error loading data"),
+                  ),
+                );
+              }
+
+              return const HomePage();
             },
           );
         }
@@ -40,21 +60,34 @@ class Wrapper extends StatelessWidget {
     );
   }
 
-  Future<void> setEnforcer(BuildContext context) async {
-    final enforcerProvider =
-        Provider.of<EnforcerProvider>(context, listen: false);
-    final enforcer = await EnforcerDBHelper.instance.getEnforcer();
+  Future<bool> loadData(BuildContext context) async {
+    try {
+      final enforcerProvider = Provider.of<EnforcerProvider>(
+        context,
+        listen: false,
+      );
 
-    enforcerProvider.setEnforcer(enforcer);
-  }
+      final violationsProvider = Provider.of<ViolationProvider>(
+        context,
+        listen: false,
+      );
 
-  void load(BuildContext context) async {
-    final violationsProvider = Provider.of<ViolationProvider>(
-      context,
-      listen: false,
-    );
-    final violations = await ViolationsDatabase().getViolations();
+      final vehicleTypeProvider = Provider.of<VehicleTypeProvider>(
+        context,
+        listen: false,
+      );
 
-    violationsProvider.setViolations(violations);
+      final enforcer = await EnforcerDBHelper.instance.getEnforcer();
+      final violations = await ViolationsDatabase().getViolations();
+      final vehicleTypes = await VehicleTypeDBHelper.instance.getVehicleTypes();
+
+      violationsProvider.setViolations(violations);
+      enforcerProvider.setEnforcer(enforcer);
+      vehicleTypeProvider.setVehicleTypes(vehicleTypes);
+
+      return true;
+    } catch (e) {
+      rethrow;
+    }
   }
 }

@@ -21,6 +21,7 @@ export 'package:location/location.dart';
 export 'package:google_geocoding_api/google_geocoding_api.dart';
 export 'package:http/http.dart';
 export 'package:dropdown_textfield/dropdown_textfield.dart';
+export 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 ///
 ///
@@ -38,8 +39,12 @@ export 'package:u_traffic_enforcer/config/enums/device_connection.dart';
 export 'package:u_traffic_enforcer/config/enums/field_type.dart';
 export 'package:u_traffic_enforcer/config/enums/ticket_status.dart';
 
-// enums extensions
+// extensions
 export 'package:u_traffic_enforcer/config/extensions/input_validator.dart';
+export 'package:u_traffic_enforcer/config/extensions/string_date_formatter.dart';
+export 'package:u_traffic_enforcer/config/extensions/upper_case_input_format.dart';
+
+// themes
 export 'package:u_traffic_enforcer/config/themes/colors.dart';
 export 'package:u_traffic_enforcer/config/themes/spacing.dart';
 export 'package:u_traffic_enforcer/config/themes/textstyles.dart';
@@ -54,6 +59,7 @@ export 'package:u_traffic_enforcer/config/utils/nav_utils.dart';
 export 'package:u_traffic_enforcer/database/ticket_db_helper.dart';
 export 'package:u_traffic_enforcer/database/violations_db_helper.dart';
 export 'package:u_traffic_enforcer/database/enforcer_db_helper.dart';
+export 'package:u_traffic_enforcer/database/vehicle_types_db_helper.dart';
 
 // models
 export 'package:u_traffic_enforcer/model/driver_model.dart';
@@ -65,6 +71,8 @@ export 'package:u_traffic_enforcer/model/location_model.dart';
 export 'package:u_traffic_enforcer/model/barangays.dart';
 export 'package:u_traffic_enforcer/model/city.dart';
 export 'package:u_traffic_enforcer/model/province.dart';
+export 'package:u_traffic_enforcer/model/vehicle_type.dart';
+export 'package:u_traffic_enforcer/model/qr_details.dart';
 
 // pages
 export 'package:u_traffic_enforcer/pages/auth/login_page.dart';
@@ -91,6 +99,8 @@ export 'package:u_traffic_enforcer/providers/violations_provider.dart';
 export 'package:u_traffic_enforcer/providers/enforcer_provider.dart';
 export 'package:u_traffic_enforcer/providers/image_provider.dart';
 export 'package:u_traffic_enforcer/providers/form_validator_provider.dart';
+export 'package:u_traffic_enforcer/providers/scanned_details_provider.dart';
+export 'package:u_traffic_enforcer/providers/vehicle_type_provider.dart';
 
 // Services
 export 'package:u_traffic_enforcer/services/auth_service.dart';

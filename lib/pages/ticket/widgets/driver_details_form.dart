@@ -42,6 +42,9 @@ class DriverDetailsForm extends StatelessWidget {
             const ImageScannerButton(),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
+              formatters: [
+                UpperCaseTextFormatter(),
+              ],
               enabled: !form.isDriverNotPresent,
               controller: nameController,
               decoration: const InputDecoration(
@@ -63,6 +66,9 @@ class DriverDetailsForm extends StatelessWidget {
             ),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
+              formatters: [
+                UpperCaseTextFormatter(),
+              ],
               enabled: !form.isDriverNotPresent,
               controller: addressController,
               decoration: const InputDecoration(
@@ -120,6 +126,9 @@ class DriverDetailsForm extends StatelessWidget {
             const Text("License Number"),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
+              formatters: [
+                UpperCaseTextFormatter(),
+              ],
               enabled: !form.isDriverNotPresent,
               controller: licenseNumberController,
               decoration: const InputDecoration(

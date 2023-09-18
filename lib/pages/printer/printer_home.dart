@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:u_traffic_enforcer/config/extensions/date_time_extension.dart';
 import 'package:u_traffic_enforcer/config/extensions/string_date_formatter.dart';
 import 'package:u_traffic_enforcer/config/extensions/timestamp_extension.dart';
 
@@ -119,9 +120,6 @@ class _PrinterHomeState extends State<PrinterHome> {
       listen: false,
     );
 
-    final enforcer =
-        Provider.of<EnforcerProvider>(context, listen: false).enforcer;
-
     final dateFormatter = DateFormat("yyyy-MM-dd hh:mm:ss");
 
     List<LineText> list = [];
@@ -206,7 +204,8 @@ class _PrinterHomeState extends State<PrinterHome> {
     list.add(
       LineText(
         type: LineText.TYPE_TEXT,
-        content: "Plate Number:\n  ${ticket.plateNumber}",
+        content:
+            "Plate Number:\n  ${ticket.plateNumber.isEmpty ? 'N/A' : ticket.plateNumber}",
         weight: 2,
         height: 2,
         width: 2,
@@ -240,7 +239,7 @@ class _PrinterHomeState extends State<PrinterHome> {
       LineText(
         type: LineText.TYPE_TEXT,
         content:
-            "Date and Time of Violation:\n  ${ticket.violationDateTime.toString().formtDate} ${ticket.violationDateTime.toString().split(" ")[1].split('.')[0]}",
+            "Date and Time of Violation:\n  ${ticket.violationDateTime.toAmericanDate} ${ticket.violationDateTime.toTime}",
         weight: 2,
         height: 2,
         width: 2,
@@ -252,7 +251,7 @@ class _PrinterHomeState extends State<PrinterHome> {
       LineText(
         type: LineText.TYPE_TEXT,
         content:
-            "Ticket Due Date:\n  ${ticket.violationDateTime.toAmericanData}",
+            "Ticket Due Date:\n  ${ticket.violationDateTime.formattedDueDate}",
         weight: 2,
         height: 2,
         width: 2,
@@ -263,8 +262,7 @@ class _PrinterHomeState extends State<PrinterHome> {
     list.add(
       LineText(
         type: LineText.TYPE_TEXT,
-        content:
-            "Enforcer:\n  ${enforcer.firstName} ${enforcer.middleName} ${enforcer.lastName}\n",
+        content: "Enforcer:\n  ${ticket.enforcerName}\n",
         weight: 2,
         height: 2,
         width: 2,
@@ -286,7 +284,7 @@ class _PrinterHomeState extends State<PrinterHome> {
     );
 
     final List<Violation> driverViolations = violationProvider.getViolations
-        .where((element) => element.isSelected)
+        .where((element) => ticket.violationsID.contains(element.id))
         .toList();
 
     for (final violation in driverViolations) {

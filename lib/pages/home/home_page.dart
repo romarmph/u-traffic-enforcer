@@ -78,7 +78,9 @@ class _HomePageState extends State<HomePage> {
 
   Widget viewScheduleBtn() {
     return TextButton(
-      onPressed: () {},
+      onPressed: () {
+        AuthService().signOut();
+      },
       child: const Text("View Schedule"),
     );
   }
@@ -357,42 +359,33 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: USpace.space16),
             miniDashboard(),
             const SizedBox(height: USpace.space8),
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(
-            //     horizontal: USpace.space16,
-            //   ),
-            //   child: OutlinedButton.icon(
-            //     onPressed: () async {
-            //       String barcodeScanRes =
-            //           await FlutterBarcodeScanner.scanBarcode(
-            //         '#ff6666',
-            //         'Cancel',
-            //         true,
-            //         ScanMode.QR,
-            //       );
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: USpace.space16,
+              ),
+              child: OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.all(USpace.space24),
+                ),
+                onPressed: () async {
+                  String barcodeScanRes =
+                      await FlutterBarcodeScanner.scanBarcode(
+                    '#ff6666',
+                    'Cancel',
+                    true,
+                    ScanMode.QR,
+                  );
 
-            //       final licenseNumber = barcodeScanRes.split(':')[0];
-            //       final uid = barcodeScanRes.split(':')[1];
+                  QRDetails qrDetails = QRDetails.fromJson(
+                    jsonDecode(barcodeScanRes),
+                  );
 
-            //       await FirebaseFirestore.instance
-            //           .collection('licenses')
-            //           .where('userID', isEqualTo: uid)
-            //           .where('licenseNumber', isEqualTo: licenseNumber)
-            //           .get()
-            //           .then(
-            //         (value) {
-            //           final license = LicenseDetails.fromJson(
-            //             value.docs.first.data(),
-            //           );
-
-            //           goCreateTicketWithLicense(license);
-            //         },
-            //       );
-            //     },
-            //     label: const Text("Scan QR"),
-            //     icon: const Icon(Icons.qr_code_scanner_outlined),
-            //   ),
-            // ),
+                  goCreateTicketWithLicense(qrDetails);
+                },
+                label: const Text("Scan QR"),
+                icon: const Icon(Icons.qr_code_scanner_outlined),
+              ),
+            ),
             Expanded(
               child: recentTicketView(),
             ),
@@ -408,11 +401,11 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void goCreateTicketWithLicense(LicenseDetails licenseDetails) {
+  void goCreateTicketWithLicense(QRDetails qrDetails) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => CreateTicketPage(
-          licenseDetail: licenseDetails,
+          qrDetails: qrDetails,
         ),
       ),
     );

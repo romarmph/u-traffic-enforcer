@@ -20,6 +20,7 @@ class VehiecleDetailsForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final formValidator = Provider.of<FormValidators>(context);
     return Consumer<CreateTicketFormNotifier>(
       builder: (context, form, child) {
         return Column(
@@ -35,6 +36,9 @@ class VehiecleDetailsForm extends StatelessWidget {
             ),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
+              formatters: [
+                UpperCaseTextFormatter(),
+              ],
               decoration: InputDecoration(
                 labelText: 'Plate Number',
                 suffixIcon: IconButton(
@@ -49,13 +53,14 @@ class VehiecleDetailsForm extends StatelessWidget {
                   },
                 ),
               ),
-              validator: (value) {
-                return null;
-              },
+              validator: formValidator.validatePlateNumber,
               controller: plateNumberController,
             ),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
+              formatters: [
+                UpperCaseTextFormatter(),
+              ],
               decoration: const InputDecoration(
                 labelText: 'Engine Number',
               ),
@@ -66,6 +71,9 @@ class VehiecleDetailsForm extends StatelessWidget {
             ),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
+              formatters: [
+                UpperCaseTextFormatter(),
+              ],
               decoration: const InputDecoration(
                 labelText: 'Chassis Number',
               ),
@@ -98,6 +106,9 @@ class VehiecleDetailsForm extends StatelessWidget {
             ),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
+              formatters: [
+                UpperCaseTextFormatter(),
+              ],
               decoration: const InputDecoration(
                 labelText: 'Vehicle Owner',
               ),
@@ -105,6 +116,9 @@ class VehiecleDetailsForm extends StatelessWidget {
             ),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
+              formatters: [
+                UpperCaseTextFormatter(),
+              ],
               decoration: const InputDecoration(
                 labelText: 'Vehicle Owner Address',
               ),
@@ -127,15 +141,14 @@ class VehicleTypeInputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final formValidator = Provider.of<FormValidators>(context);
     return TextFormField(
       readOnly: true,
       decoration: const InputDecoration(
         labelText: "Vehicle Type",
       ),
       controller: controller,
-      validator: (value) {
-        return null;
-      },
+      validator: formValidator.validateVehicleType,
       onTap: () async {
         final type = await showDialog(
           context: context,

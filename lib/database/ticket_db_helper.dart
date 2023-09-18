@@ -53,17 +53,22 @@ class TicketDBHelper {
         throw Exception('ticket-already-exists');
       }
 
+      var newDocRef = ticketCollection.doc();
+      String newDocId = newDocRef.id;
+
       Ticket updatedTicket = ticket.copyWith(
         ticketNumber: newCount,
         dateCreated: Timestamp.now(),
       );
 
       transaction.set(
-        ticketCollection.doc(),
+        newDocRef,
         updatedTicket.toJson(),
       );
 
-      return updatedTicket;
+      return updatedTicket.copyWith(
+        id: newDocId,
+      );
     });
   }
 }

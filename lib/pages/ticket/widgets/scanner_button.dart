@@ -82,6 +82,8 @@ class _ImageScannerButtonState extends State<ImageScannerButton> {
   Future<void> onTap() async {
     final imageProvider =
         Provider.of<UTrafficImageProvider>(context, listen: false);
+    final scanDetailsProvider =
+        Provider.of<ScannedDetails>(context, listen: false);
     showLoading(
       'Scanning License',
     );
@@ -117,6 +119,8 @@ class _ImageScannerButtonState extends State<ImageScannerButton> {
     final scanApi = LicenseScanServices.instance;
     try {
       final data = await scanApi.sendRequest(cropped.path);
+
+      scanDetailsProvider.setDetails(data!);
 
       popCurrent();
       showSuccess();

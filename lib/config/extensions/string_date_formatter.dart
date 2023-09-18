@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:u_traffic_enforcer/config/utils/exports.dart';
 
 extension StringDate on String {
   String get formtDate {
@@ -32,6 +33,21 @@ extension StringDate on String {
       return DateTime.parse(this);
     } catch (e) {
       return null;
+    }
+  }
+
+  Timestamp get toTimestamp {
+    try {
+      final stringDate = replaceAll('/', '-');
+      final dateParts = stringDate.split('-');
+
+      final date = DateTime.parse(
+        [dateParts[2], dateParts[0], dateParts[1]].join('-'),
+      );
+
+      return Timestamp.fromDate(date);
+    } catch (e) {
+      rethrow;
     }
   }
 }

@@ -89,11 +89,11 @@ class Ticket {
       'vehicleOwnerAddress': vehicleOwnerAddress,
       'enforcerID': enforcerID,
       'enforcerName': enforcerName,
-      'status': status,
+      'status': status.toString().split('.').last,
       'birthDate': birthDate,
       'dateCreated': dateCreated,
       'violationDateTime': violationDateTime,
-      'violationPlace': violationPlace,
+      'violationPlace': violationPlace.toJson(),
       'violationsID': violationsID,
     };
   }

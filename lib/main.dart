@@ -1,3 +1,4 @@
+
 import 'config/utils/exports.dart';
 
 void main() async {
@@ -40,7 +41,13 @@ class UTrafficEnforcer extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => UTrafficImageProvider(),
-        )
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ScannedDetails(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => VehicleTypeProvider(),
+        ),
       ],
       child: MaterialApp(
         navigatorKey: navigatorKey,

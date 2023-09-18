@@ -1,4 +1,4 @@
-import 'package:u_traffic_enforcer/config/extensions/string_date_formatter.dart';
+import 'package:u_traffic_enforcer/config/extensions/timestamp_extension.dart';
 
 import '../../config/utils/exports.dart';
 
@@ -107,32 +107,69 @@ class _TicketPreviewState extends State<TicketPreview>
   }
 
   Future<void> saveTicket() async {
-    // final form = Provider.of<CreateTicketFormNotifier>(context, listen: false);
-    // final enforcer = Provider.of<AuthService>(context, listen: false);
+    final imageProvider = Provider.of<UTrafficImageProvider>(
+      context,
+      listen: false,
+    );
+    final ticketProvider = Provider.of<TicketProvider>(
+      context,
+      listen: false,
+    );
 
-    // QuickAlert.show(
-    //     context: context,
-    //     type: QuickAlertType.loading,
-    //     text: 'Saving ticket...',
-    //     barrierDismissible: false);
+    QuickAlert.show(
+        context: context,
+        type: QuickAlertType.loading,
+        text: 'Saving ticket...',
+        barrierDismissible: false);
 
-    // final location = await LocationServices.instance.getLocation();
+    Ticket ticket = ticketProvider.ticket;
 
-    // Ticket ticket = Ticket(
-    //   fullname:
-    // );
+    final futureTicket = await TicketDBHelper.instance.createTicket(ticket);
 
-    // final future = await TicketDBHelper.instance.createTicket(ticket);
+    // if (imageProvider.licenseImagePath.isNotEmpty) {
+    //   final uploadStatus = await renameAndUpload(
+    //     imageProvider.licenseImagePath,
+    //     futureTicket.id!,
+    //   );
 
-    // try {
-    //   await renameAndUpload(form.licenseImagePath, future.id!);
-    // } catch (e) {
-    //   print(e);
+    //   if (uploadStatus) {
+    //     _showUploadSucessDialog();
+    //   } else {
+    //     _showUploadFailedDialog();
+    //   }
     // }
+    final uploadStatus = await renameAndUpload(
+      imageProvider.licenseImagePath,
+      futureTicket.id!,
+    );
 
-    // popCurrent();
+    if (uploadStatus) {
+      _showUploadSucessDialog();
+    } else {
+      _showUploadFailedDialog();
+    }
 
-    // _showSaveSuccessDialog(future);
+    popCurrent();
+
+    _showSaveSuccessDialog(futureTicket);
+  }
+
+  void _showUploadSucessDialog() {
+    QuickAlert.show(
+      context: context,
+      type: QuickAlertType.success,
+      text: "Image uploaded successfully.",
+      barrierDismissible: false,
+    );
+  }
+
+  void _showUploadFailedDialog() {
+    QuickAlert.show(
+      context: context,
+      type: QuickAlertType.error,
+      text: "Image upload failed.",
+      barrierDismissible: false,
+    );
   }
 
   void _showSaveSuccessDialog(Ticket ticket) async {
@@ -170,8 +207,8 @@ class _TicketPreviewState extends State<TicketPreview>
                 child: TabBarView(
                   controller: tabController,
                   children: [
-                    _buildDetails(),
-                    _buildDetails(),
+                    _driverDetails(),
+                    _vehicleDetails(),
                     _buildViolationsView(),
                   ],
                 ),
@@ -231,34 +268,84 @@ class _TicketPreviewState extends State<TicketPreview>
     );
   }
 
-  Widget _buildDetails() {
+  Widget _driverDetails() {
+    final ticket = Provider.of<TicketProvider>(context, listen: false).ticket;
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(USpace.space8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          // children: formData.entries.map((data) {
-          //   String title = data.value;
-
-          //   if (data.key == TicketField.birthDate && data.value != "") {
-          //     title = data.value;
-          //   }
-
-          //   if (title.isEmpty) {
-          //     title = "N/A";
-          //   }
-
-          //   return PreviewListTile(
-          //     title: title,
-          //     subtitle: formSettings[data.key].label,
-          //   );
-          // }).toList(),
+          children: [
+            PreviewListTile(
+              title: ticket.licenseNumber,
+              subtitle: 'License Number',
+            ),
+            PreviewListTile(
+              title: ticket.driverName,
+              subtitle: 'Driver Name',
+            ),
+            PreviewListTile(
+              title: ticket.birthDate.toAmericanDate,
+              subtitle: 'Birthdate',
+            ),
+            PreviewListTile(
+              title: ticket.address,
+              subtitle: 'Address',
+            ),
+            PreviewListTile(
+              title: ticket.phone,
+              subtitle: 'Phone Number',
+            ),
+            PreviewListTile(
+              title: ticket.email,
+              subtitle: 'Email Address',
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Future<void> renameAndUpload(String oldPath, String newName) async {
+  Widget _vehicleDetails() {
+    final ticket = Provider.of<TicketProvider>(context, listen: false).ticket;
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(USpace.space8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            PreviewListTile(
+              title: ticket.vehicleType,
+              subtitle: 'Vehicle Type',
+            ),
+            PreviewListTile(
+              title: ticket.plateNumber,
+              subtitle: 'Plate Number',
+            ),
+            PreviewListTile(
+              title: ticket.engineNumber,
+              subtitle: 'Engine Number',
+            ),
+            PreviewListTile(
+              title: ticket.chassisNumber,
+              subtitle: 'Chassis Number',
+            ),
+            // Vehicle owner
+            PreviewListTile(
+              title: ticket.vehicleOwner,
+              subtitle: 'Vehicle Owner Name',
+            ),
+            PreviewListTile(
+              title: ticket.vehicleOwnerAddress,
+              subtitle: 'Vehicle Owner Address',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<bool> renameAndUpload(String oldPath, String newName) async {
     final newFile = ImagePickerService.instance.rename(
       oldPath,
       newName,
@@ -271,8 +358,10 @@ class _TicketPreviewState extends State<TicketPreview>
 
     try {
       await uploadTask;
+
+      return true;
     } on FirebaseException catch (e) {
-      print(e);
+      return false;
     }
   }
 }

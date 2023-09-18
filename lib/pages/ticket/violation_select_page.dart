@@ -91,7 +91,7 @@ class _ViolationsListState extends State<ViolationsList> {
 
   void _previewTicket() {
     final provider = Provider.of<ViolationProvider>(context, listen: false);
-    final form = Provider.of<CreateTicketFormNotifier>(context, listen: false);
+    final ticketProvier = Provider.of<TicketProvider>(context, listen: false);
 
     if (provider.getViolations.where((element) => element.isSelected).isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -102,10 +102,16 @@ class _ViolationsListState extends State<ViolationsList> {
       return;
     }
 
-    final Set<String?> selectedTicket = provider.getViolations
+    final List<String?> selectedViolations = provider.getViolations
         .where((element) => element.isSelected)
         .map((e) => e.id)
-        .toSet();
+        .toList();
+
+    Ticket updatedTicket = ticketProvier.ticket.copyWith(
+      violationsID: selectedViolations,
+    );
+
+    ticketProvier.updateTicket(updatedTicket);
 
     goPreviewTicket();
   }
