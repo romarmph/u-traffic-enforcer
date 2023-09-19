@@ -1,7 +1,7 @@
 import '../config/utils/exports.dart';
 
 class AuthService {
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  static final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   User? _userFromFirebase(User? user) {
@@ -65,5 +65,17 @@ class AuthService {
 
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
+  }
+
+  Future<void> updatePassword(String newPassword, String oldPassword) async {
+    final User currentUser = _firebaseAuth.currentUser!;
+
+    UserCredential userCredential =
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: currentUser.email!,
+      password: oldPassword,
+    );
+
+    await userCredential.user!.updatePassword(newPassword);
   }
 }

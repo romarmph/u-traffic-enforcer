@@ -85,6 +85,8 @@ class UTrafficEnforcer extends StatelessWidget {
         routes: {
           "/": (context) => const Wrapper(),
           "/settings": (context) => const SettingsPage(),
+          "/settings/updatepassword": (context) => const PasswordChangePage(),
+          "/settings/leave": (context) => const LeavePage(),
           "/auth/login": (context) => const Login(),
           "/auth/register": (context) => const Register(),
           "/ticket/create": (context) => const CreateTicketPage(),

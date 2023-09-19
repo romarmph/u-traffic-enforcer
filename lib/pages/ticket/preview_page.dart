@@ -1,5 +1,3 @@
-import 'package:u_traffic_enforcer/config/extensions/timestamp_extension.dart';
-
 import '../../config/utils/exports.dart';
 
 class TicketPreview extends StatefulWidget {
@@ -360,6 +358,7 @@ class _TicketPreviewState extends State<TicketPreview>
       await uploadTask;
 
       return true;
+      // ignore: unused_catch_clause
     } on FirebaseException catch (e) {
       return false;
     }

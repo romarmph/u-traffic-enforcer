@@ -47,7 +47,7 @@ extension InputValidator on String {
   }
 
   bool get isPasswordLengthValid {
-    return length >= 8;
+    return length < 8;
   }
 
   bool isPasswordConfirmed(String password) {
