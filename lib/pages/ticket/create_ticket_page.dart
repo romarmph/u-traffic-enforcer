@@ -1,7 +1,3 @@
-import 'package:u_traffic_enforcer/config/extensions/date_time_extension.dart';
-
-import 'package:u_traffic_enforcer/config/extensions/timestamp_extension.dart';
-
 import '../../../config/utils/exports.dart';
 
 class CreateTicketPage extends StatefulWidget {
@@ -170,6 +166,8 @@ class _CreateTicketPageState extends State<CreateTicketPage>
                                         details.details['birthdate'].toString())
                                     .toAmericanDate
                                 : "";
+
+                            details.clearDetails();
                           }
                           return DriverDetailsForm(
                             nameController: _nameController,
