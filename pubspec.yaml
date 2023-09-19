@@ -60,6 +60,7 @@ dependencies:
   flutter_barcode_scanner: ^2.0.0
   cached_network_image: ^3.2.3
   firebase_cached_image: ^0.4.4
+  syncfusion_flutter_signaturepad: ^23.1.36
 
 dev_dependencies:
   flutter_test:

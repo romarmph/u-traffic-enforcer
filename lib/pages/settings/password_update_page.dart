@@ -1,5 +1,3 @@
-import 'package:u_traffic_enforcer/pages/common/bottom_nav.dart';
-
 import '../../config/utils/exports.dart';
 
 class PasswordChangePage extends StatefulWidget {

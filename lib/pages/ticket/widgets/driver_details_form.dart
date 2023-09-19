@@ -25,7 +25,6 @@ class DriverDetailsForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final formValidator = Provider.of<FormValidators>(context);
-    final scannedDetails = Provider.of<ScannedDetails>(context);
 
     return Consumer<CreateTicketFormNotifier>(
       builder: (context, form, child) {
@@ -57,7 +56,6 @@ class DriverDetailsForm extends StatelessWidget {
               ),
               onChanged: (value) {
                 form.setDriverName(value);
-                scannedDetails.onChange('fullname', value);
               },
               validator: formValidator.validateName,
             ),
@@ -67,10 +65,7 @@ class DriverDetailsForm extends StatelessWidget {
               controller: birthDateController,
               label: "Birthdate",
               validator: formValidator.validateBithdate,
-              onChanged: (value) => scannedDetails.onChange(
-                'birthdate',
-                value,
-              ),
+              onChanged: (value) {},
             ),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
@@ -90,7 +85,6 @@ class DriverDetailsForm extends StatelessWidget {
               validator: formValidator.validateAddress,
               onChanged: (value) {
                 form.setDriverAddress(value);
-                scannedDetails.onChange('address', value);
               },
               onTap: () async {
                 final address = await Navigator.push(
@@ -150,10 +144,7 @@ class DriverDetailsForm extends StatelessWidget {
                 ),
               ),
               validator: formValidator.validateLicenseNumber,
-              onChanged: (value) => scannedDetails.onChange(
-                'license_number',
-                value,
-              ),
+              onChanged: (value) {},
             ),
           ],
         );

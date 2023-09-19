@@ -13,7 +13,7 @@ class CreateTicketPage extends StatefulWidget {
 }
 
 class _CreateTicketPageState extends State<CreateTicketPage>
-    with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
+    with TickerProviderStateMixin {
   late TabController _tabController;
   late CreateTicketFormNotifier _formNotifier;
   late ScannedDetails _scannedDetails;
@@ -39,7 +39,11 @@ class _CreateTicketPageState extends State<CreateTicketPage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, initialIndex: 0, vsync: this);
+    _tabController = TabController(
+      length: 2,
+      initialIndex: 0,
+      vsync: this,
+    );
     _formNotifier = Provider.of<CreateTicketFormNotifier>(
       context,
       listen: false,
@@ -124,7 +128,6 @@ class _CreateTicketPageState extends State<CreateTicketPage>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return WillPopScope(
       onWillPop: () async {
         clearField();
@@ -146,51 +149,55 @@ class _CreateTicketPageState extends State<CreateTicketPage>
                 child: TabBarView(
                   controller: _tabController,
                   children: [
-                    SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.all(USpace.space16),
-                        child: Consumer<ScannedDetails>(
-                            builder: (context, details, child) {
-                          if (details.details.isNotEmpty) {
-                            _nameController.text =
-                                details.details['fullname'] ?? "";
-                            _addressController.text =
-                                details.details['address'] ?? "";
+                    KeepAliveWrapper(
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.all(USpace.space16),
+                          child: Consumer<ScannedDetails>(
+                              builder: (context, details, child) {
+                            if (details.details.isNotEmpty) {
+                              _nameController.text =
+                                  details.details['fullname'] ?? "";
+                              _addressController.text =
+                                  details.details['address'] ?? "";
 
-                            _licenseNumberController.text =
-                                details.details['licensenumber'] ?? "";
-                            _birthDateController.text = details
-                                        .details['birthdate'] !=
-                                    null
-                                ? DateTime.parse(
-                                        details.details['birthdate'].toString())
-                                    .toAmericanDate
-                                : "";
+                              _licenseNumberController.text =
+                                  details.details['licensenumber'] ?? "";
+                              _birthDateController.text =
+                                  details.details['birthdate'] != null
+                                      ? DateTime.parse(details
+                                              .details['birthdate']
+                                              .toString())
+                                          .toAmericanDate
+                                      : "";
 
-                            details.clearDetails();
-                          }
-                          return DriverDetailsForm(
-                            nameController: _nameController,
-                            addressController: _addressController,
-                            phoneController: _phoneController,
-                            emailController: _emailController,
-                            licenseNumberController: _licenseNumberController,
-                            birthDateController: _birthDateController,
-                          );
-                        }),
+                              details.clearDetails();
+                            }
+                            return DriverDetailsForm(
+                              nameController: _nameController,
+                              addressController: _addressController,
+                              phoneController: _phoneController,
+                              emailController: _emailController,
+                              licenseNumberController: _licenseNumberController,
+                              birthDateController: _birthDateController,
+                            );
+                          }),
+                        ),
                       ),
                     ),
-                    SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.all(USpace.space16),
-                        child: VehiecleDetailsForm(
-                          plateNumberController: _plateNumberController,
-                          engineNumberController: _engineNumberController,
-                          chassisNumberController: _chassisNumberController,
-                          vehicleOwnerController: _vehicleOwnerController,
-                          vehicleOwnerAddressController:
-                              _vehicleOwnerAddressController,
-                          vehicleTypeController: _vehicleTypeController,
+                    KeepAliveWrapper(
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.all(USpace.space16),
+                          child: VehiecleDetailsForm(
+                            plateNumberController: _plateNumberController,
+                            engineNumberController: _engineNumberController,
+                            chassisNumberController: _chassisNumberController,
+                            vehicleOwnerController: _vehicleOwnerController,
+                            vehicleOwnerAddressController:
+                                _vehicleOwnerAddressController,
+                            vehicleTypeController: _vehicleTypeController,
+                          ),
                         ),
                       ),
                     ),
@@ -268,6 +275,11 @@ class _CreateTicketPageState extends State<CreateTicketPage>
       return;
     }
 
+    if (_tabController.index == 1 && !_formKey.currentState!.validate()) {
+      _tabController.animateTo(0);
+      return;
+    }
+
     if (_tabController.index == 1 && _formKey.currentState!.validate()) {
       _selectViolation();
     }
@@ -317,7 +329,4 @@ class _CreateTicketPageState extends State<CreateTicketPage>
 
     goSelectViolation();
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }

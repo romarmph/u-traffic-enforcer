@@ -50,9 +50,7 @@ class SettingsPage extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.event),
               title: const Text("Request Leave"),
-              onTap: () {
-                goChangePassword();
-              },
+              onTap: () {              },
               trailing: const Icon(Icons.arrow_forward_ios),
             ),
           ],
