@@ -23,6 +23,7 @@ export 'package:http/http.dart';
 export 'package:dropdown_textfield/dropdown_textfield.dart';
 export 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 export 'package:searchable_listview/searchable_listview.dart';
+export 'package:syncfusion_flutter_signaturepad/signaturepad.dart';
 
 ///
 ///
@@ -90,6 +91,7 @@ export 'package:u_traffic_enforcer/pages/printer/printer_home.dart';
 export 'package:u_traffic_enforcer/pages/ticket/create_ticket_page.dart';
 export 'package:u_traffic_enforcer/pages/ticket/preview_page.dart';
 export 'package:u_traffic_enforcer/pages/ticket/violation_select_page.dart';
+export 'package:u_traffic_enforcer/pages/ticket/signature_pad.dart';
 export 'package:u_traffic_enforcer/pages/ticket/widgets/driver_details_form.dart';
 export 'package:u_traffic_enforcer/pages/ticket/widgets/preview_list_tile.dart';
 export 'package:u_traffic_enforcer/pages/ticket/widgets/text_field.dart';

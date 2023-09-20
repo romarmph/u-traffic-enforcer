@@ -62,6 +62,8 @@ dependencies:
   firebase_cached_image: ^0.4.4
   syncfusion_flutter_signaturepad: ^23.1.36
   searchable_listview: ^2.7.0
+  image: ^4.0.17
+  path_provider: ^2.1.1
 
 dev_dependencies:
   flutter_test:

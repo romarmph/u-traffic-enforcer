@@ -14,7 +14,7 @@ class _TicketPreviewState extends State<TicketPreview>
 
   @override
   void initState() {
-    tabController = TabController(length: 3, vsync: this);
+    tabController = TabController(length: 4, vsync: this);
 
     super.initState();
   }
@@ -39,6 +39,17 @@ class _TicketPreviewState extends State<TicketPreview>
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: USpace.space12),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () {
+                goSignaturePad();
+              },
+              icon: const Icon(Icons.create_rounded),
+              label: const Text("Sign Ticket"),
+            ),
           ),
           const SizedBox(height: USpace.space12),
           Row(
@@ -124,18 +135,6 @@ class _TicketPreviewState extends State<TicketPreview>
 
     final futureTicket = await TicketDBHelper.instance.createTicket(ticket);
 
-    // if (imageProvider.licenseImagePath.isNotEmpty) {
-    //   final uploadStatus = await renameAndUpload(
-    //     imageProvider.licenseImagePath,
-    //     futureTicket.id!,
-    //   );
-
-    //   if (uploadStatus) {
-    //     _showUploadSucessDialog();
-    //   } else {
-    //     _showUploadFailedDialog();
-    //   }
-    // }
     if (imageProvider.licenseImagePath.isNotEmpty) {
       final uploadStatus = await renameAndUpload(
         imageProvider.licenseImagePath,
@@ -210,6 +209,19 @@ class _TicketPreviewState extends State<TicketPreview>
                     _driverDetails(),
                     _vehicleDetails(),
                     _buildViolationsView(),
+                    Consumer<UTrafficImageProvider>(
+                      builder: (context, value, child) {
+                        if (value.signatureImagePath.isEmpty) {
+                          return const Center(
+                            child: Text("No signature found."),
+                          );
+                        }
+                        return Image.file(
+                          File(value.signatureImagePath),
+                          fit: BoxFit.cover,
+                        );
+                      },
+                    )
                   ],
                 ),
               ),
@@ -231,6 +243,9 @@ class _TicketPreviewState extends State<TicketPreview>
       ),
       Tab(
         text: "Violations",
+      ),
+      Tab(
+        text: "Images",
       ),
     ];
   }
