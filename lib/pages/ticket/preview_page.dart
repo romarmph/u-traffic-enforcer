@@ -136,15 +136,17 @@ class _TicketPreviewState extends State<TicketPreview>
     //     _showUploadFailedDialog();
     //   }
     // }
-    final uploadStatus = await renameAndUpload(
-      imageProvider.licenseImagePath,
-      futureTicket.id!,
-    );
+    if (imageProvider.licenseImagePath.isNotEmpty) {
+      final uploadStatus = await renameAndUpload(
+        imageProvider.licenseImagePath,
+        futureTicket.id!,
+      );
 
-    if (uploadStatus) {
-      _showUploadSucessDialog();
-    } else {
-      _showUploadFailedDialog();
+      if (uploadStatus) {
+        _showUploadSucessDialog();
+      } else {
+        _showUploadFailedDialog();
+      }
     }
 
     popCurrent();

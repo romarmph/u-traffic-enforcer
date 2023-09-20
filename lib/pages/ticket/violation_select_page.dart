@@ -85,6 +85,21 @@ class _ViolationsListState extends State<ViolationsList> {
               );
             }
 
+            if (item.id == 'V0ORjFu2Y0H9Hu88WgbO' &&
+                ticket.plateNumber.isEmpty) {
+              return CheckboxListTile(
+                enabled: false,
+                value: item.isSelected,
+                onChanged: (value) {
+                  violation.selectViolation(item.id);
+                },
+                title: Text(item.name),
+                subtitle: Text(
+                  "Fine: ${item.fine.toString()}",
+                ),
+              );
+            }
+
             return CheckboxListTile(
               value: item.isSelected,
               onChanged: (value) {

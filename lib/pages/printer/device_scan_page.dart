@@ -20,7 +20,12 @@ class DeviceScanPageState extends State<DeviceScanPage> {
   }
 
   Future<void> initPrinter() async {
-    _bluetooth.startScan(timeout: const Duration(seconds: 2));
+    try {
+      _bluetooth.startScan(timeout: const Duration(seconds: 2));
+    } catch (e) {
+      // ignore: avoid_print
+      print("Couldn't start scan");
+    }
   }
 
   @override

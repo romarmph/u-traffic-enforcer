@@ -69,6 +69,7 @@ class _PrinterHomeState extends State<PrinterHome> {
             OutlinedButton(
               onPressed: () async {
                 bool? isConnected = await _printer.isConnected;
+
                 if (isConnected != null && isConnected) {
                   _printer.disconnect();
                 }
@@ -93,6 +94,15 @@ class _PrinterHomeState extends State<PrinterHome> {
           ],
         ),
       ),
+    );
+  }
+
+  void showTurnOnBluetoothAlert() {
+    QuickAlert.show(
+      context: context,
+      type: QuickAlertType.info,
+      title: "Turn on bluetooth",
+      text: "Please turn on bluetooth to connect to printer.",
     );
   }
 
