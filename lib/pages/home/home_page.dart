@@ -1,6 +1,5 @@
-import 'package:u_traffic_enforcer/pages/home/qr_code_scanner/qr_code_scanner.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-
+import 'package:firebase_cached_image/firebase_cached_image.dart';
+import 'package:u_traffic_enforcer/pages/common/bottom_nav.dart';
 import '../../config/utils/exports.dart';
 
 class HomePage extends StatefulWidget {
@@ -21,9 +20,33 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget userNav() {
-    final user = Provider.of<AuthService>(context);
+  Widget getProfileImage() {
+    final enforcer = Provider.of<EnforcerProvider>(context);
 
+    List<String> fileExtensions = ['jpg', 'jpeg', 'png'];
+
+    String baseurl = "gs://u-traffic.appspot.com/profileImage";
+    FirebaseUrl url = FirebaseUrl('');
+    for (var item in fileExtensions) {
+      try {
+        url = FirebaseUrl('$baseurl/${enforcer.enforcer.id}.$item');
+      } on Exception catch (e) {
+        // ignore: avoid_print
+        print(e);
+      }
+    }
+
+    return Image(
+      image: FirebaseImageProvider(
+        url,
+      ),
+      fit: BoxFit.cover,
+      width: 48,
+      height: 48,
+    );
+  }
+
+  Widget userNav() {
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: USpace.space16,
@@ -31,29 +54,9 @@ class _HomePageState extends State<HomePage> {
       child: Row(
         children: [
           ClipOval(
-            child: FutureBuilder(
-              future: StorageService.instance.fetchProfileImage(
-                user.currentUser.id,
-              ),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                }
-
-                if (snapshot.data == null) {
-                  return Image.network(
-                      'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/2048px-User-avatar.svg.png');
-                }
-
-                return Image.memory(
-                  snapshot.data!,
-                  fit: BoxFit.cover,
-                  width: 48,
-                  height: 48,
-                );
-              },
-            ),
+            child: getProfileImage(),
           ),
+
           const SizedBox(width: USpace.space16),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,7 +84,9 @@ class _HomePageState extends State<HomePage> {
 
   Widget viewScheduleBtn() {
     return TextButton(
-      onPressed: () {},
+      onPressed: () {
+        AuthService().signOut();
+      },
       child: const Text("View Schedule"),
     );
   }
@@ -255,10 +260,13 @@ class _HomePageState extends State<HomePage> {
 
   Widget recentTicketsList() {
     final enforcer = Provider.of<EnforcerProvider>(context, listen: false);
+    final ticketDB = TicketDBHelper.instance;
 
     return Expanded(
-        child: StreamBuilder<List<Map<String, dynamic>>>(
-      stream: TicketDBHelper().getTicketsByEnforcerId(enforcer.enforcer.id!),
+        child: StreamBuilder<List<Ticket>>(
+      stream: ticketDB.getTicketsByEnforcerId(
+        enforcer.enforcer.id,
+      ),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -268,8 +276,7 @@ class _HomePageState extends State<HomePage> {
           return const Center(child: Text("Error fetching tickets"));
         }
 
-        final List<Ticket> tickets =
-            snapshot.data!.map((ticket) => Ticket.fromJson(ticket)).toList();
+        final List<Ticket> tickets = snapshot.data!;
 
         return ListView.builder(
           itemCount: tickets.length,
@@ -282,7 +289,7 @@ class _HomePageState extends State<HomePage> {
                       color: UColors.gray700,
                     ),
               ),
-              subtitle: Text('${ticket.firstName!} ${ticket.lastName!}'),
+              subtitle: Text(ticket.driverName),
               onTap: () {
                 viewRecentTicket(ticket, context);
               },
@@ -312,36 +319,11 @@ class _HomePageState extends State<HomePage> {
                     ),
               ),
               const Spacer(),
-              // viewAllBtn(),
             ],
           ),
           recentTicketsList(),
         ],
       ),
-    );
-  }
-
-  int currentIndex = 0;
-  Widget bottomNav() {
-    return BottomNavigationBar(
-      currentIndex: currentIndex,
-      onTap: (index) {
-        setState(() {
-          currentIndex = index;
-        });
-      },
-      selectedItemColor: UColors.blue700,
-      unselectedItemColor: UColors.gray600,
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home_outlined),
-          label: "Home",
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.settings_outlined),
-          label: "Settings",
-        ),
-      ],
     );
   }
 
@@ -357,42 +339,33 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: USpace.space16),
             miniDashboard(),
             const SizedBox(height: USpace.space8),
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(
-            //     horizontal: USpace.space16,
-            //   ),
-            //   child: OutlinedButton.icon(
-            //     onPressed: () async {
-            //       String barcodeScanRes =
-            //           await FlutterBarcodeScanner.scanBarcode(
-            //         '#ff6666',
-            //         'Cancel',
-            //         true,
-            //         ScanMode.QR,
-            //       );
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: USpace.space16,
+              ),
+              child: OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.all(USpace.space24),
+                ),
+                onPressed: () async {
+                  String barcodeScanRes =
+                      await FlutterBarcodeScanner.scanBarcode(
+                    '#ff6666',
+                    'Cancel',
+                    true,
+                    ScanMode.QR,
+                  );
 
-            //       final licenseNumber = barcodeScanRes.split(':')[0];
-            //       final uid = barcodeScanRes.split(':')[1];
+                  QRDetails qrDetails = QRDetails.fromJson(
+                    jsonDecode(barcodeScanRes),
+                  );
 
-            //       await FirebaseFirestore.instance
-            //           .collection('licenses')
-            //           .where('userID', isEqualTo: uid)
-            //           .where('licenseNumber', isEqualTo: licenseNumber)
-            //           .get()
-            //           .then(
-            //         (value) {
-            //           final license = LicenseDetails.fromJson(
-            //             value.docs.first.data(),
-            //           );
-
-            //           goCreateTicketWithLicense(license);
-            //         },
-            //       );
-            //     },
-            //     label: const Text("Scan QR"),
-            //     icon: const Icon(Icons.qr_code_scanner_outlined),
-            //   ),
-            // ),
+                  goCreateTicketWithLicense(qrDetails);
+                },
+                label: const Text("Scan QR"),
+                icon: const Icon(Icons.qr_code_scanner_outlined),
+              ),
+            ),
             Expanded(
               child: recentTicketView(),
             ),
@@ -404,15 +377,15 @@ class _HomePageState extends State<HomePage> {
         label: Text("New Ticket"),
         icon: Icon(Icons.add),
       ),
-      bottomNavigationBar: bottomNav(),
+      bottomNavigationBar: const BottomNav(),
     );
   }
 
-  void goCreateTicketWithLicense(LicenseDetails licenseDetails) {
+  void goCreateTicketWithLicense(QRDetails qrDetails) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => CreateTicketPage(
-          licenseDetail: licenseDetails,
+          qrDetails: qrDetails,
         ),
       ),
     );

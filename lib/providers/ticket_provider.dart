@@ -1,37 +1,40 @@
+
 import '../../../config/utils/exports.dart';
 
 class TicketProvider extends ChangeNotifier {
-  final Ticket _lastPrintedTicket = Ticket();
-
   Ticket _ticket = Ticket(
-    ticketNumber: null,
-    violationsID: {},
+    id: "",
+    ticketNumber: 0,
     licenseNumber: "",
-    firstName: "",
-    middleName: "",
-    lastName: "",
-    birthDate: null,
+    driverName: "",
+    phone: "",
+    email: "",
     address: "",
-    status: TicketStatus.unpaid,
     vehicleType: "",
     engineNumber: "",
     chassisNumber: "",
     plateNumber: "",
     vehicleOwner: "",
     vehicleOwnerAddress: "",
-    placeOfViolation: null,
-    violationDateTime: null,
-    enforcerId: "",
-    driverSignature: "",
-    licenseImageUrl: "",
+    enforcerID: "",
+    enforcerName: "",
+    status: TicketStatus.unpaid,
+    birthDate: Timestamp.now(),
+    dateCreated: Timestamp.now(),
+    ticketDueDate: Timestamp.now().getDueDate,
+    violationDateTime: Timestamp.now(),
+    violationPlace: const ULocation(
+      address: "",
+      lat: 0.0,
+      long: 0.0,
+    ),
+    violationsID: [],
   );
 
-  Ticket get getTicket => _ticket;
-  Ticket get lastPrintedTicket => _lastPrintedTicket;
+  Ticket get ticket => _ticket;
 
   void updateTicket(Ticket ticket) {
     _ticket = ticket;
-
     notifyListeners();
   }
 }

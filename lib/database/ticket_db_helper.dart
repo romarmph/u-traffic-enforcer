@@ -1,25 +1,38 @@
 import '../../../config/utils/exports.dart';
 
 class TicketDBHelper {
+  TicketDBHelper._();
+
+  static final TicketDBHelper _instance = TicketDBHelper._();
+
+  static TicketDBHelper get instance => _instance;
+
   final _firestore = FirebaseFirestore.instance;
 
-  Stream<List<Map<String, dynamic>>> getTicketsByEnforcerId(String enforcerID) {
+  static const String _ticketCollection = 'tickets';
+  static const String _enforcerIDField = 'enforcerID';
+  static const String _dateCreatedField = 'dateCreated';
+  static const String _countersCollection = 'counters';
+  static const String _ticketCounterDocument = 'ticketCounter';
+  static const String _countField = 'count';
+
+  Stream<List<Ticket>> getTicketsByEnforcerId(String enforcerID) {
     return FirebaseFirestore.instance
-        .collection('tickets')
-        .where('enforcerId', isEqualTo: enforcerID)
-        .orderBy('dateCreated', descending: true)
+        .collection(_ticketCollection)
+        .where(_enforcerIDField, isEqualTo: enforcerID)
+        .orderBy(_dateCreatedField, descending: true)
         .snapshots()
         .map((QuerySnapshot snapshot) {
       return snapshot.docs.map((DocumentSnapshot document) {
-        return document.data() as Map<String, dynamic>;
+        return Ticket.fromJson(document.data() as Map<String, dynamic>);
       }).toList();
     });
   }
 
-  Future<dynamic> saveTicket(Map<String, dynamic> ticketData) async {
-    final counterCollection = _firestore.collection('counters');
-    final ticketCountDocument = counterCollection.doc('ticketCounter');
-    final ticketCollection = _firestore.collection('tickets');
+  Future<Ticket> createTicket(Ticket ticket) async {
+    final ticketCountDocument =
+        _firestore.doc('$_countersCollection/$_ticketCounterDocument');
+    final ticketCollection = _firestore.collection(_ticketCollection);
 
     return await _firestore.runTransaction((transaction) async {
       final ticketDocSnapshot = await transaction.get(ticketCountDocument);
@@ -28,30 +41,33 @@ class TicketDBHelper {
         throw Exception('ticketCount-doc-does-not-exist');
       }
 
-      int newCount = ticketDocSnapshot.data()!['count'] + 1;
-      transaction.update(ticketCountDocument, {'count': newCount});
+      int newCount = ticketDocSnapshot.data()![_countField] + 1;
+      transaction.update(ticketCountDocument, {_countField: newCount});
 
-      ticketData['ticketNumber'] = newCount;
-      ticketData['dateCreated'] = DateTime.now();
-
-      final Ticket ticket = Ticket.fromJson(ticketData);
-
-      final QuerySnapshot snapshot = await ticketCollection
-          .where('ticketNumber', isEqualTo: ticket.ticketNumber)
+      final snapshot = await ticketCollection
+          .where('ticketNumber', isEqualTo: newCount)
           .get();
 
-      final List<DocumentSnapshot> ticketList = snapshot.docs;
-
-      if (ticketList.isEmpty) {
-        transaction.set(
-          ticketCollection.doc(),
-          ticket.toJson(),
-        );
-      } else {
+      if (snapshot.docs.isNotEmpty) {
         throw Exception('ticket-already-exists');
       }
 
-      return ticket;
+      var newDocRef = ticketCollection.doc();
+      String newDocId = newDocRef.id;
+
+      Ticket updatedTicket = ticket.copyWith(
+        ticketNumber: newCount,
+        dateCreated: Timestamp.now(),
+      );
+
+      transaction.set(
+        newDocRef,
+        updatedTicket.toJson(),
+      );
+
+      return updatedTicket.copyWith(
+        id: newDocId,
+      );
     });
   }
 }

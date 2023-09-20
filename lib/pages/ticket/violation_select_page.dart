@@ -42,20 +42,72 @@ class _ViolationsListState extends State<ViolationsList> {
   }
 
   Widget _buildViolationsList() {
+    final ticket = Provider.of<TicketProvider>(context, listen: false).ticket;
+
     return Consumer<ViolationProvider>(
       builder: (context, violation, child) {
-        return ListView.builder(
-          itemCount: violation.getViolations.length,
-          itemBuilder: (context, index) {
-            Violation current = violation.getViolations[index];
+        if (ticket.licenseNumber.isEmpty) {
+          violation.getViolations
+              .where((element) => element.id == '2z8KdHRfLapkAeAhbjOt')
+              .first
+              .isSelected = true;
+        }
+
+        if (ticket.plateNumber.isEmpty) {
+          violation.getViolations
+              .where((element) => element.id == 'V0ORjFu2Y0H9Hu88WgbO')
+              .first
+              .isSelected = true;
+        }
+
+        return SearchableList<Violation>(
+          inputDecoration: const InputDecoration(
+            labelText: "Search Violations",
+          ),
+          initialList: violation.getViolations,
+          filter: (query) => violation.getViolations
+              .where((element) =>
+                  element.name.toLowerCase().contains(query.toLowerCase()))
+              .toList(),
+          builder: (displayedList, itemIndex, item) {
+            if (item.id == '2z8KdHRfLapkAeAhbjOt' &&
+                ticket.licenseNumber.isEmpty) {
+              return CheckboxListTile(
+                enabled: false,
+                value: item.isSelected,
+                onChanged: (value) {
+                  violation.selectViolation(item.id);
+                },
+                title: Text(item.name),
+                subtitle: Text(
+                  "Fine: ${item.fine.toString()}",
+                ),
+              );
+            }
+
+            if (item.id == 'V0ORjFu2Y0H9Hu88WgbO' &&
+                ticket.plateNumber.isEmpty) {
+              return CheckboxListTile(
+                enabled: false,
+                value: item.isSelected,
+                onChanged: (value) {
+                  violation.selectViolation(item.id);
+                },
+                title: Text(item.name),
+                subtitle: Text(
+                  "Fine: ${item.fine.toString()}",
+                ),
+              );
+            }
+
             return CheckboxListTile(
-              value: current.isSelected,
+              value: item.isSelected,
               onChanged: (value) {
-                violation.selectViolation(current.id);
+                violation.selectViolation(item.id);
               },
-              title: Text(current.name),
+              title: Text(item.name),
               subtitle: Text(
-                "Fine: ${current.fine.toString()}",
+                "Fine: ${item.fine.toString()}",
               ),
             );
           },
@@ -79,6 +131,7 @@ class _ViolationsListState extends State<ViolationsList> {
               "Please select the violations below:",
               style: const UTextStyle().textlgfontmedium,
             ),
+            const SizedBox(height: USpace.space16),
             Expanded(
               child: _buildViolationsList(),
             ),
@@ -91,7 +144,7 @@ class _ViolationsListState extends State<ViolationsList> {
 
   void _previewTicket() {
     final provider = Provider.of<ViolationProvider>(context, listen: false);
-    final form = Provider.of<CreateTicketFormNotifier>(context, listen: false);
+    final ticketProvier = Provider.of<TicketProvider>(context, listen: false);
 
     if (provider.getViolations.where((element) => element.isSelected).isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -102,12 +155,16 @@ class _ViolationsListState extends State<ViolationsList> {
       return;
     }
 
-    final Set<String?> selectedTicket = provider.getViolations
+    final List<String?> selectedViolations = provider.getViolations
         .where((element) => element.isSelected)
         .map((e) => e.id)
-        .toSet();
+        .toList();
 
-    form.setViolationsID(selectedTicket);
+    Ticket updatedTicket = ticketProvier.ticket.copyWith(
+      violationsID: selectedViolations,
+    );
+
+    ticketProvier.updateTicket(updatedTicket);
 
     goPreviewTicket();
   }

@@ -7,92 +7,85 @@ import '../../../config/utils/exports.dart';
 class DriverDetailsForm extends StatelessWidget {
   const DriverDetailsForm({
     super.key,
+    required this.nameController,
+    required this.addressController,
+    required this.phoneController,
+    required this.emailController,
+    required this.licenseNumberController,
+    required this.birthDateController,
   });
+
+  final TextEditingController nameController;
+  final TextEditingController addressController;
+  final TextEditingController phoneController;
+  final TextEditingController emailController;
+  final TextEditingController licenseNumberController;
+  final TextEditingController birthDateController;
 
   @override
   Widget build(BuildContext context) {
+    final formValidator = Provider.of<FormValidators>(context);
+
     return Consumer<CreateTicketFormNotifier>(
       builder: (context, form, child) {
-        final formSettings = form.formSettings;
-
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CheckboxListTile(
               title: const Text("No Driver"),
-              value: form.noDriver,
+              value: form.isDriverNotPresent,
               onChanged: (value) {
-                form.setNoDriver(value!);
+                form.setIsDriverNotPresent(value!);
               },
             ),
             const SizedBox(height: USpace.space12),
             const ImageScannerButton(),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
-              enabled: !form.noDriver,
-              controller: formSettings[TicketField.lastName]!.controller!,
-              decoration: InputDecoration(
-                fillColor: !form.noDriver ? UColors.gray100 : UColors.gray50,
-                labelText: formSettings[TicketField.lastName]!.label,
+              formatters: [
+                UpperCaseTextFormatter(),
+              ],
+              enabled: !form.isDriverNotPresent,
+              controller: nameController,
+              decoration: const InputDecoration(
+                fillColor: UColors.gray100,
+                labelText: "Driver Name",
                 labelStyle: TextStyle(
-                  color: !form.noDriver ? UColors.gray400 : UColors.gray200,
+                  color: UColors.gray400,
                 ),
               ),
-              validator: (value) => form.validateName(
-                value,
-                TicketField.lastName,
-              ),
+              onChanged: (value) {
+                form.setDriverName(value);
+              },
+              validator: formValidator.validateName,
             ),
             const SizedBox(height: USpace.space12),
-            CreateTicketField(
-              enabled: !form.noDriver,
-              controller: formSettings[TicketField.firstName]!.controller!,
-              decoration: InputDecoration(
-                fillColor: !form.noDriver ? UColors.gray100 : UColors.gray50,
-                labelText: formSettings[TicketField.firstName]!.label,
-                labelStyle: TextStyle(
-                  color: !form.noDriver ? UColors.gray400 : UColors.gray200,
-                ),
-              ),
-              validator: (value) => form.validateName(
-                value,
-                TicketField.firstName,
-              ),
-            ),
-            const SizedBox(height: USpace.space12),
-            CreateTicketField(
-              enabled: !form.noDriver,
-              controller: formSettings[TicketField.middleName]!.controller!,
-              decoration: InputDecoration(
-                fillColor: !form.noDriver ? UColors.gray100 : UColors.gray50,
-                labelText: formSettings[TicketField.middleName]!.label,
-                labelStyle: TextStyle(
-                  color: !form.noDriver ? UColors.gray400 : UColors.gray200,
-                ),
-              ),
-              validator: (value) => form.validateName(
-                value,
-                TicketField.middleName,
-              ),
+            DatePickerField(
+              enabled: !form.isDriverNotPresent,
+              controller: birthDateController,
+              label: "Birthdate",
+              validator: formValidator.validateBithdate,
               onChanged: (value) {},
             ),
             const SizedBox(height: USpace.space12),
-            const DatePickerField(
-              field: TicketField.birthDate,
-            ),
-            const SizedBox(height: USpace.space12),
             CreateTicketField(
-              enabled: !form.noDriver,
-              controller: formSettings[TicketField.address]!.controller!,
-              decoration: InputDecoration(
-                fillColor: !form.noDriver ? UColors.gray100 : UColors.gray50,
-                labelText: formSettings[TicketField.address]!.label,
+              formatters: [
+                UpperCaseTextFormatter(),
+              ],
+              enabled: !form.isDriverNotPresent,
+              controller: addressController,
+              decoration: const InputDecoration(
+                fillColor: UColors.gray100,
+                labelText: 'Address',
                 labelStyle: TextStyle(
-                  color: !form.noDriver ? UColors.gray400 : UColors.gray200,
+                  color: UColors.gray400,
                 ),
               ),
               readOnly: true,
-              validator: (value) => form.validateAddress(value),
+              validator: formValidator.validateAddress,
+              onChanged: (value) {
+                form.setDriverAddress(value);
+              },
               onTap: () async {
                 final address = await Navigator.push(
                   context,
@@ -102,53 +95,56 @@ class DriverDetailsForm extends StatelessWidget {
                 );
 
                 if (address != null) {
-                  form.formSettings[TicketField.address]!.controller!.text =
-                      address.toString();
+                  addressController.text = address.toString();
                 }
               },
             ),
             const SizedBox(height: USpace.space12),
             IntlPhoneField(
-              enabled: !form.noDriver,
-              controller: formSettings[TicketField.phone]!.controller!,
+              enabled: !form.isDriverNotPresent,
+              controller: phoneController,
               keyboardType: const TextInputType.numberWithOptions(),
               initialCountryCode: 'PH',
               autovalidateMode: AutovalidateMode.onUserInteraction,
               decoration: const InputDecoration(
                 counterText: '',
+                labelText: 'Phone Number',
               ),
-              validator: (value) => form.validatePhone(value!.number),
+              validator: (value) {
+                return null;
+              },
             ),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
-              enabled: !form.noDriver,
-              controller: formSettings[TicketField.email]!.controller!,
-              decoration: InputDecoration(
-                fillColor: !form.noDriver ? UColors.gray100 : UColors.gray50,
-                labelText: formSettings[TicketField.email]!.label,
+              enabled: !form.isDriverNotPresent,
+              controller: emailController,
+              decoration: const InputDecoration(
+                fillColor: UColors.gray100,
+                labelText: 'Email',
                 labelStyle: TextStyle(
-                  color: !form.noDriver ? UColors.gray400 : UColors.gray200,
+                  color: UColors.gray400,
                 ),
               ),
-              validator: (value) => form.validateEmail(
-                value,
-              ),
-              onChanged: (value) {},
+              validator: formValidator.validateEmail,
             ),
             const SizedBox(height: USpace.space12),
             const Text("License Number"),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
-              enabled: !form.noDriver,
-              controller: formSettings[TicketField.licenseNumber]!.controller!,
-              decoration: InputDecoration(
-                fillColor: !form.noDriver ? UColors.gray100 : UColors.gray50,
-                labelText: formSettings[TicketField.licenseNumber]!.label,
+              formatters: [
+                UpperCaseTextFormatter(),
+              ],
+              enabled: !form.isDriverNotPresent,
+              controller: licenseNumberController,
+              decoration: const InputDecoration(
+                fillColor: UColors.gray100,
+                labelText: 'License Number',
                 labelStyle: TextStyle(
-                  color: !form.noDriver ? UColors.gray400 : UColors.gray200,
+                  color: UColors.gray400,
                 ),
               ),
-              validator: (value) => form.validateLicenseNumber(value),
+              validator: formValidator.validateLicenseNumber,
+              onChanged: (value) {},
             ),
           ],
         );

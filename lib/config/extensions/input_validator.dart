@@ -30,6 +30,29 @@ extension InputValidator on String {
       }
     }
   }
+
+  bool get passwordContainsAlphaNumeric {
+    final alphaNumericRegExp = RegExp(r'^[a-zA-Z0-9]+$');
+    return alphaNumericRegExp.hasMatch(this);
+  }
+
+  bool get passwordContainsUpperCase {
+    final upperCaseRegExp = RegExp(r'[A-Z]');
+    return upperCaseRegExp.hasMatch(this);
+  }
+
+  bool get passwordContainsLowerCase {
+    final lowerCaseRegExp = RegExp(r'[a-z]');
+    return lowerCaseRegExp.hasMatch(this);
+  }
+
+  bool get isPasswordLengthValid {
+    return length < 8;
+  }
+
+  bool isPasswordConfirmed(String password) {
+    return this == password;
+  }
 }
 
 extension NullInputValidator on String? {

@@ -2,6 +2,7 @@ import '../config/utils/exports.dart';
 
 class EnforcerProvider extends ChangeNotifier {
   var _enforcer = const Enforcer(
+    id: "",
     firstName: "",
     middleName: "",
     lastName: "",

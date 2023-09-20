@@ -20,6 +20,9 @@ class UTrafficEnforcer extends StatelessWidget {
         Provider<AuthService>(
           create: (_) => AuthService(),
         ),
+        Provider<FormValidators>(
+          create: (_) => FormValidators(),
+        ),
         ChangeNotifierProvider<PrinterProvider>(
           create: (_) => PrinterProvider(),
         ),
@@ -34,6 +37,18 @@ class UTrafficEnforcer extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => EnforcerProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => UTrafficImageProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ScannedDetails(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => VehicleTypeProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => NavIndexProvider(),
         ),
       ],
       child: MaterialApp(
@@ -69,11 +84,15 @@ class UTrafficEnforcer extends StatelessWidget {
         initialRoute: "/",
         routes: {
           "/": (context) => const Wrapper(),
+          "/settings": (context) => const SettingsPage(),
+          "/settings/updatepassword": (context) => const PasswordChangePage(),
+          "/settings/leave": (context) => const LeavePage(),
           "/auth/login": (context) => const Login(),
           "/auth/register": (context) => const Register(),
           "/ticket/create": (context) => const CreateTicketPage(),
           "/ticket/violations": (context) => const ViolationsList(),
           "/ticket/preview": (context) => const TicketPreview(),
+          "/ticket/signature": (context) => const SignaturePad(),
           "/printer/": (context) => const PrinterHome(),
           "/printer/scan": (context) => const DeviceScanPage(),
         },

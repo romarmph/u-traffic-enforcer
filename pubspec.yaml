@@ -58,6 +58,12 @@ dependencies:
   flutter_image_compress: ^2.0.4
   qr_code_dart_scan: ^0.7.2
   flutter_barcode_scanner: ^2.0.0
+  cached_network_image: ^3.2.3
+  firebase_cached_image: ^0.4.4
+  syncfusion_flutter_signaturepad: ^23.1.36
+  searchable_listview: ^2.7.0
+  image: ^4.0.17
+  path_provider: ^2.1.1
 
 dev_dependencies:
   flutter_test:

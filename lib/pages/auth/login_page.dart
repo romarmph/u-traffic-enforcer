@@ -18,7 +18,7 @@ class _LoginState extends State<Login> {
       final email = _emailController.text;
       final password = _passwordController.text;
       final authService = Provider.of<AuthService>(context, listen: false);
-      final result = await authService.signInWithEmailAndPassword(
+      await authService.signInWithEmailAndPassword(
         email: email,
         password: password,
       );

@@ -1,27 +1,22 @@
-import '../config/utils/exports.dart' as auth;
-import '../config/utils/exports.dart' as firestore;
 import '../config/utils/exports.dart';
 
 class AuthService {
-  final auth.FirebaseAuth _firebaseAuth = auth.FirebaseAuth.instance;
-  final firestore.FirebaseFirestore _db = firestore.FirebaseFirestore.instance;
+  static final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  UTrafficUser? _userFromFirebase(auth.User? user) {
+  User? _userFromFirebase(User? user) {
     if (user == null) {
       return null;
     }
 
-    return UTrafficUser(
-      id: user.uid,
-      email: user.email!,
-    );
+    return user;
   }
 
-  UTrafficUser get currentUser {
+  User get currentUser {
     return _userFromFirebase(_firebaseAuth.currentUser)!;
   }
 
-  Stream<UTrafficUser?>? get user {
+  Stream<User?>? get user {
     return _firebaseAuth.authStateChanges().map(_userFromFirebase);
   }
 
@@ -29,7 +24,7 @@ class AuthService {
     const String collection = "enforcers";
     const String field = "email";
 
-    final firestore.QuerySnapshot<Map<String, dynamic>> result =
+    final QuerySnapshot<Map<String, dynamic>> result =
         await _db.collection(collection).where(field, isEqualTo: email).get();
 
     if (result.docs.isEmpty) {
@@ -38,31 +33,31 @@ class AuthService {
 
     Enforcer enforcer = Enforcer.fromJson(
       result.docs.first.data(),
+      result.docs.first.id,
     );
 
     return enforcer;
   }
 
-  Future<UTrafficUser?> signInWithEmailAndPassword({
+  Future<User?> signInWithEmailAndPassword({
     required String email,
     required String password,
   }) async {
     if (await getEnforcer(email) == null) {
-      print("Account is not an enforcer");
-      return null;
+      throw Exception("account-not-enforcer");
     }
 
-    final auth.UserCredential userCredential = await _firebaseAuth
+    final UserCredential userCredential = await _firebaseAuth
         .signInWithEmailAndPassword(email: email, password: password);
 
     return _userFromFirebase(userCredential.user);
   }
 
-  Future<UTrafficUser?> createUserWithEmailAndPassword({
+  Future<User?> createUserWithEmailAndPassword({
     required String email,
     required String password,
   }) async {
-    final auth.UserCredential userCredential = await _firebaseAuth
+    final UserCredential userCredential = await _firebaseAuth
         .createUserWithEmailAndPassword(email: email, password: password);
 
     return _userFromFirebase(userCredential.user);
@@ -70,5 +65,17 @@ class AuthService {
 
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
+  }
+
+  Future<void> updatePassword(String newPassword, String oldPassword) async {
+    final User currentUser = _firebaseAuth.currentUser!;
+
+    UserCredential userCredential =
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: currentUser.email!,
+      password: oldPassword,
+    );
+
+    await userCredential.user!.updatePassword(newPassword);
   }
 }

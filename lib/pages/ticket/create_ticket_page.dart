@@ -3,61 +3,141 @@ import '../../../config/utils/exports.dart';
 class CreateTicketPage extends StatefulWidget {
   const CreateTicketPage({
     super.key,
-    this.licenseDetail,
+    this.qrDetails,
   });
 
-  final LicenseDetails? licenseDetail;
+  final QRDetails? qrDetails;
 
   @override
   State<CreateTicketPage> createState() => _CreateTicketPageState();
 }
 
 class _CreateTicketPageState extends State<CreateTicketPage>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late TabController _tabController;
-  late CreateTicketFormNotifier _notifier;
+  late CreateTicketFormNotifier _formNotifier;
+  late ScannedDetails _scannedDetails;
+  late UTrafficImageProvider _imageProvider;
+
   final _formKey = GlobalKey<FormState>();
+
+  final _nameController = TextEditingController();
+  final _addressController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _licenseNumberController = TextEditingController();
+  final _birthDateController = TextEditingController();
+  final _plateNumberController = TextEditingController();
+  final _engineNumberController = TextEditingController();
+  final _chassisNumberController = TextEditingController();
+  final _vehicleOwnerController = TextEditingController();
+  final _vehicleOwnerAddressController = TextEditingController();
+  final _vehicleTypeController = TextEditingController();
+
+  String _cancelButtonText = "Cancel";
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, initialIndex: 0, vsync: this);
-    _notifier = Provider.of<CreateTicketFormNotifier>(context, listen: false);
+    _tabController = TabController(
+      length: 2,
+      initialIndex: 0,
+      vsync: this,
+    );
+    _formNotifier = Provider.of<CreateTicketFormNotifier>(
+      context,
+      listen: false,
+    );
+    _scannedDetails = Provider.of<ScannedDetails>(
+      context,
+      listen: false,
+    );
+    _imageProvider = Provider.of<UTrafficImageProvider>(
+      context,
+      listen: false,
+    );
 
-    if (widget.licenseDetail != null) {
-      _notifier.formSettings[TicketField.licenseNumber]!.controller!.text =
-          widget.licenseDetail!.licenseNumber;
-      _notifier.formSettings[TicketField.firstName]!.controller!.text =
-          widget.licenseDetail!.firstName;
-      _notifier.formSettings[TicketField.middleName]!.controller!.text =
-          widget.licenseDetail!.middleName;
-      _notifier.formSettings[TicketField.lastName]!.controller!.text =
-          widget.licenseDetail!.lastName;
-      _notifier.formSettings[TicketField.address]!.controller!.text =
-          widget.licenseDetail!.address;
-      _notifier.formSettings[TicketField.birthDate]!.controller!.text =
-          widget.licenseDetail!.birthdate.toDate().toString();
+    _tabController.addListener(() {
+      if (_tabController.index == 0) {
+        setState(() {
+          _cancelButtonText = "Cancel";
+        });
+      } else {
+        setState(() {
+          _cancelButtonText = "Back";
+        });
+      }
+    });
+
+    _formNotifier.addListener(() {
+      if (_formNotifier.isDriverNotPresent) {
+        _nameController.clear();
+        _addressController.clear();
+        _phoneController.clear();
+        _emailController.clear();
+        _licenseNumberController.clear();
+        _birthDateController.clear();
+        _vehicleOwnerAddressController.clear();
+        _vehicleOwnerController.clear();
+        _formNotifier.setIsVehicleOwnedByDriver(false);
+      }
+
+      if (_formNotifier.isVehicleOwnedByDriver) {
+        _vehicleOwnerController.text = _nameController.text;
+        _vehicleOwnerAddressController.text = _addressController.text;
+      } else {
+        _vehicleOwnerController.clear();
+        _vehicleOwnerAddressController.clear();
+      }
+    });
+
+    if (widget.qrDetails != null) {
+      _nameController.text = widget.qrDetails!.driverName;
+      _addressController.text = widget.qrDetails!.address;
+      _phoneController.text = widget.qrDetails!.phone ?? "";
+      _emailController.text = widget.qrDetails!.email ?? "";
+      _licenseNumberController.text = widget.qrDetails!.licenseNumber;
+      _birthDateController.text = widget.qrDetails!.birthDate;
     }
+  }
 
-    _tabController.addListener(() {});
+  void clearField() {
+    _nameController.clear();
+    _addressController.clear();
+    _phoneController.clear();
+    _emailController.clear();
+    _licenseNumberController.clear();
+    _birthDateController.clear();
+    _plateNumberController.clear();
+    _engineNumberController.clear();
+    _chassisNumberController.clear();
+    _vehicleOwnerController.clear();
+    _vehicleOwnerAddressController.clear();
+    _vehicleTypeController.clear();
+    _scannedDetails.clearDetails();
+    _imageProvider.reset();
+    _formNotifier.reset();
   }
 
   @override
   void dispose() {
     _tabController.dispose();
-    _notifier.clearDriverFields();
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Create Ticket"),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(USpace.space16),
-        child: Column(
+    return WillPopScope(
+      onWillPop: () async {
+        clearField();
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Create Ticket"),
+        ),
+        body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisSize: MainAxisSize.max,
@@ -68,25 +148,57 @@ class _CreateTicketPageState extends State<CreateTicketPage>
                 key: _formKey,
                 child: TabBarView(
                   controller: _tabController,
-                  children: const [
-                    SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(height: USpace.space12),
-                          DriverDetailsForm(),
-                          SizedBox(height: USpace.space12),
-                        ],
+                  children: [
+                    KeepAliveWrapper(
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.all(USpace.space16),
+                          child: Consumer<ScannedDetails>(
+                              builder: (context, details, child) {
+                            if (details.details.isNotEmpty) {
+                              _nameController.text =
+                                  details.details['fullname'] ?? "";
+                              _addressController.text =
+                                  details.details['address'] ?? "";
+
+                              _licenseNumberController.text =
+                                  details.details['licensenumber'] ?? "";
+                              _birthDateController.text =
+                                  details.details['birthdate'] != null
+                                      ? DateTime.parse(details
+                                              .details['birthdate']
+                                              .toString())
+                                          .toAmericanDate
+                                      : "";
+
+                              details.clearDetails();
+                            }
+                            return DriverDetailsForm(
+                              nameController: _nameController,
+                              addressController: _addressController,
+                              phoneController: _phoneController,
+                              emailController: _emailController,
+                              licenseNumberController: _licenseNumberController,
+                              birthDateController: _birthDateController,
+                            );
+                          }),
+                        ),
                       ),
                     ),
-                    SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(height: USpace.space12),
-                          VehiecleDetailsForm(),
-                          SizedBox(height: USpace.space12),
-                        ],
+                    KeepAliveWrapper(
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.all(USpace.space16),
+                          child: VehiecleDetailsForm(
+                            plateNumberController: _plateNumberController,
+                            engineNumberController: _engineNumberController,
+                            chassisNumberController: _chassisNumberController,
+                            vehicleOwnerController: _vehicleOwnerController,
+                            vehicleOwnerAddressController:
+                                _vehicleOwnerAddressController,
+                            vehicleTypeController: _vehicleTypeController,
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -95,8 +207,8 @@ class _CreateTicketPageState extends State<CreateTicketPage>
             ),
           ],
         ),
+        bottomNavigationBar: _buildActionButtons(),
       ),
-      bottomNavigationBar: _buildActionButtons(),
     );
   }
 
@@ -123,27 +235,14 @@ class _CreateTicketPageState extends State<CreateTicketPage>
         children: [
           Expanded(
             child: TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text("Cancel"),
+              onPressed: _handleBackButtonClick,
+              child: Text(_cancelButtonText),
             ),
           ),
           const SizedBox(width: USpace.space16),
           Expanded(
             child: ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate() &&
-                    _tabController.index == 0) {
-                  _tabController.animateTo(1);
-                  return;
-                }
-
-                if (_formKey.currentState!.validate() &&
-                    _tabController.index == 1) {
-                  getFieldValues();
-                }
-              },
+              onPressed: _handleNextButtonClick,
               child: const Text("Next"),
             ),
           ),
@@ -155,15 +254,6 @@ class _CreateTicketPageState extends State<CreateTicketPage>
   Widget _buildTabs() {
     return TabBar(
       controller: _tabController,
-      onTap: (index) {
-        if (index == 1 && !_formKey.currentState!.validate()) {
-          // Prevent the tab change
-          _tabController.animateTo(0);
-        } else {
-          // Allow the tab change
-          _tabController.animateTo(index);
-        }
-      },
       tabs: const [
         Tab(text: "Driver Details"),
         Tab(text: "Vehicle Details"),
@@ -171,19 +261,71 @@ class _CreateTicketPageState extends State<CreateTicketPage>
     );
   }
 
-  void getFieldValues() {
-    final formData =
-        Provider.of<CreateTicketFormNotifier>(context, listen: false);
-    formData.driverFormData.forEach((key, value) {
-      formData.driverFormData[key] =
-          formData.formSettings[key]!.controller!.text;
-    });
-    formData.vehicleFormData.forEach((key, value) {
-      if (key != TicketField.violationsID) {
-        formData.vehicleFormData[key] =
-            formData.formSettings[key]!.controller!.text;
-      }
-    });
+  void _handleBackButtonClick() {
+    if (_tabController.index == 0) {
+      Navigator.pop(context);
+    } else {
+      _tabController.animateTo(_tabController.index - 1);
+    }
+  }
+
+  void _handleNextButtonClick() {
+    if (_tabController.index == 0 && _formKey.currentState!.validate()) {
+      _tabController.animateTo(1);
+      return;
+    }
+
+    if (_tabController.index == 1 && !_formKey.currentState!.validate()) {
+      _tabController.animateTo(0);
+      return;
+    }
+
+    if (_tabController.index == 1 && _formKey.currentState!.validate()) {
+      _selectViolation();
+    }
+  }
+
+  void _selectViolation() async {
+    final enforcer = Provider.of<EnforcerProvider>(context, listen: false);
+    final ticketProvider = Provider.of<TicketProvider>(context, listen: false);
+
+    String enforcerName =
+        "${enforcer.enforcer.firstName} ${enforcer.enforcer.middleName} ${enforcer.enforcer.lastName}";
+
+    QuickAlert.show(
+      context: context,
+      type: QuickAlertType.loading,
+      title: "Please wait...",
+    );
+
+    ULocation location = await LocationServices.instance.getLocation();
+
+    final ticket = Ticket(
+      driverName: _nameController.text,
+      address: _addressController.text,
+      birthDate: _birthDateController.text.toTimestamp,
+      email: _emailController.text,
+      phone: _phoneController.text,
+      licenseNumber: _licenseNumberController.text,
+      vehicleType: _vehicleTypeController.text,
+      plateNumber: _plateNumberController.text,
+      engineNumber: _engineNumberController.text,
+      chassisNumber: _chassisNumberController.text,
+      vehicleOwner: _vehicleOwnerController.text,
+      vehicleOwnerAddress: _vehicleOwnerAddressController.text,
+      enforcerID: enforcer.enforcer.id,
+      enforcerName: enforcerName,
+      status: TicketStatus.unpaid,
+      dateCreated: Timestamp.now(),
+      ticketDueDate: Timestamp.now().getDueDate,
+      violationDateTime: Timestamp.now(),
+      violationPlace: location,
+      violationsID: [],
+      ticketNumber: 0,
+    );
+    ticketProvider.updateTicket(ticket);
+
+    popCurrent();
 
     goSelectViolation();
   }

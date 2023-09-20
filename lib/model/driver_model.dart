@@ -1,54 +1,62 @@
+import 'package:u_traffic_enforcer/config/utils/exports.dart';
+
 class Driver {
   final String? id;
-  final String firstName;
-  final String middleName;
-  final String lastName;
-  final String? suffix;
-  final String birthDate;
-  final String email;
-  final String phone;
+  final String driverName;
+  final Timestamp birthDate;
+  final String address;
+  final String? email;
+  final String? phone;
 
   const Driver({
     this.id,
-    this.suffix,
-    required this.firstName,
-    required this.middleName,
-    required this.lastName,
+    this.phone,
+    this.email,
+    required this.driverName,
     required this.birthDate,
-    required this.email,
-    required this.phone,
+    required this.address,
   });
 
   Map<String, dynamic> toJson() {
     return {
-      "id": id,
-      "suffix": suffix,
-      "firstName": firstName,
-      "middleName": middleName,
-      "lastName": lastName,
-      "birthDate": birthDate,
-      "email": email,
-      "phone": phone,
+      'driverName': driverName,
+      'birthDate': birthDate,
+      'email': email,
+      'phone': phone,
+      'address': address,
     };
   }
 
-  // Create fromJson method
   factory Driver.fromJson(Map<String, dynamic> json) {
     return Driver(
-      id: json["id"],
-      suffix: json["suffix"],
-      firstName: json["firstName"],
-      middleName: json["middleName"],
-      lastName: json["lastName"],
-      birthDate: json["birthDate"],
-      email: json["email"],
-      phone: json["phone"],
+      driverName: json['driverName'],
+      birthDate: json['birthDate'],
+      email: json['email'],
+      phone: json['phone'],
+      address: json['address'],
     );
   }
 
-  // Create toString method
   @override
   String toString() {
-    return "Driver(id: $id, suffix: $suffix, firstName: $firstName, middleName: $middleName, lastName: $lastName, birthDate: $birthDate, email: $email, phone: $phone)";
+    return 'Driver{driverName: $driverName, birthDate: $birthDate, email: $email, phone: $phone, address: $address}';
+  }
+
+  Driver copyWith({
+    String? id,
+    String? driverName,
+    Timestamp? birthDate,
+    String? email,
+    String? phone,
+    String? address,
+  }) {
+    return Driver(
+      id: id ?? this.id,
+      driverName: driverName ?? this.driverName,
+      birthDate: birthDate ?? this.birthDate,
+      email: email ?? this.email,
+      phone: phone ?? this.phone,
+      address: address ?? this.address,
+    );
   }
 }

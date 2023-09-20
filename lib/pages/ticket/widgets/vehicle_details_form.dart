@@ -3,10 +3,24 @@ import '../../../config/utils/exports.dart';
 class VehiecleDetailsForm extends StatelessWidget {
   const VehiecleDetailsForm({
     super.key,
+    required this.plateNumberController,
+    required this.engineNumberController,
+    required this.chassisNumberController,
+    required this.vehicleOwnerController,
+    required this.vehicleOwnerAddressController,
+    required this.vehicleTypeController,
   });
+
+  final TextEditingController plateNumberController;
+  final TextEditingController engineNumberController;
+  final TextEditingController chassisNumberController;
+  final TextEditingController vehicleOwnerController;
+  final TextEditingController vehicleOwnerAddressController;
+  final TextEditingController vehicleTypeController;
 
   @override
   Widget build(BuildContext context) {
+    final formValidator = Provider.of<FormValidators>(context);
     return Consumer<CreateTicketFormNotifier>(
       builder: (context, form, child) {
         return Column(
@@ -17,11 +31,16 @@ class VehiecleDetailsForm extends StatelessWidget {
               style: const UTextStyle().textbasefontmedium,
             ),
             const SizedBox(height: USpace.space12),
-            _buildVehicleTypeInput(context, form),
+            VehicleTypeInputField(
+              controller: vehicleTypeController,
+            ),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
+              formatters: [
+                UpperCaseTextFormatter(),
+              ],
               decoration: InputDecoration(
-                labelText: form.formSettings[TicketField.plateNumber]!.label,
+                labelText: 'Plate Number',
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.help),
                   onPressed: () {
@@ -29,39 +48,36 @@ class VehiecleDetailsForm extends StatelessWidget {
                       context: context,
                       type: QuickAlertType.info,
                       title: 'Valid Formats',
-                      text: '''
-LLL-DDD (e.g., ABC-123)
-LLL-DDDD (e.g., ABC-1234)
-LLL DDDD (e.g., ABC 1234)
-LLLDDDD (e.g., ABC1234)
-XXXX-XXXXXXX (e.g., 1234-5678901)
-XX-XXXX (e.g., AB-1234)
-
-Letters can be uppercase or lowercase.''',
+                      text: plateNumberFormats,
                     );
                   },
                 ),
               ),
-              validator: (value) => form.validatePlateNumber(value),
-              controller:
-                  form.formSettings[TicketField.plateNumber]!.controller!,
+              validator: formValidator.validatePlateNumber,
+              controller: plateNumberController,
             ),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
-              decoration: InputDecoration(
-                labelText: form.formSettings[TicketField.engineNumber]!.label,
+              formatters: [
+                UpperCaseTextFormatter(),
+              ],
+              decoration: const InputDecoration(
+                labelText: 'Engine Number',
               ),
-              validator: (value) => form.validateEngineNumber(value),
-              controller:
-                  form.formSettings[TicketField.engineNumber]!.controller!,
+              validator: (value) {
+                return null;
+              },
+              controller: engineNumberController,
             ),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
-              decoration: InputDecoration(
-                labelText: form.formSettings[TicketField.chassisNumber]!.label,
+              formatters: [
+                UpperCaseTextFormatter(),
+              ],
+              decoration: const InputDecoration(
+                labelText: 'Chassis Number',
               ),
-              controller:
-                  form.formSettings[TicketField.chassisNumber]!.controller!,
+              controller: chassisNumberController,
             ),
             const SizedBox(height: USpace.space12),
             Row(
@@ -76,55 +92,63 @@ Letters can be uppercase or lowercase.''',
                   flex: 1,
                   child: CheckboxListTile(
                     title: const Text("Owned by Driver"),
-                    enabled: !form.noDriver,
+                    enabled: !form.isDriverNotPresent,
                     contentPadding: const EdgeInsets.all(0),
                     dense: true,
                     visualDensity: VisualDensity.compact,
-                    value: form.ownedByDriver,
-                    onChanged: (value) => form.setOwnedByDriver(value!),
+                    value: form.isVehicleOwnedByDriver,
+                    onChanged: (value) {
+                      form.setIsVehicleOwnedByDriver(value!);
+                    },
                   ),
                 ),
               ],
             ),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
-              enabled: !form.noDriver,
-              readOnly: form.ownedByDriver,
-              decoration: InputDecoration(
-                labelText: form.formSettings[TicketField.vehicleOwner]!.label,
+              formatters: [
+                UpperCaseTextFormatter(),
+              ],
+              decoration: const InputDecoration(
+                labelText: 'Vehicle Owner',
               ),
-              controller:
-                  form.formSettings[TicketField.vehicleOwner]!.controller!,
+              controller: vehicleOwnerController,
             ),
             const SizedBox(height: USpace.space12),
             CreateTicketField(
-              enabled: !form.noDriver,
-              readOnly: form.ownedByDriver,
-              decoration: InputDecoration(
-                labelText:
-                    form.formSettings[TicketField.vehicleOwnerAddress]!.label,
+              formatters: [
+                UpperCaseTextFormatter(),
+              ],
+              decoration: const InputDecoration(
+                labelText: 'Vehicle Owner Address',
               ),
-              controller: form
-                  .formSettings[TicketField.vehicleOwnerAddress]!.controller!,
+              controller: vehicleOwnerAddressController,
             ),
           ],
         );
       },
     );
   }
+}
 
-  Widget _buildVehicleTypeInput(
-    BuildContext context,
-    CreateTicketFormNotifier form,
-  ) {
-    FormSettings formSettings = form.formSettings[TicketField.vehicleType]!;
+class VehicleTypeInputField extends StatelessWidget {
+  const VehicleTypeInputField({
+    super.key,
+    required this.controller,
+  });
+
+  final TextEditingController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final formValidator = Provider.of<FormValidators>(context);
     return TextFormField(
       readOnly: true,
       decoration: const InputDecoration(
         labelText: "Vehicle Type",
       ),
-      controller: formSettings.controller,
-      validator: (value) => form.validateVehicleType(value),
+      controller: controller,
+      validator: formValidator.validateVehicleType,
       onTap: () async {
         final type = await showDialog(
           context: context,
@@ -155,7 +179,7 @@ Letters can be uppercase or lowercase.''',
         );
 
         if (type != null) {
-          formSettings.controller!.text = type;
+          controller.text = type;
         }
       },
     );

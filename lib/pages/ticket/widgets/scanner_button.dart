@@ -1,4 +1,3 @@
-import 'package:u_traffic_enforcer/config/extensions/string_date_formatter.dart';
 import 'package:u_traffic_enforcer/services/license_scan_services.dart';
 
 import '../../../config/utils/exports.dart';
@@ -15,65 +14,76 @@ class ImageScannerButton extends StatefulWidget {
 class _ImageScannerButtonState extends State<ImageScannerButton> {
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () async {
-        await onTap();
-      },
-      child: AspectRatio(
-        aspectRatio: 3 / 2,
-        child: Container(
-          decoration: BoxDecoration(
-            color: UColors.gray100,
-            borderRadius: BorderRadius.circular(
-              USpace.space12,
+    final imageProvider = Provider.of<UTrafficImageProvider>(
+      context,
+    );
+
+    return Consumer<CreateTicketFormNotifier>(builder: (context, form, child) {
+      return GestureDetector(
+        onTap: () async {
+          if (form.isDriverNotPresent) return;
+
+          await onTap();
+        },
+        child: AspectRatio(
+          aspectRatio: 3 / 2,
+          child: Container(
+            decoration: BoxDecoration(
+              color: UColors.gray100,
+              borderRadius: BorderRadius.circular(
+                USpace.space12,
+              ),
+              border: Border.all(
+                color: UColors.gray200,
+                width: 2,
+                strokeAlign: BorderSide.strokeAlignInside,
+              ),
             ),
-            border: Border.all(
-              color: UColors.gray200,
-              width: 2,
-              strokeAlign: BorderSide.strokeAlignInside,
-            ),
-          ),
-          child: Center(
-            child: Consumer<CreateTicketFormNotifier>(
-              builder: (context, form, widget) {
-                if (form.licenseImagePath.isEmpty) {
-                  return const Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.image,
-                        color: UColors.gray400,
-                        size: 48,
-                      ),
-                      SizedBox(height: USpace.space12),
-                      Text(
-                        "Tap here to scan license",
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w500,
+            child: Center(
+              child: Consumer<CreateTicketFormNotifier>(
+                builder: (context, form, widget) {
+                  if (imageProvider.licenseImagePath.isEmpty) {
+                    return const Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.image,
                           color: UColors.gray400,
+                          size: 48,
                         ),
-                      )
-                    ],
+                        SizedBox(height: USpace.space12),
+                        Text(
+                          "Tap here to scan license",
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w500,
+                            color: UColors.gray400,
+                          ),
+                        )
+                      ],
+                    );
+                  }
+                  return ClipRRect(
+                    borderRadius: BorderRadius.circular(USpace.space12),
+                    child: Image.file(
+                      File(imageProvider.licenseImagePath),
+                      fit: BoxFit.contain,
+                    ),
                   );
-                }
-                return ClipRRect(
-                  borderRadius: BorderRadius.circular(USpace.space12),
-                  child: Image.file(
-                    File(form.licenseImagePath),
-                    fit: BoxFit.contain,
-                  ),
-                );
-              },
+                },
+              ),
             ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   Future<void> onTap() async {
-    final form = Provider.of<CreateTicketFormNotifier>(context, listen: false);
+    final imageProvider =
+        Provider.of<UTrafficImageProvider>(context, listen: false);
+    final scanDetailsProvider =
+        Provider.of<ScannedDetails>(context, listen: false);
     showLoading(
       'Scanning License',
     );
@@ -82,7 +92,7 @@ class _ImageScannerButtonState extends State<ImageScannerButton> {
     if (image == null) {
       popCurrent();
 
-      if (form.licenseImagePath.isEmpty) {
+      if (imageProvider.licenseImagePath.isEmpty) {
         showError(
           "Please take an image of the Driver's License",
           "No License Image",
@@ -105,40 +115,12 @@ class _ImageScannerButtonState extends State<ImageScannerButton> {
       return;
     }
 
-    form.setLicenseImagePath(cropped.path);
+    imageProvider.setLicenseImagePath(cropped.path);
     final scanApi = LicenseScanServices.instance;
     try {
       final data = await scanApi.sendRequest(cropped.path);
 
-      if (data!['lastname'].toString().isNotEmpty) {
-        form.formSettings[TicketField.lastName]!.controller!.text =
-            data['lastname'];
-      }
-
-      if (data['fullname'].toString().isNotEmpty) {
-        if (data['fullname'].toString().contains(',')) {
-          form.formSettings[TicketField.firstName]!.controller!.text =
-              data['fullname'].toString().split(',')[1];
-        } else {
-          form.formSettings[TicketField.firstName]!.controller!.text =
-              data['fullname'];
-        }
-      }
-
-      if (data['licensenumber'].toString().isNotEmpty) {
-        form.formSettings[TicketField.licenseNumber]!.controller!.text =
-            data['licensenumber'];
-      }
-
-      if (data['address'].toString().isNotEmpty) {
-        form.formSettings[TicketField.address]!.controller!.text =
-            data['address'];
-      }
-
-      if (data['birthdate'].toString().isNotEmpty) {
-        form.formSettings[TicketField.birthDate]!.controller!.text =
-            data['birthdate'].toString().split(' ').first.formtDate;
-      }
+      scanDetailsProvider.setDetails(data!);
 
       popCurrent();
       showSuccess();

@@ -37,6 +37,24 @@ void goPrinterScanner() {
   );
 }
 
+void goChangePassword() {
+  Navigator.of(navigatorKey.currentContext!).pushNamed(
+    "/settings/updatepassword",
+  );
+}
+
+void goRequestLeave() {
+  Navigator.of(navigatorKey.currentContext!).pushNamed(
+    "/settings/leave",
+  );
+}
+
+void goSignaturePad() {
+  Navigator.of(navigatorKey.currentContext!).pushNamed(
+    "/ticket/signature",
+  );
+}
+
 void popCurrent() {
   Navigator.of(navigatorKey.currentContext!).pop();
 }

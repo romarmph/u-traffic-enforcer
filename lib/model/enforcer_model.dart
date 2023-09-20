@@ -1,12 +1,12 @@
 class Enforcer {
-  final String? id;
+  final String id;
   final String firstName;
   final String middleName;
   final String lastName;
   final String email;
 
   const Enforcer({
-    this.id,
+    required this.id,
     required this.firstName,
     required this.middleName,
     required this.lastName,
@@ -23,9 +23,9 @@ class Enforcer {
     };
   }
 
-  factory Enforcer.fromJson(Map<String, dynamic> json) {
+  factory Enforcer.fromJson(Map<String, dynamic> json, String id) {
     return Enforcer(
-      id: json["id"],
+      id: id,
       firstName: json["firstName"],
       middleName: json["middleName"],
       lastName: json["lastName"],
