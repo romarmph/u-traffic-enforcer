@@ -1,5 +1,4 @@
 import 'package:intl/intl.dart';
-import 'package:u_traffic_enforcer/config/extensions/string_date_formatter.dart';
 
 import '../../config/utils/exports.dart';
 
@@ -69,8 +68,8 @@ class _RecentTicketViewState extends State<RecentTicketView>
                         subtitle: 'Driver Name',
                       ),
                       PreviewListTile(
-                        title: widget.ticket.birthDate.toString().formtDate,
-                        subtitle: 'Last Name',
+                        title: widget.ticket.birthDate.toAmericanDate,
+                        subtitle: 'Birthdate',
                       ),
                       PreviewListTile(
                         title: widget.ticket.address,
@@ -152,16 +151,12 @@ class _RecentTicketViewState extends State<RecentTicketView>
                   ListView(
                     children: [
                       PreviewListTile(
-                        title: widget.ticket.violationDateTime
-                            .toString()
-                            .formtDate,
+                        title: widget.ticket.violationDateTime.toAmericanDate,
                         subtitle: 'Violation Date',
                       ),
                       PreviewListTile(
-                        title: timeFormat.format(
-                          widget.ticket.violationDateTime.toDate(),
-                        ),
-                        subtitle: 'Violation Date',
+                        title: widget.ticket.violationDateTime.toTime,
+                        subtitle: 'Violation Time',
                       ),
                       PreviewListTile(
                         title: widget.ticket.violationPlace.address,

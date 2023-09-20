@@ -1,4 +1,3 @@
-import 'package:u_traffic_enforcer/config/extensions/timestamp_extension.dart';
 
 import '../../../config/utils/exports.dart';
 

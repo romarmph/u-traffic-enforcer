@@ -9,15 +9,14 @@ class TicketDBHelper {
 
   final _firestore = FirebaseFirestore.instance;
 
-  final String _ticketCollection = 'tickets';
-  final String _enforcerIDField = 'enforcerId';
-  final String _dateCreatedField = 'dateCreated';
+  static const String _ticketCollection = 'tickets';
+  static const String _enforcerIDField = 'enforcerID';
+  static const String _dateCreatedField = 'dateCreated';
+  static const String _countersCollection = 'counters';
+  static const String _ticketCounterDocument = 'ticketCounter';
+  static const String _countField = 'count';
 
-  final String _countersCollection = 'counters';
-  final String _ticketCounterDocument = 'ticketCounter';
-  final String _countField = 'count';
-
-  Stream<List<Map<String, dynamic>>> getTicketsByEnforcerId(String enforcerID) {
+  Stream<List<Ticket>> getTicketsByEnforcerId(String enforcerID) {
     return FirebaseFirestore.instance
         .collection(_ticketCollection)
         .where(_enforcerIDField, isEqualTo: enforcerID)
@@ -25,7 +24,7 @@ class TicketDBHelper {
         .snapshots()
         .map((QuerySnapshot snapshot) {
       return snapshot.docs.map((DocumentSnapshot document) {
-        return document.data() as Map<String, dynamic>;
+        return Ticket.fromJson(document.data() as Map<String, dynamic>);
       }).toList();
     });
   }

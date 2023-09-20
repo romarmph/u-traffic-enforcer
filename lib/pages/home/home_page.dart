@@ -263,7 +263,7 @@ class _HomePageState extends State<HomePage> {
     final ticketDB = TicketDBHelper.instance;
 
     return Expanded(
-        child: StreamBuilder<List<Map<String, dynamic>>>(
+        child: StreamBuilder<List<Ticket>>(
       stream: ticketDB.getTicketsByEnforcerId(
         enforcer.enforcer.id,
       ),
@@ -276,8 +276,7 @@ class _HomePageState extends State<HomePage> {
           return const Center(child: Text("Error fetching tickets"));
         }
 
-        final List<Ticket> tickets =
-            snapshot.data!.map((ticket) => Ticket.fromJson(ticket)).toList();
+        final List<Ticket> tickets = snapshot.data!;
 
         return ListView.builder(
           itemCount: tickets.length,
@@ -320,7 +319,6 @@ class _HomePageState extends State<HomePage> {
                     ),
               ),
               const Spacer(),
-              // viewAllBtn(),
             ],
           ),
           recentTicketsList(),

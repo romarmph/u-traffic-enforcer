@@ -66,13 +66,15 @@ class Ticket {
       vehicleOwnerAddress: json['vehicleOwnerAddress'],
       enforcerID: json['enforcerID'],
       enforcerName: json['enforcerName'],
-      status: json['status'],
+      status: TicketStatus.values.firstWhere(
+        (e) => e.toString() == 'TicketStatus.${json['status']}',
+      ),
       birthDate: json['birthDate'],
       dateCreated: json['dateCreated'],
       ticketDueDate: json['ticketDueDate'],
       violationDateTime: json['violationDateTime'],
       violationPlace: ULocation.fromJson(json['violationPlace']),
-      violationsID: json['violationsID'],
+      violationsID: List<String?>.from(json['violationsID'] ?? []),
     );
   }
 
