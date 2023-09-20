@@ -22,6 +22,7 @@ export 'package:google_geocoding_api/google_geocoding_api.dart';
 export 'package:http/http.dart';
 export 'package:dropdown_textfield/dropdown_textfield.dart';
 export 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+export 'package:searchable_listview/searchable_listview.dart';
 
 ///
 ///

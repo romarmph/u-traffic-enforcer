@@ -4,7 +4,11 @@ class ViolationProvider extends ChangeNotifier {
   final _violationsDatabase = ViolationsDatabase();
   List<Violation> _violationsList = [];
 
-  List<Violation> get getViolations => _violationsList;
+  List<Violation> get getViolations {
+    _violationsList
+        .sort((a, b) => (b.isSelected ? 1 : 0) - (a.isSelected ? 1 : 0));
+    return _violationsList;
+  }
 
   void listenToViolations() {
     _violationsDatabase.getViolationsStream().listen((violations) {

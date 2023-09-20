@@ -12,7 +12,8 @@ class ViolationsDatabase {
   }
 
   Future<List<Violation>> getViolations() async {
-    final snapshot = await _firestore.collection('violations').get();
+    final snapshot =
+        await _firestore.collection('violations').orderBy('name').get();
 
     return snapshot.docs
         .map((doc) => Violation.fromJson(doc.data(), doc.id))

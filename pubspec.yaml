@@ -61,6 +61,7 @@ dependencies:
   cached_network_image: ^3.2.3
   firebase_cached_image: ^0.4.4
   syncfusion_flutter_signaturepad: ^23.1.36
+  searchable_listview: ^2.7.0
 
 dev_dependencies:
   flutter_test:

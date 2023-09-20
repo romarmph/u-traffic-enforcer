@@ -29,7 +29,7 @@ class Wrapper extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Loading data...",
+                            "Logging in...",
                             style: const UTextStyle().textlgfontmedium,
                           ),
                           const SizedBox(height: USpace.space16),
