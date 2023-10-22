@@ -98,6 +98,7 @@ export 'package:u_traffic_enforcer/pages/ticket/widgets/text_field.dart';
 export 'package:u_traffic_enforcer/pages/ticket/widgets/vehicle_details_form.dart';
 export 'package:u_traffic_enforcer/pages/ticket/widgets/scanner_button.dart';
 export 'package:u_traffic_enforcer/pages/ticket/widgets/keep_alive_wrapper.dart';
+export 'package:u_traffic_enforcer/pages/ticket/widgets/evidence_form.dart';
 export 'package:u_traffic_enforcer/pages/wrapper.dart';
 
 // Routes

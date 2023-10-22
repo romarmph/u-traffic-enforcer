@@ -34,13 +34,14 @@ class _CreateTicketPageState extends State<CreateTicketPage>
   final _vehicleOwnerAddressController = TextEditingController();
   final _vehicleTypeController = TextEditingController();
 
+  bool isScrollable = false;
   String _cancelButtonText = "Cancel";
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(
-      length: 2,
+      length: 3,
       initialIndex: 0,
       vsync: this,
     );
@@ -147,6 +148,9 @@ class _CreateTicketPageState extends State<CreateTicketPage>
               child: Form(
                 key: _formKey,
                 child: TabBarView(
+                  physics: isScrollable
+                      ? const AlwaysScrollableScrollPhysics()
+                      : const NeverScrollableScrollPhysics(),
                   controller: _tabController,
                   children: [
                     KeepAliveWrapper(
@@ -198,6 +202,14 @@ class _CreateTicketPageState extends State<CreateTicketPage>
                                 _vehicleOwnerAddressController,
                             vehicleTypeController: _vehicleTypeController,
                           ),
+                        ),
+                      ),
+                    ),
+                    KeepAliveWrapper(
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.all(USpace.space16),
+                          child: EvidenceForm(),
                         ),
                       ),
                     ),
@@ -257,6 +269,7 @@ class _CreateTicketPageState extends State<CreateTicketPage>
       tabs: const [
         Tab(text: "Driver Details"),
         Tab(text: "Vehicle Details"),
+        Tab(text: "Evidences"),
       ],
     );
   }
@@ -307,7 +320,7 @@ class _CreateTicketPageState extends State<CreateTicketPage>
       email: _emailController.text,
       phone: _phoneController.text,
       licenseNumber: _licenseNumberController.text,
-      vehicleType: _vehicleTypeController.text,
+      vehicleTypeID: _vehicleTypeController.text,
       plateNumber: _plateNumberController.text,
       engineNumber: _engineNumberController.text,
       chassisNumber: _chassisNumberController.text,

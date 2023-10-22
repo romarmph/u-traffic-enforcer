@@ -14,6 +14,8 @@ class _PasswordChangePageState extends State<PasswordChangePage> {
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
+  bool _isObscure = true;
+
   String? _oldPasswordError;
   String? _newPasswordError;
   String? _confirmPasswordError;
@@ -96,6 +98,7 @@ class _PasswordChangePageState extends State<PasswordChangePage> {
                   height: USpace.space16,
                 ),
                 TextFormField(
+                  obscureText: true,
                   controller: _oldPasswordController,
                   decoration: const InputDecoration(
                     labelText: "Old Password",
@@ -116,8 +119,16 @@ class _PasswordChangePageState extends State<PasswordChangePage> {
                   height: USpace.space16,
                 ),
                 TextFormField(
+                  obscureText: _isObscure,
                   controller: _newPasswordController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                          _isObscure ? Icons.visibility : Icons.visibility_off),
+                      onPressed: () => setState(
+                        () => _isObscure = !_isObscure,
+                      ),
+                    ),
                     labelText: "New Password",
                   ),
                   onChanged: (value) {
@@ -153,8 +164,16 @@ class _PasswordChangePageState extends State<PasswordChangePage> {
                   height: USpace.space16,
                 ),
                 TextFormField(
+                  obscureText: _isObscure,
                   controller: _confirmPasswordController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                          _isObscure ? Icons.visibility : Icons.visibility_off),
+                      onPressed: () => setState(
+                        () => _isObscure = !_isObscure,
+                      ),
+                    ),
                     labelText: "Confirm Password",
                   ),
                   onChanged: (value) {

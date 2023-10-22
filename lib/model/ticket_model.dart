@@ -8,7 +8,7 @@ class Ticket {
   final String phone;
   final String email;
   final String address;
-  final String vehicleType;
+  final String vehicleTypeID;
   final String engineNumber;
   final String chassisNumber;
   final String plateNumber;
@@ -32,7 +32,7 @@ class Ticket {
     required this.phone,
     required this.email,
     required this.address,
-    required this.vehicleType,
+    required this.vehicleTypeID,
     required this.engineNumber,
     required this.chassisNumber,
     required this.plateNumber,
@@ -58,7 +58,7 @@ class Ticket {
       phone: json['phone'],
       email: json['email'],
       address: json['address'],
-      vehicleType: json['vehicleType'],
+      vehicleTypeID: json['vehicleTypeID'],
       engineNumber: json['engineNumber'],
       chassisNumber: json['chassisNumber'],
       plateNumber: json['plateNumber'],
@@ -86,7 +86,7 @@ class Ticket {
       'phone': phone,
       'email': email,
       'address': address,
-      'vehicleType': vehicleType,
+      'vehicleTypeID': vehicleTypeID,
       'engineNumber': engineNumber,
       'chassisNumber': chassisNumber,
       'plateNumber': plateNumber,
@@ -129,7 +129,7 @@ class Ticket {
     String? phone,
     String? email,
     String? address,
-    String? vehicleType,
+    String? vehicleTypeID,
     String? engineNumber,
     String? chassisNumber,
     String? plateNumber,
@@ -153,7 +153,7 @@ class Ticket {
       phone: phone ?? this.phone,
       email: email ?? this.email,
       address: address ?? this.address,
-      vehicleType: vehicleType ?? this.vehicleType,
+      vehicleTypeID: vehicleTypeID ?? this.vehicleTypeID,
       engineNumber: engineNumber ?? this.engineNumber,
       chassisNumber: chassisNumber ?? this.chassisNumber,
       plateNumber: plateNumber ?? this.plateNumber,

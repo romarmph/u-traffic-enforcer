@@ -27,6 +27,8 @@ class _RecentTicketViewState extends State<RecentTicketView>
 
   @override
   Widget build(BuildContext context) {
+    final vehicleTypes = Provider.of<VehicleTypeProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('View Ticket'),
@@ -88,7 +90,9 @@ class _RecentTicketViewState extends State<RecentTicketView>
                   ListView(
                     children: [
                       PreviewListTile(
-                        title: widget.ticket.vehicleType,
+                        title: vehicleTypes.getVehicleTypeName(
+                          widget.ticket.vehicleTypeID,
+                        ),
                         subtitle: 'Vehicle Type',
                       ),
                       PreviewListTile(

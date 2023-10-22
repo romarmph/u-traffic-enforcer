@@ -273,6 +273,8 @@ class _HomePageState extends State<HomePage> {
         }
 
         if (snapshot.hasError) {
+          print(snapshot);
+          debugPrint(snapshot.error.toString());
           return const Center(child: Text("Error fetching tickets"));
         }
 
@@ -339,45 +341,81 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: USpace.space16),
             miniDashboard(),
             const SizedBox(height: USpace.space8),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: USpace.space16,
-              ),
-              child: OutlinedButton.icon(
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.all(USpace.space24),
-                ),
-                onPressed: () async {
-                  String barcodeScanRes =
-                      await FlutterBarcodeScanner.scanBarcode(
-                    '#ff6666',
-                    'Cancel',
-                    true,
-                    ScanMode.QR,
-                  );
-
-                  QRDetails qrDetails = QRDetails.fromJson(
-                    jsonDecode(barcodeScanRes),
-                  );
-
-                  goCreateTicketWithLicense(qrDetails);
-                },
-                label: const Text("Scan QR"),
-                icon: const Icon(Icons.qr_code_scanner_outlined),
-              ),
-            ),
             Expanded(
               child: recentTicketView(),
             ),
           ],
         ),
       ),
-      floatingActionButton: const FloatingActionButton.extended(
-        onPressed: goCreateTicket,
-        label: Text("New Ticket"),
-        icon: Icon(Icons.add),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: showMenu,
+        label: const Text("Create Ticket"),
+        icon: const Icon(Icons.add),
       ),
       bottomNavigationBar: const BottomNav(),
+    );
+  }
+
+  void showMenu() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: Container(
+            padding: const EdgeInsets.all(USpace.space16),
+            decoration: BoxDecoration(
+              color: UColors.white,
+              borderRadius: BorderRadius.circular(USpace.space12),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ElevatedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.all(USpace.space24),
+                  ),
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                    String barcodeScanRes =
+                        await FlutterBarcodeScanner.scanBarcode(
+                      '#ff6666',
+                      'Cancel',
+                      true,
+                      ScanMode.QR,
+                    );
+
+                    QRDetails qrDetails = QRDetails.fromJson(
+                      jsonDecode(barcodeScanRes),
+                    );
+
+                    goCreateTicketWithLicense(qrDetails);
+                  },
+                  label: const Text("Scan QR"),
+                  icon: const Icon(Icons.qr_code_scanner_outlined),
+                ),
+                const SizedBox(height: USpace.space12),
+                ElevatedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.all(USpace.space24),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    goCreateTicket();
+                  },
+                  label: const Text("Fill Form"),
+                  icon: const Icon(Icons.create_rounded),
+                ),
+                const SizedBox(height: USpace.space12),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text("Cancel"),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

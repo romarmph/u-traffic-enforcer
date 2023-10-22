@@ -330,7 +330,7 @@ class _TicketPreviewState extends State<TicketPreview>
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             PreviewListTile(
-              title: ticket.vehicleType,
+              title: ticket.vehicleTypeID,
               subtitle: 'Vehicle Type',
             ),
             PreviewListTile(
