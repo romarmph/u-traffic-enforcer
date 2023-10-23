@@ -26,7 +26,6 @@ class TicketDBHelper {
       if (snapshot.docs.isEmpty) return List.empty();
 
       return snapshot.docs.map((DocumentSnapshot document) {
-        print(document.data());
         return Ticket.fromJson(document.data() as Map<String, dynamic>);
       }).toList();
     });

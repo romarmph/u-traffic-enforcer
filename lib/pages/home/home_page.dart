@@ -273,7 +273,6 @@ class _HomePageState extends State<HomePage> {
         }
 
         if (snapshot.hasError) {
-          print(snapshot);
           debugPrint(snapshot.error.toString());
           return const Center(child: Text("Error fetching tickets"));
         }

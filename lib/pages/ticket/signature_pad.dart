@@ -75,8 +75,6 @@ class _SignaturePadState extends State<SignaturePad> {
                       await _signaturePadKey.currentState!.toImage();
                   File file = await SignatureServices().saveImage(image);
 
-                  print(file);
-
                   signaturePathProvider.setSignatureImagePath(file.path);
                 },
                 child: const Text('Save Signature'),

@@ -138,87 +138,90 @@ class _CreateTicketPageState extends State<CreateTicketPage>
         appBar: AppBar(
           title: const Text("Create Ticket"),
         ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            _buildTabs(),
-            Expanded(
-              child: Form(
-                key: _formKey,
-                child: TabBarView(
-                  physics: isScrollable
-                      ? const AlwaysScrollableScrollPhysics()
-                      : const NeverScrollableScrollPhysics(),
-                  controller: _tabController,
-                  children: [
-                    KeepAliveWrapper(
-                      child: SingleChildScrollView(
-                        child: Padding(
-                          padding: const EdgeInsets.all(USpace.space16),
-                          child: Consumer<ScannedDetails>(
-                              builder: (context, details, child) {
-                            if (details.details.isNotEmpty) {
-                              _nameController.text =
-                                  details.details['fullname'] ?? "";
-                              _addressController.text =
-                                  details.details['address'] ?? "";
+        body: LayoutBuilder(builder: (context, constraints) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              _buildTabs(),
+              SizedBox(
+                height: constraints.maxHeight - 64,
+                child: Form(
+                  key: _formKey,
+                  child: TabBarView(
+                    // physics: isScrollable
+                    //     ? const AlwaysScrollableScrollPhysics()
+                    //     : const NeverScrollableScrollPhysics(),
+                    controller: _tabController,
+                    children: [
+                      KeepAliveWrapper(
+                        child: SingleChildScrollView(
+                          child: Padding(
+                            padding: const EdgeInsets.all(USpace.space16),
+                            child: Consumer<ScannedDetails>(
+                                builder: (context, details, child) {
+                              if (details.details.isNotEmpty) {
+                                _nameController.text =
+                                    details.details['fullname'] ?? "";
+                                _addressController.text =
+                                    details.details['address'] ?? "";
 
-                              _licenseNumberController.text =
-                                  details.details['licensenumber'] ?? "";
-                              _birthDateController.text =
-                                  details.details['birthdate'] != null
-                                      ? DateTime.parse(details
-                                              .details['birthdate']
-                                              .toString())
-                                          .toAmericanDate
-                                      : "";
+                                _licenseNumberController.text =
+                                    details.details['licensenumber'] ?? "";
+                                _birthDateController.text =
+                                    details.details['birthdate'] != null
+                                        ? DateTime.parse(details
+                                                .details['birthdate']
+                                                .toString())
+                                            .toAmericanDate
+                                        : "";
 
-                              details.clearDetails();
-                            }
-                            return DriverDetailsForm(
-                              nameController: _nameController,
-                              addressController: _addressController,
-                              phoneController: _phoneController,
-                              emailController: _emailController,
-                              licenseNumberController: _licenseNumberController,
-                              birthDateController: _birthDateController,
-                            );
-                          }),
-                        ),
-                      ),
-                    ),
-                    KeepAliveWrapper(
-                      child: SingleChildScrollView(
-                        child: Padding(
-                          padding: const EdgeInsets.all(USpace.space16),
-                          child: VehiecleDetailsForm(
-                            plateNumberController: _plateNumberController,
-                            engineNumberController: _engineNumberController,
-                            chassisNumberController: _chassisNumberController,
-                            vehicleOwnerController: _vehicleOwnerController,
-                            vehicleOwnerAddressController:
-                                _vehicleOwnerAddressController,
-                            vehicleTypeController: _vehicleTypeController,
+                                details.clearDetails();
+                              }
+                              return DriverDetailsForm(
+                                nameController: _nameController,
+                                addressController: _addressController,
+                                phoneController: _phoneController,
+                                emailController: _emailController,
+                                licenseNumberController:
+                                    _licenseNumberController,
+                                birthDateController: _birthDateController,
+                              );
+                            }),
                           ),
                         ),
                       ),
-                    ),
-                    KeepAliveWrapper(
-                      child: SingleChildScrollView(
-                        child: Padding(
-                          padding: const EdgeInsets.all(USpace.space16),
-                          child: EvidenceForm(),
+                      KeepAliveWrapper(
+                        child: SingleChildScrollView(
+                          child: Padding(
+                            padding: const EdgeInsets.all(USpace.space16),
+                            child: VehiecleDetailsForm(
+                              plateNumberController: _plateNumberController,
+                              engineNumberController: _engineNumberController,
+                              chassisNumberController: _chassisNumberController,
+                              vehicleOwnerController: _vehicleOwnerController,
+                              vehicleOwnerAddressController:
+                                  _vehicleOwnerAddressController,
+                              vehicleTypeController: _vehicleTypeController,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                      KeepAliveWrapper(
+                        child: Container(
+                          color: UColors.gray100,
+                          padding: const EdgeInsets.all(USpace.space16),
+                          child: const EvidenceForm(),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
+            ],
+          );
+        }),
         bottomNavigationBar: _buildActionButtons(),
       ),
     );
@@ -264,13 +267,16 @@ class _CreateTicketPageState extends State<CreateTicketPage>
   }
 
   Widget _buildTabs() {
-    return TabBar(
-      controller: _tabController,
-      tabs: const [
-        Tab(text: "Driver Details"),
-        Tab(text: "Vehicle Details"),
-        Tab(text: "Evidences"),
-      ],
+    return SizedBox(
+      height: 64,
+      child: TabBar(
+        controller: _tabController,
+        tabs: const [
+          Tab(text: "Driver Details"),
+          Tab(text: "Vehicle Details"),
+          Tab(text: "Evidences"),
+        ],
+      ),
     );
   }
 
