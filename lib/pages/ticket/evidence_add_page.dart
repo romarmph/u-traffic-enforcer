@@ -8,17 +8,20 @@ class EvidenceAddPage extends StatefulWidget {
 }
 
 class _EvidenceAddPageState extends State<EvidenceAddPage> {
-  final nameController = TextEditingController();
-  final descriptionController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _descriptionController = TextEditingController();
 
-  late File file;
+  File _file = File('');
 
   void takeImage() async {
     final image = await ImagePickerService.instance.pickImage();
 
-    if (image == null) return;
+    if (image == null) {
+      return;
+    }
 
-    setState(() => file = File(image.path));
+    setState(() => _file = File(image.path));
   }
 
   @override
@@ -27,67 +30,103 @@ class _EvidenceAddPageState extends State<EvidenceAddPage> {
       appBar: AppBar(
         title: const Text("Add Evidence"),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(USpace.space16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+      body: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        child: Padding(
+          padding: const EdgeInsets.all(USpace.space16),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                TextFormField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(
+                    labelText: "Name",
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Please enter a name";
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(
+                  height: USpace.space16,
+                ),
+                TextFormField(
+                  textAlignVertical: TextAlignVertical.top,
+                  minLines: 1,
+                  maxLines: 3,
+                  controller: _descriptionController,
+                  decoration: const InputDecoration(
+                    labelText: "Description",
+                  ),
+                ),
+                const SizedBox(
+                  height: USpace.space16,
+                ),
+                GestureDetector(
+                  onTap: _file.existsSync() ? null : takeImage,
+                  child: _buildImage(),
+                ),
+                const SizedBox(
+                  height: USpace.space8,
+                ),
+                _buildRemoveAndRetakeButtons(),
+              ],
+            ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Form(
-              child: Column(
-                children: [
-                  TextFormField(
-                    controller: nameController,
-                    decoration: const InputDecoration(
-                      labelText: "Name",
-                    ),
-                  ),
-                  const SizedBox(
-                    height: USpace.space16,
-                  ),
-                  TextFormField(
-                    textAlignVertical: TextAlignVertical.top,
-                    minLines: 1,
-                    maxLines: 3,
-                    controller: descriptionController,
-                    decoration: const InputDecoration(
-                      labelText: "Description",
-                    ),
-                  ),
-                ],
+            Expanded(
+              child: TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text("Back"),
               ),
             ),
-            const SizedBox(
-              height: USpace.space16,
-            ),
-            GestureDetector(
-              onTap: file.existsSync() ? null : takeImage,
-              child: _buildImage(),
-            ),
-            const SizedBox(
-              height: USpace.space8,
-            ),
-            _buildRemoveAndRetakeButtons(),
-            const Spacer(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text("Back"),
-                  ),
-                ),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () async {},
-                    child: const Text("Save Evidence"),
-                  ),
-                ),
-              ],
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () {
+                  if (!_file.existsSync()) {
+                    _showNoImageError();
+                    return;
+                  }
+                  if (_formKey.currentState!.validate()) {
+                    final evidenceProvider = Provider.of<EvidenceProvider>(
+                      context,
+                      listen: false,
+                    );
+                    evidenceProvider.addEvidence(
+                      Evidence(
+                        name: _nameController.text,
+                        description: _descriptionController.text,
+                        path: _file.path,
+                      ),
+                    );
+
+                    Navigator.of(context).pop();
+                  }
+                },
+                child: const Text("Save Evidence"),
+              ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  void _showNoImageError() {
+    QuickAlert.show(
+      context: context,
+      title: "No Image",
+      text: "Please take an image first",
+      type: QuickAlertType.error,
     );
   }
 
@@ -99,13 +138,13 @@ class _EvidenceAddPageState extends State<EvidenceAddPage> {
         color: UColors.gray100,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: UColors.gray200,
+          color: UColors.gray300,
           width: 1,
         ),
       ),
-      child: file.existsSync()
+      child: _file.existsSync()
           ? Image.file(
-              file,
+              _file,
               fit: BoxFit.cover,
             )
           : const Center(
@@ -124,7 +163,7 @@ class _EvidenceAddPageState extends State<EvidenceAddPage> {
   }
 
   Widget _buildRemoveAndRetakeButtons() {
-    return file.existsSync()
+    return _file.existsSync()
         ? Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -137,7 +176,7 @@ class _EvidenceAddPageState extends State<EvidenceAddPage> {
                       width: 1.5,
                     ),
                   ),
-                  onPressed: () => setState(() => file = File("")),
+                  onPressed: () => setState(() => _file = File("")),
                   child: const Text("Remove"),
                 ),
               ),

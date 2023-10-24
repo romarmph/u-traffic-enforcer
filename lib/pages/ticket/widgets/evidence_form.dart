@@ -14,35 +14,29 @@ class _EvidenceFormState extends State<EvidenceForm> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Expanded(
-          child: ListView.separated(
-            itemCount: 4,
-            separatorBuilder: (context, index) => const SizedBox(
-              height: USpace.space20,
-            ),
-            itemBuilder: (context, index) {
-              return Container(
-                height: 400,
-                clipBehavior: Clip.antiAlias,
-                decoration: BoxDecoration(
-                  color: UColors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Stack(
-                  children: [
-                    const Placeholder(),
-                    Positioned(
-                      right: 4,
-                      top: 4,
-                      child: IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.delete_rounded,
-                          size: 32,
-                        ),
-                      ),
+          child: Consumer<EvidenceProvider>(
+            builder: (context, provider, child) {
+              if (provider.evidences.isEmpty) {
+                return const Center(
+                  child: Text(
+                    "No evidence added yet",
+                    style: TextStyle(
+                      color: UColors.gray400,
+                      fontSize: 18,
                     ),
-                  ],
+                  ),
+                );
+              }
+
+              return ListView.separated(
+                itemCount: provider.evidences.length,
+                separatorBuilder: (context, index) => const SizedBox(
+                  height: USpace.space20,
                 ),
+                itemBuilder: (context, index) {
+                  final evidence = provider.evidences[index];
+                  return EvidenceCard(evidence: evidence);
+                },
               );
             },
           ),
