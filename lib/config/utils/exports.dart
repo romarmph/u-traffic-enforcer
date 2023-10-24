@@ -77,6 +77,7 @@ export 'package:u_traffic_enforcer/model/city.dart';
 export 'package:u_traffic_enforcer/model/province.dart';
 export 'package:u_traffic_enforcer/model/vehicle_type.dart';
 export 'package:u_traffic_enforcer/model/qr_details.dart';
+export 'package:u_traffic_enforcer/model/evidence.dart';
 
 // pages
 export 'package:u_traffic_enforcer/pages/auth/login_page.dart';
@@ -99,6 +100,7 @@ export 'package:u_traffic_enforcer/pages/ticket/widgets/vehicle_details_form.dar
 export 'package:u_traffic_enforcer/pages/ticket/widgets/scanner_button.dart';
 export 'package:u_traffic_enforcer/pages/ticket/widgets/keep_alive_wrapper.dart';
 export 'package:u_traffic_enforcer/pages/ticket/widgets/evidence_form.dart';
+export 'package:u_traffic_enforcer/pages/ticket/evidence_add_page.dart';
 export 'package:u_traffic_enforcer/pages/wrapper.dart';
 
 // Routes

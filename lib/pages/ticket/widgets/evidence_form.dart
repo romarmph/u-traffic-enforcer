@@ -51,7 +51,13 @@ class _EvidenceFormState extends State<EvidenceForm> {
           height: USpace.space16,
         ),
         ElevatedButton.icon(
-          onPressed: () {},
+          onPressed: () async {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) {
+                return const EvidenceAddPage();
+              },
+            ));
+          },
           label: const Text("Add Evidence"),
           icon: const Icon(Icons.add_a_photo_rounded),
         )
