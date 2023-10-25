@@ -9,6 +9,7 @@ class VehiecleDetailsForm extends StatelessWidget {
     required this.vehicleOwnerController,
     required this.vehicleOwnerAddressController,
     required this.vehicleTypeController,
+    required this.conductionController,
   });
 
   final TextEditingController plateNumberController;
@@ -17,10 +18,12 @@ class VehiecleDetailsForm extends StatelessWidget {
   final TextEditingController vehicleOwnerController;
   final TextEditingController vehicleOwnerAddressController;
   final TextEditingController vehicleTypeController;
+  final TextEditingController conductionController;
 
   @override
   Widget build(BuildContext context) {
     final formValidator = Provider.of<FormValidators>(context);
+    // final vehicleTypes = Provider.of<VehicleTypes>(context);
     return Consumer<CreateTicketFormNotifier>(
       builder: (context, form, child) {
         return Column(
@@ -55,6 +58,16 @@ class VehiecleDetailsForm extends StatelessWidget {
               ),
               validator: formValidator.validatePlateNumber,
               controller: plateNumberController,
+            ),
+            const SizedBox(height: USpace.space12),
+            CreateTicketField(
+              decoration: const InputDecoration(
+                labelText: 'Conduction Sticker or File Number',
+              ),
+              validator: (value) {
+                return null;
+              },
+              controller: conductionController,
             ),
             const SizedBox(height: USpace.space12),
             CreateTicketField(

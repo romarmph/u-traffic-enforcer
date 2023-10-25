@@ -36,6 +36,7 @@ class CreateTicketFormNotifier extends ChangeNotifier {
   void reset() {
     _isDriverNotPresent = false;
     _isVehicleOwnedByDriver = false;
+
     _driverName = "";
     _driverAddress = "";
     notifyListeners();

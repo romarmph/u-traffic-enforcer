@@ -292,27 +292,29 @@ class _TicketPreviewState extends State<TicketPreview>
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             PreviewListTile(
-              title: ticket.licenseNumber,
+              title: ticket.licenseNumber.replaceNull,
               subtitle: 'License Number',
             ),
             PreviewListTile(
-              title: ticket.driverName,
+              title: ticket.driverName.replaceNull,
               subtitle: 'Driver Name',
             ),
             PreviewListTile(
-              title: ticket.birthDate.toAmericanDate,
+              title: ticket.birthDate != null
+                  ? ticket.birthDate!.toAmericanDate
+                  : "N/A",
               subtitle: 'Birthdate',
             ),
             PreviewListTile(
-              title: ticket.address,
+              title: ticket.address.replaceNull,
               subtitle: 'Address',
             ),
             PreviewListTile(
-              title: ticket.phone,
+              title: ticket.phone.replaceNull,
               subtitle: 'Phone Number',
             ),
             PreviewListTile(
-              title: ticket.email,
+              title: ticket.email.replaceNull,
               subtitle: 'Email Address',
             ),
           ],
@@ -334,24 +336,24 @@ class _TicketPreviewState extends State<TicketPreview>
               subtitle: 'Vehicle Type',
             ),
             PreviewListTile(
-              title: ticket.plateNumber,
+              title: ticket.plateNumber.replaceNull,
               subtitle: 'Plate Number',
             ),
             PreviewListTile(
-              title: ticket.engineNumber,
+              title: ticket.engineNumber.replaceNull,
               subtitle: 'Engine Number',
             ),
             PreviewListTile(
-              title: ticket.chassisNumber,
+              title: ticket.chassisNumber.replaceNull,
               subtitle: 'Chassis Number',
             ),
             // Vehicle owner
             PreviewListTile(
-              title: ticket.vehicleOwner,
+              title: ticket.vehicleOwner.replaceNull,
               subtitle: 'Vehicle Owner Name',
             ),
             PreviewListTile(
-              title: ticket.vehicleOwnerAddress,
+              title: ticket.vehicleOwnerAddress.replaceNull,
               subtitle: 'Vehicle Owner Address',
             ),
           ],

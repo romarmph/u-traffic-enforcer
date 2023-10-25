@@ -11,6 +11,7 @@ class TicketProvider extends ChangeNotifier {
     address: "",
     vehicleTypeID: "",
     engineNumber: "",
+    conductionOrFileNumber: "",
     chassisNumber: "",
     plateNumber: "",
     vehicleOwner: "",

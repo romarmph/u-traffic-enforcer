@@ -14,6 +14,11 @@ class EvidenceProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void removeEvidenceByID(String id) {
+    _evidences.removeWhere((element) => element.id == id);
+    notifyListeners();
+  }
+
   void clearEvidences() {
     _evidences.clear();
     notifyListeners();

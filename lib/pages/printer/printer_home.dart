@@ -217,7 +217,7 @@ class _PrinterHomeState extends State<PrinterHome> {
       LineText(
         type: LineText.TYPE_TEXT,
         content:
-            "Plate Number:\n  ${ticket.plateNumber.isEmpty ? 'N/A' : ticket.plateNumber}",
+            "Plate Number:\n  ${ticket.plateNumber!.isEmpty ? 'N/A' : ticket.plateNumber}",
         weight: 2,
         height: 2,
         width: 2,

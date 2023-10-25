@@ -62,27 +62,29 @@ class _RecentTicketViewState extends State<RecentTicketView>
                   ListView(
                     children: [
                       PreviewListTile(
-                        title: widget.ticket.licenseNumber,
+                        title: widget.ticket.licenseNumber ?? "N/A",
                         subtitle: 'License Number',
                       ),
                       PreviewListTile(
-                        title: widget.ticket.driverName,
+                        title: widget.ticket.driverName ?? "N/A",
                         subtitle: 'Driver Name',
                       ),
                       PreviewListTile(
-                        title: widget.ticket.birthDate.toAmericanDate,
+                        title: widget.ticket.birthDate != null
+                            ? widget.ticket.birthDate!.toAmericanDate
+                            : "N/A",
                         subtitle: 'Birthdate',
                       ),
                       PreviewListTile(
-                        title: widget.ticket.address,
+                        title: widget.ticket.address ?? "N/A",
                         subtitle: 'Address',
                       ),
                       PreviewListTile(
-                        title: widget.ticket.phone,
+                        title: widget.ticket.phone ?? "N/A",
                         subtitle: 'Contact Number',
                       ),
                       PreviewListTile(
-                        title: widget.ticket.email,
+                        title: widget.ticket.email ?? "N/A",
                         subtitle: 'Email Address',
                       ),
                     ],
@@ -96,23 +98,23 @@ class _RecentTicketViewState extends State<RecentTicketView>
                         subtitle: 'Vehicle Type',
                       ),
                       PreviewListTile(
-                        title: widget.ticket.plateNumber,
+                        title: widget.ticket.plateNumber ?? "N/A",
                         subtitle: 'Plate Number',
                       ),
                       PreviewListTile(
-                        title: widget.ticket.engineNumber,
+                        title: widget.ticket.engineNumber ?? "N/A",
                         subtitle: 'Engine Number',
                       ),
                       PreviewListTile(
-                        title: widget.ticket.chassisNumber,
+                        title: widget.ticket.chassisNumber ?? "N/A",
                         subtitle: 'Chassis Number',
                       ),
                       PreviewListTile(
-                        title: widget.ticket.vehicleOwner,
+                        title: widget.ticket.vehicleOwner ?? "N/A",
                         subtitle: 'Vehicle Owner',
                       ),
                       PreviewListTile(
-                        title: widget.ticket.vehicleOwnerAddress,
+                        title: widget.ticket.vehicleOwnerAddress ?? "N/A",
                         subtitle: 'Vehicle Owner Address',
                       ),
                     ],

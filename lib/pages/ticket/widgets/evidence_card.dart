@@ -63,6 +63,7 @@ class EvidenceCard extends StatelessWidget {
       onConfirmBtnTap: () {
         final provider = Provider.of<EvidenceProvider>(context, listen: false);
         provider.removeEvidence(evidence);
+        Navigator.of(context).pop();
       },
     );
   }

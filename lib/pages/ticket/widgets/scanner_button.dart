@@ -80,10 +80,19 @@ class _ImageScannerButtonState extends State<ImageScannerButton> {
   }
 
   Future<void> onTap() async {
-    final imageProvider =
-        Provider.of<UTrafficImageProvider>(context, listen: false);
-    final scanDetailsProvider =
-        Provider.of<ScannedDetails>(context, listen: false);
+    final imageProvider = Provider.of<UTrafficImageProvider>(
+      context,
+      listen: false,
+    );
+    final scanDetailsProvider = Provider.of<ScannedDetails>(
+      context,
+      listen: false,
+    );
+    final evidenceProvider = Provider.of<EvidenceProvider>(
+      context,
+      listen: false,
+    );
+
     showLoading(
       'Scanning License',
     );
@@ -115,7 +124,17 @@ class _ImageScannerButtonState extends State<ImageScannerButton> {
       return;
     }
 
+    evidenceProvider.removeEvidenceByID('default');
+
     imageProvider.setLicenseImagePath(cropped.path);
+    evidenceProvider.addEvidence(
+      Evidence(
+        id: 'default',
+        name: 'License Image - Front',
+        path: cropped.path,
+      ),
+    );
+
     final scanApi = LicenseScanServices.instance;
     try {
       final data = await scanApi.sendRequest(cropped.path);

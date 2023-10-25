@@ -46,14 +46,14 @@ class _ViolationsListState extends State<ViolationsList> {
 
     return Consumer<ViolationProvider>(
       builder: (context, violation, child) {
-        if (ticket.licenseNumber.isEmpty) {
+        if (ticket.licenseNumber != null && ticket.licenseNumber!.isEmpty) {
           violation.getViolations
               .where((element) => element.id == '2z8KdHRfLapkAeAhbjOt')
               .first
               .isSelected = true;
         }
 
-        if (ticket.plateNumber.isEmpty) {
+        if (ticket.plateNumber != null && ticket.plateNumber!.isEmpty) {
           violation.getViolations
               .where((element) => element.id == 'V0ORjFu2Y0H9Hu88WgbO')
               .first
@@ -71,7 +71,8 @@ class _ViolationsListState extends State<ViolationsList> {
               .toList(),
           builder: (displayedList, itemIndex, item) {
             if (item.id == '2z8KdHRfLapkAeAhbjOt' &&
-                ticket.licenseNumber.isEmpty) {
+                ticket.licenseNumber != null &&
+                ticket.licenseNumber!.isEmpty) {
               return CheckboxListTile(
                 enabled: false,
                 value: item.isSelected,
@@ -86,7 +87,8 @@ class _ViolationsListState extends State<ViolationsList> {
             }
 
             if (item.id == 'V0ORjFu2Y0H9Hu88WgbO' &&
-                ticket.plateNumber.isEmpty) {
+                ticket.plateNumber != null &&
+                ticket.plateNumber!.isEmpty) {
               return CheckboxListTile(
                 enabled: false,
                 value: item.isSelected,
