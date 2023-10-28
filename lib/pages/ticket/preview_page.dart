@@ -85,6 +85,26 @@ class _TicketPreviewState extends State<TicketPreview>
   }
 
   void _showDialog() async {
+    final form = Provider.of<CreateTicketFormNotifier>(context, listen: false);
+
+    final evidenceProvider =
+        Provider.of<EvidenceProvider>(context, listen: false);
+
+    final signature = evidenceProvider.evidences
+        .where((element) => element.id == "signature");
+
+    if (!form.isDriverNotPresent) {
+      if (signature.isEmpty) {
+        QuickAlert.show(
+          context: context,
+          type: QuickAlertType.error,
+          title: "Signature not found",
+          text: "Please have the driver to sign the ticket.",
+        );
+        return;
+      }
+    }
+
     final value = await QuickAlert.show(
       context: context,
       type: QuickAlertType.warning,
@@ -116,7 +136,7 @@ class _TicketPreviewState extends State<TicketPreview>
   }
 
   Future<void> saveTicket() async {
-    final imageProvider = Provider.of<UTrafficImageProvider>(
+    final imageProvider = Provider.of<LicenseImageProvider>(
       context,
       listen: false,
     );
@@ -209,16 +229,28 @@ class _TicketPreviewState extends State<TicketPreview>
                     _driverDetails(),
                     _vehicleDetails(),
                     _buildViolationsView(),
-                    Consumer<UTrafficImageProvider>(
-                      builder: (context, value, child) {
-                        if (value.signatureImagePath.isEmpty) {
+                    Consumer<EvidenceProvider>(
+                      builder: (context, provider, child) {
+                        if (provider.evidences.isEmpty) {
                           return const Center(
                             child: Text("No signature found."),
                           );
                         }
-                        return Image.file(
-                          File(value.signatureImagePath),
-                          fit: BoxFit.cover,
+                        return ListView.separated(
+                          itemCount: provider.evidences.length,
+                          itemBuilder: (context, index) {
+                            final evidence = provider.evidences[index];
+
+                            return EvidenceCard(
+                              isPreview: true,
+                              evidence: evidence,
+                            );
+                          },
+                          separatorBuilder: (context, index) {
+                            return const SizedBox(
+                              height: USpace.space12,
+                            );
+                          },
                         );
                       },
                     )
@@ -292,27 +324,29 @@ class _TicketPreviewState extends State<TicketPreview>
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             PreviewListTile(
-              title: ticket.licenseNumber,
+              title: ticket.licenseNumber.replaceNull,
               subtitle: 'License Number',
             ),
             PreviewListTile(
-              title: ticket.driverName,
+              title: ticket.driverName.replaceNull,
               subtitle: 'Driver Name',
             ),
             PreviewListTile(
-              title: ticket.birthDate.toAmericanDate,
+              title: ticket.birthDate != null
+                  ? ticket.birthDate!.toAmericanDate
+                  : "N/A",
               subtitle: 'Birthdate',
             ),
             PreviewListTile(
-              title: ticket.address,
+              title: ticket.address.replaceNull,
               subtitle: 'Address',
             ),
             PreviewListTile(
-              title: ticket.phone,
+              title: ticket.phone.replaceNull,
               subtitle: 'Phone Number',
             ),
             PreviewListTile(
-              title: ticket.email,
+              title: ticket.email.replaceNull,
               subtitle: 'Email Address',
             ),
           ],
@@ -330,28 +364,28 @@ class _TicketPreviewState extends State<TicketPreview>
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             PreviewListTile(
-              title: ticket.vehicleType,
+              title: ticket.vehicleTypeID,
               subtitle: 'Vehicle Type',
             ),
             PreviewListTile(
-              title: ticket.plateNumber,
+              title: ticket.plateNumber.replaceNull,
               subtitle: 'Plate Number',
             ),
             PreviewListTile(
-              title: ticket.engineNumber,
+              title: ticket.engineNumber.replaceNull,
               subtitle: 'Engine Number',
             ),
             PreviewListTile(
-              title: ticket.chassisNumber,
+              title: ticket.chassisNumber.replaceNull,
               subtitle: 'Chassis Number',
             ),
             // Vehicle owner
             PreviewListTile(
-              title: ticket.vehicleOwner,
+              title: ticket.vehicleOwner.replaceNull,
               subtitle: 'Vehicle Owner Name',
             ),
             PreviewListTile(
-              title: ticket.vehicleOwnerAddress,
+              title: ticket.vehicleOwnerAddress.replaceNull,
               subtitle: 'Vehicle Owner Address',
             ),
           ],

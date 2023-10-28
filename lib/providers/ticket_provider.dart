@@ -1,4 +1,3 @@
-
 import '../../../config/utils/exports.dart';
 
 class TicketProvider extends ChangeNotifier {
@@ -10,8 +9,9 @@ class TicketProvider extends ChangeNotifier {
     phone: "",
     email: "",
     address: "",
-    vehicleType: "",
+    vehicleTypeID: "",
     engineNumber: "",
+    conductionOrFileNumber: "",
     chassisNumber: "",
     plateNumber: "",
     vehicleOwner: "",

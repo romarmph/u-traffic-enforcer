@@ -12,20 +12,23 @@ class SignaturePad extends StatefulWidget {
 
 class _SignaturePadState extends State<SignaturePad> {
   final _signaturePadKey = GlobalKey<SfSignaturePadState>();
-  UTrafficImageProvider _imageProvider = UTrafficImageProvider();
+  EvidenceProvider _evidenceProvider = EvidenceProvider();
 
   @override
   void initState() {
     super.initState();
-    _imageProvider = Provider.of<UTrafficImageProvider>(
+    _evidenceProvider = Provider.of<EvidenceProvider>(
       context,
       listen: false,
     );
 
-    if (_imageProvider.signatureImagePath.isNotEmpty) {
+    final signatureImage = _evidenceProvider.evidences
+        .where((element) => element.id == "signature");
+
+    if (signatureImage.isNotEmpty) {
       SignatureServices().deleteFile(
         File(
-          _imageProvider.signatureImagePath,
+          signatureImage.first.path,
         ),
       );
     }
@@ -66,18 +69,19 @@ class _SignaturePadState extends State<SignaturePad> {
             Expanded(
               child: ElevatedButton(
                 onPressed: () async {
-                  final signaturePathProvider =
-                      Provider.of<UTrafficImageProvider>(
-                    context,
-                    listen: false,
-                  );
                   ui.Image image =
                       await _signaturePadKey.currentState!.toImage();
                   File file = await SignatureServices().saveImage(image);
 
-                  print(file);
+                  _evidenceProvider.addEvidence(
+                    Evidence(
+                      id: 'signature',
+                      name: "Driver Signature",
+                      path: file.path,
+                    ),
+                  );
 
-                  signaturePathProvider.setSignatureImagePath(file.path);
+                  popCurrent();
                 },
                 child: const Text('Save Signature'),
               ),

@@ -32,10 +32,19 @@ class DriverDetailsForm extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CheckboxListTile(
-              title: const Text("No Driver"),
+              title: const Text("Driver Not Present"),
               value: form.isDriverNotPresent,
               onChanged: (value) {
                 form.setIsDriverNotPresent(value!);
+                form.setHasNoLicense(value);
+              },
+            ),
+            CheckboxListTile(
+              enabled: !form.isDriverNotPresent,
+              title: const Text("No Driver License"),
+              value: form.hasNoLicense,
+              onChanged: (value) {
+                form.setHasNoLicense(value!);
               },
             ),
             const SizedBox(height: USpace.space12),
@@ -54,9 +63,6 @@ class DriverDetailsForm extends StatelessWidget {
                   color: UColors.gray400,
                 ),
               ),
-              onChanged: (value) {
-                form.setDriverName(value);
-              },
               validator: formValidator.validateName,
             ),
             const SizedBox(height: USpace.space12),
@@ -83,9 +89,6 @@ class DriverDetailsForm extends StatelessWidget {
               ),
               readOnly: true,
               validator: formValidator.validateAddress,
-              onChanged: (value) {
-                form.setDriverAddress(value);
-              },
               onTap: () async {
                 final address = await Navigator.push(
                   context,
@@ -143,7 +146,10 @@ class DriverDetailsForm extends StatelessWidget {
                   color: UColors.gray400,
                 ),
               ),
-              validator: formValidator.validateLicenseNumber,
+              validator: (value) => formValidator.validateLicenseNumber(
+                value,
+                form.hasNoLicense,
+              ),
               onChanged: (value) {},
             ),
           ],

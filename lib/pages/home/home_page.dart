@@ -47,6 +47,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget userNav() {
+    final enforcer = Provider.of<EnforcerProvider>(
+      context,
+      listen: false,
+    );
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: USpace.space16,
@@ -62,13 +66,13 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Enforcer 1",
+                "${enforcer.enforcer.firstName} ${enforcer.enforcer.lastName}",
                 style: const UTextStyle().textlgfontbold.copyWith(
                       color: UColors.gray700,
                     ),
               ),
               Text(
-                "enforcer1@gmail.com",
+                enforcer.enforcer.email,
                 style: const UTextStyle()
                     .textxsfontsemibold
                     .copyWith(color: UColors.gray500),
@@ -84,9 +88,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget viewScheduleBtn() {
     return TextButton(
-      onPressed: () {
-        AuthService().signOut();
-      },
+      onPressed: () {},
       child: const Text("View Schedule"),
     );
   }
@@ -144,7 +146,7 @@ class _HomePageState extends State<HomePage> {
                     Row(
                       children: [
                         Text(
-                          "Jul 28",
+                          "Oct 26",
                           style: const UTextStyle().textxlfontmedium.copyWith(
                                 color: UColors.white,
                               ),
@@ -160,7 +162,7 @@ class _HomePageState extends State<HomePage> {
                                     BorderRadius.circular(USpace.space8),
                               ),
                               child: Text(
-                                "5:00 AM",
+                                "1:00 PM",
                                 style: const UTextStyle()
                                     .textbasefontmedium
                                     .copyWith(
@@ -186,7 +188,7 @@ class _HomePageState extends State<HomePage> {
                                     BorderRadius.circular(USpace.space8),
                               ),
                               child: Text(
-                                "1:00 PM",
+                                "9:00 PM",
                                 style: const UTextStyle()
                                     .textbasefontmedium
                                     .copyWith(
@@ -209,7 +211,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         const SizedBox(width: USpace.space8),
                         Text(
-                          "Magic Mall",
+                          "Post 1",
                           style: const UTextStyle().textbasefontmedium.copyWith(
                                 color: UColors.white,
                               ),
@@ -235,7 +237,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(height: USpace.space4),
                     Text(
-                      "July 31, 2023",
+                      "November 2, 2023",
                       style: const UTextStyle().textlgfontbold.copyWith(
                             color: UColors.blue700,
                           ),
@@ -273,6 +275,7 @@ class _HomePageState extends State<HomePage> {
         }
 
         if (snapshot.hasError) {
+          debugPrint(snapshot.error.toString());
           return const Center(child: Text("Error fetching tickets"));
         }
 
@@ -289,7 +292,7 @@ class _HomePageState extends State<HomePage> {
                       color: UColors.gray700,
                     ),
               ),
-              subtitle: Text(ticket.driverName),
+              subtitle: Text(ticket.driverName!),
               onTap: () {
                 viewRecentTicket(ticket, context);
               },
@@ -339,45 +342,81 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: USpace.space16),
             miniDashboard(),
             const SizedBox(height: USpace.space8),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: USpace.space16,
-              ),
-              child: OutlinedButton.icon(
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.all(USpace.space24),
-                ),
-                onPressed: () async {
-                  String barcodeScanRes =
-                      await FlutterBarcodeScanner.scanBarcode(
-                    '#ff6666',
-                    'Cancel',
-                    true,
-                    ScanMode.QR,
-                  );
-
-                  QRDetails qrDetails = QRDetails.fromJson(
-                    jsonDecode(barcodeScanRes),
-                  );
-
-                  goCreateTicketWithLicense(qrDetails);
-                },
-                label: const Text("Scan QR"),
-                icon: const Icon(Icons.qr_code_scanner_outlined),
-              ),
-            ),
             Expanded(
               child: recentTicketView(),
             ),
           ],
         ),
       ),
-      floatingActionButton: const FloatingActionButton.extended(
-        onPressed: goCreateTicket,
-        label: Text("New Ticket"),
-        icon: Icon(Icons.add),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: showMenu,
+        label: const Text("Create Ticket"),
+        icon: const Icon(Icons.add),
       ),
       bottomNavigationBar: const BottomNav(),
+    );
+  }
+
+  void showMenu() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: Container(
+            padding: const EdgeInsets.all(USpace.space16),
+            decoration: BoxDecoration(
+              color: UColors.white,
+              borderRadius: BorderRadius.circular(USpace.space12),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ElevatedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.all(USpace.space24),
+                  ),
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                    String barcodeScanRes =
+                        await FlutterBarcodeScanner.scanBarcode(
+                      '#ff6666',
+                      'Cancel',
+                      true,
+                      ScanMode.QR,
+                    );
+
+                    QRDetails qrDetails = QRDetails.fromJson(
+                      jsonDecode(barcodeScanRes),
+                    );
+
+                    goCreateTicketWithLicense(qrDetails);
+                  },
+                  label: const Text("Scan QR"),
+                  icon: const Icon(Icons.qr_code_scanner_outlined),
+                ),
+                const SizedBox(height: USpace.space12),
+                ElevatedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.all(USpace.space24),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    goCreateTicket();
+                  },
+                  label: const Text("Fill Form"),
+                  icon: const Icon(Icons.create_rounded),
+                ),
+                const SizedBox(height: USpace.space12),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text("Cancel"),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

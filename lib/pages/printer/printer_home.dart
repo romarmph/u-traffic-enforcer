@@ -127,6 +127,11 @@ class _PrinterHomeState extends State<PrinterHome> {
       listen: false,
     );
 
+    final vehicleType = Provider.of<VehicleTypeProvider>(
+      context,
+      listen: false,
+    ).getVehicleTypeName(ticket.vehicleTypeID);
+
     final dateFormatter = DateFormat("yyyy-MM-dd hh:mm:ss");
 
     List<LineText> list = [];
@@ -212,7 +217,7 @@ class _PrinterHomeState extends State<PrinterHome> {
       LineText(
         type: LineText.TYPE_TEXT,
         content:
-            "Plate Number:\n  ${ticket.plateNumber.isEmpty ? 'N/A' : ticket.plateNumber}",
+            "Plate Number:\n  ${ticket.plateNumber!.isEmpty ? 'N/A' : ticket.plateNumber}",
         weight: 2,
         height: 2,
         width: 2,
@@ -223,7 +228,7 @@ class _PrinterHomeState extends State<PrinterHome> {
     list.add(
       LineText(
         type: LineText.TYPE_TEXT,
-        content: "Vehicle Type:\n  ${ticket.vehicleType}",
+        content: "Vehicle Type:\n  $vehicleType",
         weight: 2,
         height: 2,
         width: 2,

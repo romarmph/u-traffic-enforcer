@@ -3,20 +3,21 @@ import '../../../config/utils/exports.dart';
 class Ticket {
   String? id;
   int? ticketNumber;
-  final String licenseNumber;
-  final String driverName;
-  final String phone;
-  final String email;
-  final String address;
-  final String vehicleType;
-  final String engineNumber;
-  final String chassisNumber;
-  final String plateNumber;
-  final String vehicleOwner;
-  final String vehicleOwnerAddress;
+  final String? licenseNumber;
+  final String? driverName;
+  final String? phone;
+  final String? email;
+  final String? address;
+  final String vehicleTypeID;
+  final String? engineNumber;
+  final String? chassisNumber;
+  final String? plateNumber;
+  final String? conductionOrFileNumber;
+  final String? vehicleOwner;
+  final String? vehicleOwnerAddress;
   final String enforcerID;
   final String enforcerName;
-  final Timestamp birthDate;
+  final Timestamp? birthDate;
   final Timestamp dateCreated;
   final Timestamp ticketDueDate;
   final Timestamp violationDateTime;
@@ -32,8 +33,9 @@ class Ticket {
     required this.phone,
     required this.email,
     required this.address,
-    required this.vehicleType,
+    required this.vehicleTypeID,
     required this.engineNumber,
+    required this.conductionOrFileNumber,
     required this.chassisNumber,
     required this.plateNumber,
     required this.vehicleOwner,
@@ -58,8 +60,9 @@ class Ticket {
       phone: json['phone'],
       email: json['email'],
       address: json['address'],
-      vehicleType: json['vehicleType'],
+      vehicleTypeID: json['vehicleTypeID'],
       engineNumber: json['engineNumber'],
+      conductionOrFileNumber: json['conductionOrFileNumber'],
       chassisNumber: json['chassisNumber'],
       plateNumber: json['plateNumber'],
       vehicleOwner: json['vehicleOwner'],
@@ -86,8 +89,9 @@ class Ticket {
       'phone': phone,
       'email': email,
       'address': address,
-      'vehicleType': vehicleType,
+      'vehicleTypeID': vehicleTypeID,
       'engineNumber': engineNumber,
+      'conductionOrFileNumber': conductionOrFileNumber,
       'chassisNumber': chassisNumber,
       'plateNumber': plateNumber,
       'vehicleOwner': vehicleOwner,
@@ -129,8 +133,9 @@ class Ticket {
     String? phone,
     String? email,
     String? address,
-    String? vehicleType,
+    String? vehicleTypeID,
     String? engineNumber,
+    String? conductionOrFileNumber,
     String? chassisNumber,
     String? plateNumber,
     String? vehicleOwner,
@@ -153,8 +158,10 @@ class Ticket {
       phone: phone ?? this.phone,
       email: email ?? this.email,
       address: address ?? this.address,
-      vehicleType: vehicleType ?? this.vehicleType,
+      vehicleTypeID: vehicleTypeID ?? this.vehicleTypeID,
       engineNumber: engineNumber ?? this.engineNumber,
+      conductionOrFileNumber:
+          conductionOrFileNumber ?? this.conductionOrFileNumber,
       chassisNumber: chassisNumber ?? this.chassisNumber,
       plateNumber: plateNumber ?? this.plateNumber,
       vehicleOwner: vehicleOwner ?? this.vehicleOwner,
