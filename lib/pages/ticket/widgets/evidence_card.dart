@@ -4,8 +4,10 @@ class EvidenceCard extends StatelessWidget {
   const EvidenceCard({
     super.key,
     required this.evidence,
+    this.isPreview = false,
   });
 
+  final bool isPreview;
   final Evidence evidence;
 
   @override
@@ -40,12 +42,14 @@ class EvidenceCard extends StatelessWidget {
             subtitle: evidence.description != null
                 ? Text(evidence.description!)
                 : null,
-            trailing: IconButton(
-              onPressed: () {
-                _showDeleteConfirmation(context);
-              },
-              icon: const Icon(Icons.delete),
-            ),
+            trailing: isPreview
+                ? null
+                : IconButton(
+                    onPressed: () {
+                      _showDeleteConfirmation(context);
+                    },
+                    icon: const Icon(Icons.delete),
+                  ),
           )
         ],
       ),
@@ -62,7 +66,18 @@ class EvidenceCard extends StatelessWidget {
       confirmBtnText: "Delete",
       onConfirmBtnTap: () {
         final provider = Provider.of<EvidenceProvider>(context, listen: false);
-        provider.removeEvidence(evidence);
+        final licenseImage = Provider.of<LicenseImageProvider>(
+          context,
+          listen: false,
+        );
+
+        if (evidence.id == "default") {
+          licenseImage.resetLicense();
+          provider.removeEvidence(evidence);
+        } else {
+          provider.removeEvidence(evidence);
+        }
+
         Navigator.of(context).pop();
       },
     );

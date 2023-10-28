@@ -155,6 +155,7 @@ class VehicleTypeInputField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final formValidator = Provider.of<FormValidators>(context);
+    final vehicleTypes = Provider.of<VehicleTypeProvider>(context);
     return TextFormField(
       readOnly: true,
       decoration: const InputDecoration(

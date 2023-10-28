@@ -31,12 +31,16 @@ class FormValidators {
     return null;
   }
 
-  String? validateLicenseNumber(String? value) {
-    if (value!.trim().isEmpty) {
+  String? validateLicenseNumber(String? value, bool hasNoLicense) {
+    if (hasNoLicense) {
       return null;
     }
+
+    if (!hasNoLicense && value!.trim().isEmpty) {
+      return 'License number is required.';
+    }
     final licenseNumberRegex = RegExp(r'^[A-Z]\d{2}-\d{2}-\d{6}$');
-    if (!licenseNumberRegex.hasMatch(value)) {
+    if (!licenseNumberRegex.hasMatch(value!)) {
       return 'Invalid license number format';
     }
     return null;

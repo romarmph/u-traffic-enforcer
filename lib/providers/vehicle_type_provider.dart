@@ -11,6 +11,7 @@ class VehicleTypeProvider extends ChangeNotifier {
   }
 
   String getVehicleTypeName(String vehicleTypeID) {
+    print(_vehicleTypes);
     return _vehicleTypes
         .firstWhere((element) => element.id == vehicleTypeID)
         .typeName;

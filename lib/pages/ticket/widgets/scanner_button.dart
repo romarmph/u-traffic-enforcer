@@ -14,7 +14,7 @@ class ImageScannerButton extends StatefulWidget {
 class _ImageScannerButtonState extends State<ImageScannerButton> {
   @override
   Widget build(BuildContext context) {
-    final imageProvider = Provider.of<UTrafficImageProvider>(
+    final imageProvider = Provider.of<LicenseImageProvider>(
       context,
     );
 
@@ -80,7 +80,7 @@ class _ImageScannerButtonState extends State<ImageScannerButton> {
   }
 
   Future<void> onTap() async {
-    final imageProvider = Provider.of<UTrafficImageProvider>(
+    final imageProvider = Provider.of<LicenseImageProvider>(
       context,
       listen: false,
     );

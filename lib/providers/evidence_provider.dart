@@ -5,6 +5,10 @@ class EvidenceProvider extends ChangeNotifier {
   List<Evidence> get evidences => _evidences;
 
   void addEvidence(Evidence evidence) {
+    if (evidence.id == "signature") {
+      _evidences.removeWhere((element) => element.id == "signature");
+    }
+
     _evidences.add(evidence);
     notifyListeners();
   }

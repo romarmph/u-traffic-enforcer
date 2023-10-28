@@ -11,8 +11,12 @@ class ScannedDetails extends ChangeNotifier {
   }
 
   void clearDetails() {
-    _details = {};
-    notifyListeners();
+    try {
+      _details = {};
+      notifyListeners();
+    } catch (e) {
+      return;
+    }
   }
 
   void onChange(String key, String value) {

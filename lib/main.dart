@@ -39,7 +39,7 @@ class UTrafficEnforcer extends StatelessWidget {
           create: (context) => EnforcerProvider(),
         ),
         ChangeNotifierProvider(
-          create: (context) => UTrafficImageProvider(),
+          create: (context) => LicenseImageProvider(),
         ),
         ChangeNotifierProvider(
           create: (context) => ScannedDetails(),

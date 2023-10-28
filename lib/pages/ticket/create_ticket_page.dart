@@ -15,9 +15,8 @@ class CreateTicketPage extends StatefulWidget {
 class _CreateTicketPageState extends State<CreateTicketPage>
     with TickerProviderStateMixin {
   late TabController _tabController;
-  late CreateTicketFormNotifier _formNotifier;
   late ScannedDetails _scannedDetails;
-  late UTrafficImageProvider _imageProvider;
+  late LicenseImageProvider _imageProvider;
   late EvidenceProvider _evidenceProvider;
 
   final _driverFormKey = GlobalKey<FormState>();
@@ -48,15 +47,12 @@ class _CreateTicketPageState extends State<CreateTicketPage>
       initialIndex: 0,
       vsync: this,
     );
-    _formNotifier = Provider.of<CreateTicketFormNotifier>(
-      context,
-      listen: false,
-    );
+
     _scannedDetails = Provider.of<ScannedDetails>(
       context,
       listen: false,
     );
-    _imageProvider = Provider.of<UTrafficImageProvider>(
+    _imageProvider = Provider.of<LicenseImageProvider>(
       context,
       listen: false,
     );
@@ -101,9 +97,8 @@ class _CreateTicketPageState extends State<CreateTicketPage>
     _vehicleOwnerAddressController.clear();
     _vehicleTypeController.clear();
     _scannedDetails.clearDetails();
-    _imageProvider.reset();
+    _imageProvider.resetLicense();
     _evidenceProvider.clearEvidences();
-    _formNotifier.reset();
   }
 
   @override
@@ -270,6 +265,23 @@ class _CreateTicketPageState extends State<CreateTicketPage>
 
   bool _isDriverFormValid() {
     final form = Provider.of<CreateTicketFormNotifier>(context, listen: false);
+    final licenseImage = Provider.of<LicenseImageProvider>(
+      context,
+      listen: false,
+    );
+
+    if (!form.isDriverNotPresent &&
+        licenseImage.licenseImagePath.isEmpty &&
+        !form.hasNoLicense) {
+      QuickAlert.show(
+        context: context,
+        type: QuickAlertType.error,
+        title: "License Image",
+        text: "Please add a license image",
+      );
+
+      return false;
+    }
 
     if (form.isDriverNotPresent) {
       return true;
