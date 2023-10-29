@@ -1,13 +1,20 @@
 import '../../../config/utils/exports.dart';
 
 class CreateTicketFormNotifier extends ChangeNotifier {
+  String _vehicleTypeID = "";
   bool _isDriverNotPresent = false;
   bool _hasNoLicense = false;
   bool _isVehicleOwnedByDriver = false;
 
+  String get vehicleTypeID => _vehicleTypeID;
   bool get isDriverNotPresent => _isDriverNotPresent;
   bool get hasNoLicense => _hasNoLicense;
   bool get isVehicleOwnedByDriver => _isVehicleOwnedByDriver;
+
+  void setVehicleTypeID(String value) {
+    _vehicleTypeID = value;
+    notifyListeners();
+  }
 
   void setIsDriverNotPresent(bool value) {
     _isDriverNotPresent = value;
@@ -28,6 +35,7 @@ class CreateTicketFormNotifier extends ChangeNotifier {
     _isDriverNotPresent = false;
     _hasNoLicense = false;
     _isVehicleOwnedByDriver = false;
+    _vehicleTypeID = "";
 
     notifyListeners();
   }
