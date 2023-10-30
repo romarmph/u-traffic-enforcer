@@ -154,6 +154,7 @@ class VehicleTypeInputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final form = Provider.of<CreateTicketFormNotifier>(context);
     final formValidator = Provider.of<FormValidators>(context);
     final vehicleTypes = Provider.of<VehicleTypeProvider>(context);
     return TextFormField(
@@ -164,36 +165,28 @@ class VehicleTypeInputField extends StatelessWidget {
       controller: controller,
       validator: formValidator.validateVehicleType,
       onTap: () async {
-        final type = await showDialog(
+        final VehicleType? type = await showDialog(
           context: context,
           builder: (context) {
             return SimpleDialog(
-              children: [
-                ListTile(
-                  title: const Text("Motorcycle"),
-                  onTap: () {
-                    Navigator.pop(context, "Motorcycle");
-                  },
-                ),
-                ListTile(
-                  title: const Text("Car"),
-                  onTap: () {
-                    Navigator.pop(context, "Car");
-                  },
-                ),
-                ListTile(
-                  title: const Text("Truck"),
-                  onTap: () {
-                    Navigator.pop(context, "Truck");
-                  },
-                )
-              ],
+              children: vehicleTypes.vehicleTypes
+                  .map(
+                    (vehicleType) => SimpleDialogOption(
+                      padding: const EdgeInsets.all(USpace.space16),
+                      onPressed: () {
+                        Navigator.pop(context, vehicleType);
+                      },
+                      child: Text(vehicleType.typeName),
+                    ),
+                  )
+                  .toList(),
             );
           },
         );
 
         if (type != null) {
-          controller.text = type;
+          controller.text = type.typeName;
+          form.setVehicleTypeID(type.id);
         }
       },
     );

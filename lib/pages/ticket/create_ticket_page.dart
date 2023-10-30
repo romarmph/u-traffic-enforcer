@@ -382,6 +382,7 @@ class _CreateTicketPageState extends State<CreateTicketPage>
   }
 
   void _selectViolation() async {
+    final form = Provider.of<CreateTicketFormNotifier>(context, listen: false);
     final enforcer = Provider.of<EnforcerProvider>(context, listen: false);
     final ticketProvider = Provider.of<TicketProvider>(context, listen: false);
 
@@ -401,7 +402,8 @@ class _CreateTicketPageState extends State<CreateTicketPage>
       email: _emailController.text,
       phone: _phoneController.text,
       licenseNumber: _licenseNumberController.text,
-      vehicleTypeID: _vehicleTypeController.text,
+      vehicleTypeID: form.vehicleTypeID,
+      vehicleTypeName: _vehicleTypeController.text,
       plateNumber: _plateNumberController.text,
       conductionOrFileNumber: _conductionController.text,
       engineNumber: _engineNumberController.text,

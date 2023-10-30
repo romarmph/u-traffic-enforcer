@@ -10,6 +10,7 @@ class TicketProvider extends ChangeNotifier {
     email: "",
     address: "",
     vehicleTypeID: "",
+    vehicleTypeName: "",
     engineNumber: "",
     conductionOrFileNumber: "",
     chassisNumber: "",
