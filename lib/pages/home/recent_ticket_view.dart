@@ -198,6 +198,10 @@ class _RecentTicketViewState extends State<RecentTicketView>
                   ListView(
                     children: [
                       PreviewListTile(
+                        title: widget.ticket.ticketNumber.toString(),
+                        subtitle: 'Ticket Number',
+                      ),
+                      PreviewListTile(
                         title: widget.ticket.violationDateTime.toAmericanDate,
                         subtitle: 'Violation Date',
                       ),

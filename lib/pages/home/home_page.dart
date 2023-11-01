@@ -12,18 +12,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  Widget notificationBtn() {
-    return IconButton(
-      onPressed: () {
-        _scaffoldKey.currentState!.openEndDrawer();
-      },
-      icon: const Icon(
-        Icons.notifications_outlined,
-        size: USpace.space28,
-      ),
-    );
-  }
-
   Widget getProfileImage() {
     final enforcer = Provider.of<EnforcerProvider>(context);
 
@@ -83,7 +71,9 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
           const Spacer(),
-          notificationBtn(),
+          NotificationBellButton(
+            scaffoldKey: _scaffoldKey,
+          ),
         ],
       ),
     );
@@ -357,7 +347,7 @@ class _HomePageState extends State<HomePage> {
         label: const Text("Create Ticket"),
         icon: const Icon(Icons.add),
       ),
-      endDrawer: const Drawer(),
+      endDrawer: const NotificationDrawer(),
       bottomNavigationBar: const BottomNav(),
     );
   }
