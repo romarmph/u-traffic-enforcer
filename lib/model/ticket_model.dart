@@ -18,6 +18,7 @@ class Ticket {
   final String? vehicleOwnerAddress;
   final String enforcerID;
   final String enforcerName;
+  final double totalFine;
   final Timestamp? birthDate;
   final Timestamp dateCreated;
   final Timestamp ticketDueDate;
@@ -51,6 +52,7 @@ class Ticket {
     required this.violationDateTime,
     required this.violationPlace,
     required this.violationsID,
+    required this.totalFine,
   });
 
   factory Ticket.fromJson(Map<String, dynamic> json, [String? id]) {
@@ -81,6 +83,7 @@ class Ticket {
       violationDateTime: json['violationDateTime'],
       violationPlace: ULocation.fromJson(json['violationPlace']),
       violationsID: List<String?>.from(json['violationsID'] ?? []),
+      totalFine: json['totalFine'].toDouble(),
     );
   }
 
@@ -109,6 +112,7 @@ class Ticket {
       'violationDateTime': violationDateTime,
       'violationPlace': violationPlace.toJson(),
       'violationsID': violationsID,
+      'totalFine': totalFine,
     };
   }
 
@@ -154,6 +158,7 @@ class Ticket {
     Timestamp? violationDateTime,
     ULocation? violationPlace,
     List<String?>? violationsID,
+    double? totalFine,
   }) {
     return Ticket(
       id: id ?? this.id,
@@ -181,6 +186,7 @@ class Ticket {
       violationDateTime: violationDateTime ?? this.violationDateTime,
       violationPlace: violationPlace ?? this.violationPlace,
       violationsID: violationsID ?? this.violationsID,
+      totalFine: totalFine ?? this.totalFine,
     );
   }
 }

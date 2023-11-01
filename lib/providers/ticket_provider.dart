@@ -30,6 +30,7 @@ class TicketProvider extends ChangeNotifier {
       long: 0.0,
     ),
     violationsID: [],
+    totalFine: 0,
   );
 
   Ticket get ticket => _ticket;

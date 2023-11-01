@@ -147,13 +147,28 @@ class _TicketPreviewState extends State<TicketPreview>
       listen: false,
     );
 
+    final violationsProvider = Provider.of<ViolationProvider>(
+      context,
+      listen: false,
+    );
+
     QuickAlert.show(
         context: context,
         type: QuickAlertType.loading,
         text: 'Saving ticket...',
         barrierDismissible: false);
+    double totalFine = 0;
+    final temp = ticketProvider.ticket;
 
-    Ticket ticket = ticketProvider.ticket;
+    for (var violation in violationsProvider.getViolations) {
+      if (temp.violationsID.contains(violation.id)) {
+        totalFine += violation.fine;
+      }
+    }
+
+    Ticket ticket = ticketProvider.ticket.copyWith(
+      totalFine: totalFine,
+    );
 
     final futureTicket = await TicketDBHelper.instance.createTicket(ticket);
     final storageService = StorageService.instance;

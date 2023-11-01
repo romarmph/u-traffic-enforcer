@@ -437,6 +437,7 @@ class _CreateTicketPageState extends State<CreateTicketPage>
       violationPlace: location,
       violationsID: [],
       ticketNumber: 0,
+      totalFine: 0,
     );
     ticketProvider.updateTicket(ticket);
 

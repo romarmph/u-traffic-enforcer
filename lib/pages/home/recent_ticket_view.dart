@@ -225,17 +225,49 @@ class _RecentTicketViewState extends State<RecentTicketView>
           )
         ],
       ),
-      bottomNavigationBar: Padding(
+      bottomNavigationBar: Container(
         padding: const EdgeInsets.all(8.0),
-        child: ElevatedButton(
-          onPressed: () {
-            final ticketProvider =
-                Provider.of<TicketProvider>(context, listen: false);
+        color: UColors.white,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Divider(),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Total Fine',
+                    style: TextStyle(
+                      color: UColors.gray600,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    widget.ticket.totalFine.toString(),
+                    style: const TextStyle(
+                      color: UColors.red400,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final ticketProvider =
+                    Provider.of<TicketProvider>(context, listen: false);
 
-            ticketProvider.updateTicket(widget.ticket);
-            goPrinter();
-          },
-          child: const Text('Print Ticket'),
+                ticketProvider.updateTicket(widget.ticket);
+                goPrinter();
+              },
+              child: const Text('Print Ticket'),
+            ),
+          ],
         ),
       ),
     );
