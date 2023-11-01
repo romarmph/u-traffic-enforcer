@@ -65,10 +65,6 @@ class _ViolationsListState extends State<ViolationsList> {
             labelText: "Search Violations",
           ),
           initialList: violation.getViolations,
-          filter: (query) => violation.getViolations
-              .where((element) =>
-                  element.name.toLowerCase().contains(query.toLowerCase()))
-              .toList(),
           builder: (displayedList, itemIndex, item) {
             if (item.id == '2z8KdHRfLapkAeAhbjOt' &&
                 ticket.licenseNumber != null &&

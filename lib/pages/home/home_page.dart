@@ -10,9 +10,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   Widget notificationBtn() {
     return IconButton(
-      onPressed: () {},
+      onPressed: () {
+        _scaffoldKey.currentState!.openEndDrawer();
+      },
       icon: const Icon(
         Icons.notifications_outlined,
         size: USpace.space28,
@@ -60,7 +64,6 @@ class _HomePageState extends State<HomePage> {
           ClipOval(
             child: getProfileImage(),
           ),
-
           const SizedBox(width: USpace.space16),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,7 +83,7 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
           const Spacer(),
-          // notificationBtn(),
+          notificationBtn(),
         ],
       ),
     );
@@ -333,6 +336,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -353,6 +357,7 @@ class _HomePageState extends State<HomePage> {
         label: const Text("Create Ticket"),
         icon: const Icon(Icons.add),
       ),
+      endDrawer: const Drawer(),
       bottomNavigationBar: const BottomNav(),
     );
   }

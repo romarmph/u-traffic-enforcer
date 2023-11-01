@@ -47,12 +47,18 @@ class SettingsPage extends StatelessWidget {
               },
               trailing: const Icon(Icons.arrow_forward_ios),
             ),
-            ListTile(
-              leading: const Icon(Icons.event),
-              title: const Text("Request Leave"),
-              onTap: () {              },
-              trailing: const Icon(Icons.arrow_forward_ios),
-            ),
+            // ListTile(
+            //   leading: const Icon(Icons.event),
+            //   title: const Text("Leave Application"),
+            //   onTap: () {
+            //     Navigator.of(context).push(
+            //       MaterialPageRoute(
+            //         builder: (context) => const LeavePage(),
+            //       ),
+            //     );
+            //   },
+            //   trailing: const Icon(Icons.arrow_forward_ios),
+            // ),
           ],
         ),
       ),

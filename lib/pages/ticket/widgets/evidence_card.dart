@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:u_traffic_enforcer/config/utils/exports.dart';
 
 class EvidenceCard extends StatelessWidget {
@@ -5,10 +6,12 @@ class EvidenceCard extends StatelessWidget {
     super.key,
     required this.evidence,
     this.isPreview = false,
+    this.isNetowrkImage = false,
   });
 
   final bool isPreview;
   final Evidence evidence;
+  final bool isNetowrkImage;
 
   @override
   Widget build(BuildContext context) {
@@ -31,11 +34,19 @@ class EvidenceCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Image.file(
-            height: 200,
-            File(evidence.path),
-            fit: BoxFit.fill,
-          ),
+          isNetowrkImage
+              ? CachedNetworkImage(
+                  imageUrl: evidence.path,
+                  placeholder: (context, url) =>
+                      const CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                  height: 200,
+                )
+              : Image.file(
+                  height: 200,
+                  File(evidence.path),
+                  fit: BoxFit.fill,
+                ),
           ListTile(
             contentPadding: const EdgeInsets.all(0),
             title: Text(evidence.name),

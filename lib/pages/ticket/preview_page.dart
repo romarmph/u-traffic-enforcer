@@ -87,8 +87,10 @@ class _TicketPreviewState extends State<TicketPreview>
   void _showDialog() async {
     final form = Provider.of<CreateTicketFormNotifier>(context, listen: false);
 
-    final evidenceProvider =
-        Provider.of<EvidenceProvider>(context, listen: false);
+    final evidenceProvider = Provider.of<EvidenceProvider>(
+      context,
+      listen: false,
+    );
 
     final signature = evidenceProvider.evidences
         .where((element) => element.id == "signature");
@@ -136,7 +138,7 @@ class _TicketPreviewState extends State<TicketPreview>
   }
 
   Future<void> saveTicket() async {
-    final imageProvider = Provider.of<LicenseImageProvider>(
+    final evidenceProvider = Provider.of<EvidenceProvider>(
       context,
       listen: false,
     );
@@ -154,18 +156,17 @@ class _TicketPreviewState extends State<TicketPreview>
     Ticket ticket = ticketProvider.ticket;
 
     final futureTicket = await TicketDBHelper.instance.createTicket(ticket);
+    final storageService = StorageService.instance;
 
-    if (imageProvider.licenseImagePath.isNotEmpty) {
-      final uploadStatus = await renameAndUpload(
-        imageProvider.licenseImagePath,
-        futureTicket.id!,
-      );
+    final uploadStatus = await storageService.uploadEvidence(
+      evidenceProvider.evidences,
+      futureTicket.ticketNumber!,
+    );
 
-      if (uploadStatus) {
-        _showUploadSucessDialog();
-      } else {
-        _showUploadFailedDialog();
-      }
+    if (uploadStatus) {
+      _showUploadSucessDialog();
+    } else {
+      _showUploadFailedDialog();
     }
 
     popCurrent();
@@ -364,7 +365,7 @@ class _TicketPreviewState extends State<TicketPreview>
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             PreviewListTile(
-              title: ticket.vehicleTypeID,
+              title: ticket.vehicleTypeName,
               subtitle: 'Vehicle Type',
             ),
             PreviewListTile(

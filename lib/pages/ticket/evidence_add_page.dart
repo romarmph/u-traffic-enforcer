@@ -101,6 +101,37 @@ class _EvidenceAddPageState extends State<EvidenceAddPage> {
                       context,
                       listen: false,
                     );
+
+                    final isExisting = evidenceProvider.evidences
+                        .where((element) => element.path == _file.path)
+                        .isNotEmpty;
+
+                    if (isExisting) {
+                      QuickAlert.show(
+                        context: context,
+                        title: "Existing Evidence",
+                        text: "This evidence already exists",
+                        type: QuickAlertType.error,
+                      );
+                      return;
+                    }
+
+                    final isNameUsed = evidenceProvider.evidences
+                        .where((element) =>
+                            element.name.toLowerCase() ==
+                            _nameController.text.toLowerCase())
+                        .isNotEmpty;
+
+                    if (isNameUsed) {
+                      QuickAlert.show(
+                        context: context,
+                        title: "Name Used",
+                        text: "This name is already used",
+                        type: QuickAlertType.error,
+                      );
+                      return;
+                    }
+
                     evidenceProvider.addEvidence(
                       Evidence(
                         name: _nameController.text,

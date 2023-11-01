@@ -78,6 +78,7 @@ class DriverDetailsForm extends StatelessWidget {
               formatters: [
                 UpperCaseTextFormatter(),
               ],
+              maxLines: 10,
               enabled: !form.isDriverNotPresent,
               controller: addressController,
               decoration: const InputDecoration(

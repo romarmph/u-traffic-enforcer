@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 
 import '../../config/utils/exports.dart';
@@ -19,7 +20,7 @@ class _RecentTicketViewState extends State<RecentTicketView>
   @override
   void initState() {
     _tabController = TabController(
-      length: 4,
+      length: 5,
       vsync: this,
     );
     super.initState();
@@ -47,6 +48,9 @@ class _RecentTicketViewState extends State<RecentTicketView>
               ),
               Tab(
                 text: 'Violations',
+              ),
+              Tab(
+                text: 'Evidence',
               ),
               Tab(
                 text: 'Other Detials',
@@ -154,6 +158,43 @@ class _RecentTicketViewState extends State<RecentTicketView>
                       );
                     },
                   ),
+                  FutureBuilder(
+                    future: StorageService.instance.fetchEvidences(
+                      widget.ticket.ticketNumber!,
+                    ),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+
+                      if (snapshot.hasError) {
+                        return const Center(
+                          child: Text('Error fetching evidences'),
+                        );
+                      }
+
+                      final List<Evidence> evidences =
+                          snapshot.data as List<Evidence>;
+
+                      return ListView.builder(
+                        itemCount: evidences.length,
+                        itemBuilder: (context, index) {
+                          final Evidence evidence = evidences[index];
+
+                          return GestureDetector(
+                            onTap: () => _previewImage(evidence),
+                            child: EvidenceCard(
+                              isNetowrkImage: true,
+                              isPreview: true,
+                              evidence: evidence,
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
                   ListView(
                     children: [
                       PreviewListTile(
@@ -169,7 +210,7 @@ class _RecentTicketViewState extends State<RecentTicketView>
                         subtitle: 'Place of Violation',
                       ),
                       PreviewListTile(
-                        title: formatStatus(widget.ticket.status),
+                        title: _formatStatus(widget.ticket.status),
                         subtitle: 'Ticket Status',
                       ),
                     ],
@@ -196,8 +237,47 @@ class _RecentTicketViewState extends State<RecentTicketView>
     );
   }
 
-  String formatStatus(TicketStatus status) {
+  String _formatStatus(TicketStatus status) {
     return status.toString().split('.').last.split('').first.toUpperCase() +
         status.toString().split('.').last.substring(1);
+  }
+
+  void _previewImage(Evidence evidence) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Preview Image'),
+          backgroundColor: UColors.white,
+          surfaceTintColor: UColors.white,
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: USpace.space16,
+            vertical: USpace.space0,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          content: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: CachedNetworkImage(
+              imageUrl: evidence.path,
+              alignment: Alignment.center,
+              fit: BoxFit.contain,
+              placeholder: (context, url) => const CircularProgressIndicator(),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Close'),
+            ),
+          ],
+          actionsAlignment: MainAxisAlignment.spaceAround,
+        );
+      },
+    );
   }
 }

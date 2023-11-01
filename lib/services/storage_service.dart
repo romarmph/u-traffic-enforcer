@@ -26,4 +26,52 @@ class StorageService {
       rethrow;
     }
   }
+
+  Future<bool> uploadEvidence(
+      List<Evidence> evidences, int ticketNumber) async {
+    final firestore = FirebaseFirestore.instance;
+    const evidenceRoot = "ticket-evidences";
+
+    try {
+      for (Evidence evidence in evidences) {
+        final Reference evidenceRef = _storageReference.child(
+          "$evidenceRoot/$ticketNumber/${evidence.name}.png",
+        );
+        firestore.collection("evidences").add(
+              evidence
+                  .copyWith(
+                    ticketNumber: ticketNumber,
+                  )
+                  .toJson(),
+            );
+
+        await evidenceRef.putFile(File(evidence.path));
+      }
+
+      return true;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<Evidence>> fetchEvidences(int ticketNumber) async {
+    final firestore = FirebaseFirestore.instance;
+
+    try {
+      final evidences = await firestore
+          .collection("evidences")
+          .where("ticketNumber", isEqualTo: ticketNumber)
+          .get();
+
+      final List<Evidence> evidenceList = [];
+
+      for (final evidence in evidences.docs) {
+        evidenceList.add(Evidence.fromMap(evidence.data(), evidence.id));
+      }
+
+      return evidenceList;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

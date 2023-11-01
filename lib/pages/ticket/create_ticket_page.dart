@@ -16,6 +16,7 @@ class _CreateTicketPageState extends State<CreateTicketPage>
     with TickerProviderStateMixin {
   late TabController _tabController;
   late ScannedDetails _scannedDetails;
+  late CreateTicketFormNotifier _formNotifier;
   late LicenseImageProvider _imageProvider;
   late EvidenceProvider _evidenceProvider;
 
@@ -42,6 +43,11 @@ class _CreateTicketPageState extends State<CreateTicketPage>
   @override
   void initState() {
     super.initState();
+    _formNotifier = Provider.of<CreateTicketFormNotifier>(
+      context,
+      listen: false,
+    );
+
     _tabController = TabController(
       length: 3,
       initialIndex: 0,
@@ -60,6 +66,13 @@ class _CreateTicketPageState extends State<CreateTicketPage>
       context,
       listen: false,
     );
+
+    _formNotifier.addListener(() {
+      if (_formNotifier.isVehicleOwnedByDriver) {
+        _vehicleOwnerController.text = _nameController.text;
+        _vehicleOwnerAddressController.text = _addressController.text;
+      }
+    });
 
     _tabController.addListener(() {
       if (_tabController.index == 0) {
@@ -99,6 +112,7 @@ class _CreateTicketPageState extends State<CreateTicketPage>
     _scannedDetails.clearDetails();
     _imageProvider.resetLicense();
     _evidenceProvider.clearEvidences();
+    _formNotifier.reset();
   }
 
   @override
@@ -143,7 +157,7 @@ class _CreateTicketPageState extends State<CreateTicketPage>
                               _licenseNumberController.text =
                                   details.details['licensenumber'] ?? "";
                               _birthDateController.text = _parseScannedDate(
-                                  details.details['birthdate'] ?? "");
+                                  details.details['birthdate']);
 
                               details.clearDetails();
                             }
@@ -201,10 +215,14 @@ class _CreateTicketPageState extends State<CreateTicketPage>
     );
   }
 
-  String _parseScannedDate(String date) {
+  String _parseScannedDate(var date) {
+    if (date.runtimeType == DateTime) {
+      return date.toString().split(' ')[0];
+    }
+
     try {
       final parsedDate = DateTime.parse(date);
-      return parsedDate.toString();
+      return parsedDate.toString().split(' ')[0];
     } catch (e) {
       return "";
     }

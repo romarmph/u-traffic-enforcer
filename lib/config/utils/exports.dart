@@ -79,6 +79,7 @@ export 'package:u_traffic_enforcer/model/province.dart';
 export 'package:u_traffic_enforcer/model/vehicle_type.dart';
 export 'package:u_traffic_enforcer/model/qr_details.dart';
 export 'package:u_traffic_enforcer/model/evidence.dart';
+export 'package:u_traffic_enforcer/model/leave_type.dart';
 
 // pages
 export 'package:u_traffic_enforcer/pages/auth/login_page.dart';
