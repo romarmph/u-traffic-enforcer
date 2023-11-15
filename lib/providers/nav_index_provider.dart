@@ -10,3 +10,7 @@ class NavIndexProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+final navIndexProvider = ChangeNotifierProvider<NavIndexProvider>((ref) {
+  return NavIndexProvider();
+});

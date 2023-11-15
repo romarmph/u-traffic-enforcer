@@ -37,7 +37,6 @@ dependencies:
   firebase_core: ^2.14.0
   firebase_auth: ^4.6.3
   cloud_firestore: ^4.8.2
-  provider: ^6.0.5
   google_fonts: ^5.1.0
   google_mlkit_text_recognition: ^0.9.0
   image_cropper: ^5.0.0
@@ -58,12 +57,13 @@ dependencies:
   flutter_image_compress: ^2.0.4
   qr_code_dart_scan: ^0.7.2
   flutter_barcode_scanner: ^2.0.0
-  cached_network_image: ^3.2.3
+  cached_network_image: ^3.3.0
   firebase_cached_image: ^0.4.4
   syncfusion_flutter_signaturepad: ^23.1.36
   searchable_listview: ^2.7.0
   image: ^4.0.17
   path_provider: ^2.1.1
+  flutter_riverpod: ^2.4.6
 
 dev_dependencies:
   flutter_test:

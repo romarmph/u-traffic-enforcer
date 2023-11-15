@@ -40,3 +40,8 @@ class CreateTicketFormNotifier extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+final createTicketFormProvider =
+    ChangeNotifierProvider<CreateTicketFormNotifier>((ref) {
+  return CreateTicketFormNotifier();
+});

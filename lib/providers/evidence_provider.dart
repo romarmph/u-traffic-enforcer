@@ -28,3 +28,7 @@ class EvidenceProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+final evidenceChangeNotifierProvider = ChangeNotifierProvider<EvidenceProvider>((ref) {
+  return EvidenceProvider();
+});

@@ -3,16 +3,16 @@ import 'package:intl/intl.dart';
 
 import '../../config/utils/exports.dart';
 
-class RecentTicketView extends StatefulWidget {
+class RecentTicketView extends ConsumerStatefulWidget {
   const RecentTicketView({super.key, required this.ticket});
 
   final Ticket ticket;
 
   @override
-  State<RecentTicketView> createState() => _RecentTicketViewState();
+  ConsumerState<RecentTicketView> createState() => _RecentTicketViewState();
 }
 
-class _RecentTicketViewState extends State<RecentTicketView>
+class _RecentTicketViewState extends ConsumerState<RecentTicketView>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final timeFormat = DateFormat('hh:mm a');
@@ -28,7 +28,8 @@ class _RecentTicketViewState extends State<RecentTicketView>
 
   @override
   Widget build(BuildContext context) {
-    final vehicleTypes = Provider.of<VehicleTypeProvider>(context);
+    final vehicleTypes = ref.watch(vehicleTypeProvider);
+    final violations = ref.watch(violationsListProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -96,9 +97,10 @@ class _RecentTicketViewState extends State<RecentTicketView>
                   ListView(
                     children: [
                       PreviewListTile(
-                        title: vehicleTypes.getVehicleTypeName(
-                          widget.ticket.vehicleTypeID,
-                        ),
+                        title: vehicleTypes
+                            .firstWhere((element) =>
+                                element.id == widget.ticket.vehicleTypeID)
+                            .typeName,
                         subtitle: 'Vehicle Type',
                       ),
                       PreviewListTile(
@@ -123,38 +125,33 @@ class _RecentTicketViewState extends State<RecentTicketView>
                       ),
                     ],
                   ),
-                  Consumer<ViolationProvider>(
-                    builder: (context, value, child) {
-                      final List<Violation> selected = [];
+                  ListView.builder(
+                    itemCount: widget.ticket.issuedViolations.length,
+                    itemBuilder: (context, index) {
+                      final IssuedViolation violation =
+                          widget.ticket.issuedViolations[index];
 
-                      for (final violation in value.getViolations) {
-                        if (widget.ticket.violationsID.contains(violation.id)) {
-                          selected.add(violation);
-                        }
-                      }
+                      final name = violations
+                          .where(
+                              (element) => element.id == violation.violationID)
+                          .first
+                          .name;
 
-                      return ListView.builder(
-                        itemCount: selected.length,
-                        itemBuilder: (context, index) {
-                          final Violation violation = selected[index];
-
-                          return ListTile(
-                            title: Text(violation.name),
-                            trailing: Text(
-                              violation.fine.toString(),
-                              style: const TextStyle(
-                                color: UColors.red400,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            titleTextStyle: const TextStyle(
-                              color: UColors.gray600,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          );
-                        },
+                      return ListTile(
+                        title: Text(name),
+                        trailing: Text(
+                          violation.fine.toString(),
+                          style: const TextStyle(
+                            color: UColors.red400,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        titleTextStyle: const TextStyle(
+                          color: UColors.gray600,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                        ),
                       );
                     },
                   ),
@@ -259,8 +256,7 @@ class _RecentTicketViewState extends State<RecentTicketView>
             ),
             ElevatedButton(
               onPressed: () {
-                final ticketProvider =
-                    Provider.of<TicketProvider>(context, listen: false);
+                final ticketProvider = ref.watch(ticketChangeNotifierProvider);
 
                 ticketProvider.updateTicket(widget.ticket);
                 goPrinter();

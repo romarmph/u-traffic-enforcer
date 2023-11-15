@@ -1,13 +1,13 @@
 import '../../config/utils/exports.dart';
 
-class Login extends StatefulWidget {
+class Login extends ConsumerStatefulWidget {
   const Login({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  ConsumerState<Login> createState() => _LoginState();
 }
 
-class _LoginState extends State<Login> {
+class _LoginState extends ConsumerState<Login> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -17,7 +17,7 @@ class _LoginState extends State<Login> {
     if (_formKey.currentState!.validate()) {
       final email = _emailController.text;
       final password = _passwordController.text;
-      final authService = Provider.of<AuthService>(context, listen: false);
+      final authService = ref.watch(authProvider);
       await authService.signInWithEmailAndPassword(
         email: email,
         password: password,

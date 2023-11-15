@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:u_traffic_enforcer/config/utils/exports.dart';
 
-class EvidenceCard extends StatelessWidget {
+class EvidenceCard extends ConsumerStatefulWidget {
   const EvidenceCard({
     super.key,
     required this.evidence,
@@ -13,6 +13,11 @@ class EvidenceCard extends StatelessWidget {
   final Evidence evidence;
   final bool isNetowrkImage;
 
+  @override
+  ConsumerState<EvidenceCard> createState() => _EvidenceCardState();
+}
+
+class _EvidenceCardState extends ConsumerState<EvidenceCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -34,9 +39,9 @@ class EvidenceCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          isNetowrkImage
+          widget.isNetowrkImage
               ? CachedNetworkImage(
-                  imageUrl: evidence.path,
+                  imageUrl: widget.evidence.path,
                   placeholder: (context, url) =>
                       const CircularProgressIndicator(),
                   errorWidget: (context, url, error) => const Icon(Icons.error),
@@ -44,16 +49,16 @@ class EvidenceCard extends StatelessWidget {
                 )
               : Image.file(
                   height: 200,
-                  File(evidence.path),
+                  File(widget.evidence.path),
                   fit: BoxFit.fill,
                 ),
           ListTile(
             contentPadding: const EdgeInsets.all(0),
-            title: Text(evidence.name),
-            subtitle: evidence.description != null
-                ? Text(evidence.description!)
+            title: Text(widget.evidence.name),
+            subtitle: widget.evidence.description != null
+                ? Text(widget.evidence.description!)
                 : null,
-            trailing: isPreview
+            trailing: widget.isPreview
                 ? null
                 : IconButton(
                     onPressed: () {
@@ -76,17 +81,14 @@ class EvidenceCard extends StatelessWidget {
       showCancelBtn: true,
       confirmBtnText: "Delete",
       onConfirmBtnTap: () {
-        final provider = Provider.of<EvidenceProvider>(context, listen: false);
-        final licenseImage = Provider.of<LicenseImageProvider>(
-          context,
-          listen: false,
-        );
+        final provider = ref.watch(evidenceChangeNotifierProvider);
+        final licenseImage = ref.watch(licenseImageProvider);
 
-        if (evidence.id == "default") {
+        if (widget.evidence.id == "default") {
           licenseImage.resetLicense();
-          provider.removeEvidence(evidence);
+          provider.removeEvidence(widget.evidence);
         } else {
-          provider.removeEvidence(evidence);
+          provider.removeEvidence(widget.evidence);
         }
 
         Navigator.of(context).pop();

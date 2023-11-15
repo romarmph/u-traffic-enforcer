@@ -1,7 +1,12 @@
 import '../../config/utils/exports.dart';
 
 class ViolationsDatabase {
-  final _firestore = FirebaseFirestore.instance;
+  const ViolationsDatabase._();
+
+  static const ViolationsDatabase _instance = ViolationsDatabase._();
+  static ViolationsDatabase get instance => _instance;
+
+  static final _firestore = FirebaseFirestore.instance;
 
   Stream<List<Violation>> getViolationsStream() {
     return _firestore.collection('violations').snapshots().map(

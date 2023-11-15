@@ -1,6 +1,8 @@
+import 'package:u_traffic_enforcer/riverpod/vehicle_type.riverpod.dart';
+
 import '../../../config/utils/exports.dart';
 
-class VehiecleDetailsForm extends StatelessWidget {
+class VehiecleDetailsForm extends ConsumerWidget {
   const VehiecleDetailsForm({
     super.key,
     required this.plateNumberController,
@@ -21,130 +23,126 @@ class VehiecleDetailsForm extends StatelessWidget {
   final TextEditingController conductionController;
 
   @override
-  Widget build(BuildContext context) {
-    final formValidator = Provider.of<FormValidators>(context);
-    // final vehicleTypes = Provider.of<VehicleTypes>(context);
-    return Consumer<CreateTicketFormNotifier>(
-      builder: (context, form, child) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+  Widget build(BuildContext context, WidgetRef ref) {
+    final formValidator = ref.watch(formValidatorProvider);
+    final form = ref.watch(createTicketFormProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Vehicle Details",
+          style: const UTextStyle().textbasefontmedium,
+        ),
+        const SizedBox(height: USpace.space12),
+        VehicleTypeInputField(
+          controller: vehicleTypeController,
+        ),
+        const SizedBox(height: USpace.space12),
+        CreateTicketField(
+          formatters: [
+            UpperCaseTextFormatter(),
+          ],
+          decoration: InputDecoration(
+            labelText: 'Plate Number',
+            suffixIcon: IconButton(
+              icon: const Icon(Icons.help),
+              onPressed: () {
+                QuickAlert.show(
+                  context: context,
+                  type: QuickAlertType.info,
+                  title: 'Valid Formats',
+                  text: plateNumberFormats,
+                );
+              },
+            ),
+          ),
+          validator: formValidator.validatePlateNumber,
+          controller: plateNumberController,
+        ),
+        const SizedBox(height: USpace.space12),
+        CreateTicketField(
+          decoration: const InputDecoration(
+            labelText: 'Conduction Sticker or File Number',
+          ),
+          validator: (value) {
+            return null;
+          },
+          controller: conductionController,
+        ),
+        const SizedBox(height: USpace.space12),
+        CreateTicketField(
+          formatters: [
+            UpperCaseTextFormatter(),
+          ],
+          decoration: const InputDecoration(
+            labelText: 'Engine Number',
+          ),
+          validator: (value) {
+            return null;
+          },
+          controller: engineNumberController,
+        ),
+        const SizedBox(height: USpace.space12),
+        CreateTicketField(
+          formatters: [
+            UpperCaseTextFormatter(),
+          ],
+          decoration: const InputDecoration(
+            labelText: 'Chassis Number',
+          ),
+          controller: chassisNumberController,
+        ),
+        const SizedBox(height: USpace.space12),
+        Row(
           children: [
-            Text(
-              "Vehicle Details",
-              style: const UTextStyle().textbasefontmedium,
-            ),
-            const SizedBox(height: USpace.space12),
-            VehicleTypeInputField(
-              controller: vehicleTypeController,
-            ),
-            const SizedBox(height: USpace.space12),
-            CreateTicketField(
-              formatters: [
-                UpperCaseTextFormatter(),
-              ],
-              decoration: InputDecoration(
-                labelText: 'Plate Number',
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.help),
-                  onPressed: () {
-                    QuickAlert.show(
-                      context: context,
-                      type: QuickAlertType.info,
-                      title: 'Valid Formats',
-                      text: plateNumberFormats,
-                    );
-                  },
-                ),
+            Expanded(
+              child: Text(
+                "Vehicle Owner",
+                style: const UTextStyle().textbasefontmedium,
               ),
-              validator: formValidator.validatePlateNumber,
-              controller: plateNumberController,
             ),
-            const SizedBox(height: USpace.space12),
-            CreateTicketField(
-              decoration: const InputDecoration(
-                labelText: 'Conduction Sticker or File Number',
+            Expanded(
+              flex: 1,
+              child: CheckboxListTile(
+                title: const Text("Owned by Driver"),
+                enabled: !form.isDriverNotPresent,
+                contentPadding: const EdgeInsets.all(0),
+                dense: true,
+                visualDensity: VisualDensity.compact,
+                value: form.isVehicleOwnedByDriver,
+                onChanged: (value) {
+                  form.setIsVehicleOwnedByDriver(value!);
+                },
               ),
-              validator: (value) {
-                return null;
-              },
-              controller: conductionController,
-            ),
-            const SizedBox(height: USpace.space12),
-            CreateTicketField(
-              formatters: [
-                UpperCaseTextFormatter(),
-              ],
-              decoration: const InputDecoration(
-                labelText: 'Engine Number',
-              ),
-              validator: (value) {
-                return null;
-              },
-              controller: engineNumberController,
-            ),
-            const SizedBox(height: USpace.space12),
-            CreateTicketField(
-              formatters: [
-                UpperCaseTextFormatter(),
-              ],
-              decoration: const InputDecoration(
-                labelText: 'Chassis Number',
-              ),
-              controller: chassisNumberController,
-            ),
-            const SizedBox(height: USpace.space12),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    "Vehicle Owner",
-                    style: const UTextStyle().textbasefontmedium,
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: CheckboxListTile(
-                    title: const Text("Owned by Driver"),
-                    enabled: !form.isDriverNotPresent,
-                    contentPadding: const EdgeInsets.all(0),
-                    dense: true,
-                    visualDensity: VisualDensity.compact,
-                    value: form.isVehicleOwnedByDriver,
-                    onChanged: (value) {
-                      form.setIsVehicleOwnedByDriver(value!);
-                    },
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: USpace.space12),
-            CreateTicketField(
-              formatters: [
-                UpperCaseTextFormatter(),
-              ],
-              decoration: const InputDecoration(
-                labelText: 'Vehicle Owner',
-              ),
-              controller: vehicleOwnerController,
-            ),
-            const SizedBox(height: USpace.space12),
-            CreateTicketField(
-              formatters: [
-                UpperCaseTextFormatter(),
-              ],
-              decoration: const InputDecoration(
-                labelText: 'Vehicle Owner Address',
-              ),
-              controller: vehicleOwnerAddressController,
             ),
           ],
-        );
-      },
+        ),
+        const SizedBox(height: USpace.space12),
+        CreateTicketField(
+          formatters: [
+            UpperCaseTextFormatter(),
+          ],
+          decoration: const InputDecoration(
+            labelText: 'Vehicle Owner',
+          ),
+          controller: vehicleOwnerController,
+        ),
+        const SizedBox(height: USpace.space12),
+        CreateTicketField(
+          formatters: [
+            UpperCaseTextFormatter(),
+          ],
+          decoration: const InputDecoration(
+            labelText: 'Vehicle Owner Address',
+          ),
+          controller: vehicleOwnerAddressController,
+        ),
+      ],
     );
   }
 }
 
-class VehicleTypeInputField extends StatelessWidget {
+class VehicleTypeInputField extends ConsumerWidget {
   const VehicleTypeInputField({
     super.key,
     required this.controller,
@@ -153,10 +151,9 @@ class VehicleTypeInputField extends StatelessWidget {
   final TextEditingController controller;
 
   @override
-  Widget build(BuildContext context) {
-    final form = Provider.of<CreateTicketFormNotifier>(context);
-    final formValidator = Provider.of<FormValidators>(context);
-    final vehicleTypes = Provider.of<VehicleTypeProvider>(context);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final form = ref.watch(createTicketFormProvider);
+    final formValidator = ref.watch(formValidatorProvider);
     return TextFormField(
       readOnly: true,
       decoration: const InputDecoration(
@@ -168,25 +165,37 @@ class VehicleTypeInputField extends StatelessWidget {
         final VehicleType? type = await showDialog(
           context: context,
           builder: (context) {
-            return SimpleDialog(
-              children: vehicleTypes.vehicleTypes
-                  .map(
-                    (vehicleType) => SimpleDialogOption(
-                      padding: const EdgeInsets.all(USpace.space16),
-                      onPressed: () {
-                        Navigator.pop(context, vehicleType);
-                      },
-                      child: Text(vehicleType.typeName),
-                    ),
-                  )
-                  .toList(),
-            );
+            return ref.watch(vehicleTypeStreamProvider).when(
+                  data: (types) {
+                    return SimpleDialog(
+                      children: types
+                          .map(
+                            (vehicleType) => SimpleDialogOption(
+                              padding: const EdgeInsets.all(USpace.space16),
+                              onPressed: () {
+                                Navigator.pop(context, vehicleType);
+                              },
+                              child: Text(vehicleType.typeName),
+                            ),
+                          )
+                          .toList(),
+                    );
+                  },
+                  error: (error, stackTrace) {
+                    return const Center(
+                      child: Text("Error loading vehicle types"),
+                    );
+                  },
+                  loading: () => const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                );
           },
         );
 
         if (type != null) {
           controller.text = type.typeName;
-          form.setVehicleTypeID(type.id);
+          form.setVehicleTypeID(type.id!);
         }
       },
     );

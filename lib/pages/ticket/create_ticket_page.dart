@@ -1,6 +1,6 @@
 import '../../../config/utils/exports.dart';
 
-class CreateTicketPage extends StatefulWidget {
+class CreateTicketPage extends ConsumerStatefulWidget {
   const CreateTicketPage({
     super.key,
     this.qrDetails,
@@ -9,16 +9,12 @@ class CreateTicketPage extends StatefulWidget {
   final QRDetails? qrDetails;
 
   @override
-  State<CreateTicketPage> createState() => _CreateTicketPageState();
+  ConsumerState<CreateTicketPage> createState() => _CreateTicketPageState();
 }
 
-class _CreateTicketPageState extends State<CreateTicketPage>
+class _CreateTicketPageState extends ConsumerState<CreateTicketPage>
     with TickerProviderStateMixin {
   late TabController _tabController;
-  late ScannedDetails _scannedDetails;
-  late CreateTicketFormNotifier _formNotifier;
-  late LicenseImageProvider _imageProvider;
-  late EvidenceProvider _evidenceProvider;
 
   final _driverFormKey = GlobalKey<FormState>();
   final _vehicleFormKey = GlobalKey<FormState>();
@@ -43,36 +39,12 @@ class _CreateTicketPageState extends State<CreateTicketPage>
   @override
   void initState() {
     super.initState();
-    _formNotifier = Provider.of<CreateTicketFormNotifier>(
-      context,
-      listen: false,
-    );
 
     _tabController = TabController(
       length: 3,
       initialIndex: 0,
       vsync: this,
     );
-
-    _scannedDetails = Provider.of<ScannedDetails>(
-      context,
-      listen: false,
-    );
-    _imageProvider = Provider.of<LicenseImageProvider>(
-      context,
-      listen: false,
-    );
-    _evidenceProvider = Provider.of<EvidenceProvider>(
-      context,
-      listen: false,
-    );
-
-    _formNotifier.addListener(() {
-      if (_formNotifier.isVehicleOwnedByDriver) {
-        _vehicleOwnerController.text = _nameController.text;
-        _vehicleOwnerAddressController.text = _addressController.text;
-      }
-    });
 
     _tabController.addListener(() {
       if (_tabController.index == 0) {
@@ -109,10 +81,6 @@ class _CreateTicketPageState extends State<CreateTicketPage>
     _vehicleOwnerController.clear();
     _vehicleOwnerAddressController.clear();
     _vehicleTypeController.clear();
-    _scannedDetails.clearDetails();
-    _imageProvider.resetLicense();
-    _evidenceProvider.clearEvidences();
-    _formNotifier.reset();
   }
 
   @override
@@ -124,6 +92,18 @@ class _CreateTicketPageState extends State<CreateTicketPage>
 
   @override
   Widget build(BuildContext context) {
+    final details = ref.watch(scannedDetailsProvider);
+
+    if (details.details.isNotEmpty) {
+      _nameController.text = details.details['fullname'] ?? "";
+      _addressController.text = details.details['address'] ?? "";
+
+      _licenseNumberController.text = details.details['licensenumber'] ?? "";
+      _birthDateController.text =
+          _parseScannedDate(details.details['birthdate']);
+
+      details.clearDetails();
+    }
     return WillPopScope(
       onWillPop: _showCancelConfirm,
       child: Scaffold(
@@ -146,34 +126,17 @@ class _CreateTicketPageState extends State<CreateTicketPage>
                       child: SingleChildScrollView(
                         child: Padding(
                           padding: const EdgeInsets.all(USpace.space16),
-                          child: Consumer<ScannedDetails>(
-                              builder: (context, details, child) {
-                            if (details.details.isNotEmpty) {
-                              _nameController.text =
-                                  details.details['fullname'] ?? "";
-                              _addressController.text =
-                                  details.details['address'] ?? "";
-
-                              _licenseNumberController.text =
-                                  details.details['licensenumber'] ?? "";
-                              _birthDateController.text = _parseScannedDate(
-                                  details.details['birthdate']);
-
-                              details.clearDetails();
-                            }
-                            return Form(
-                              key: _driverFormKey,
-                              child: DriverDetailsForm(
-                                nameController: _nameController,
-                                addressController: _addressController,
-                                phoneController: _phoneController,
-                                emailController: _emailController,
-                                licenseNumberController:
-                                    _licenseNumberController,
-                                birthDateController: _birthDateController,
-                              ),
-                            );
-                          }),
+                          child: Form(
+                            key: _driverFormKey,
+                            child: DriverDetailsForm(
+                              nameController: _nameController,
+                              addressController: _addressController,
+                              phoneController: _phoneController,
+                              emailController: _emailController,
+                              licenseNumberController: _licenseNumberController,
+                              birthDateController: _birthDateController,
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -282,11 +245,8 @@ class _CreateTicketPageState extends State<CreateTicketPage>
   }
 
   bool _isDriverFormValid() {
-    final form = Provider.of<CreateTicketFormNotifier>(context, listen: false);
-    final licenseImage = Provider.of<LicenseImageProvider>(
-      context,
-      listen: false,
-    );
+    final form = ref.watch(createTicketFormProvider);
+    final licenseImage = ref.watch(licenseImageProvider);
 
     if (!form.isDriverNotPresent &&
         licenseImage.licenseImagePath.isEmpty &&
@@ -363,10 +323,7 @@ class _CreateTicketPageState extends State<CreateTicketPage>
     }
 
     return () {
-      final evidenceProvider = Provider.of<EvidenceProvider>(
-        context,
-        listen: false,
-      );
+      final evidenceProvider = ref.watch(evidenceChangeNotifierProvider);
 
       if (!_isDriverFormValid()) {
         _tabController.animateTo(0);
@@ -400,12 +357,12 @@ class _CreateTicketPageState extends State<CreateTicketPage>
   }
 
   void _selectViolation() async {
-    final form = Provider.of<CreateTicketFormNotifier>(context, listen: false);
-    final enforcer = Provider.of<EnforcerProvider>(context, listen: false);
-    final ticketProvider = Provider.of<TicketProvider>(context, listen: false);
+    final form = ref.watch(createTicketFormProvider);
+    final enforcer = ref.watch(enforcerProvider);
+    final ticketProvider = ref.watch(ticketChangeNotifierProvider);
 
     String enforcerName =
-        "${enforcer.enforcer.firstName} ${enforcer.enforcer.middleName} ${enforcer.enforcer.lastName}";
+        "${enforcer.firstName} ${enforcer.middleName} ${enforcer.lastName}";
 
     _showLoading();
 
@@ -428,14 +385,14 @@ class _CreateTicketPageState extends State<CreateTicketPage>
       chassisNumber: _chassisNumberController.text,
       vehicleOwner: _vehicleOwnerController.text,
       vehicleOwnerAddress: _vehicleOwnerAddressController.text,
-      enforcerID: enforcer.enforcer.id,
+      enforcerID: enforcer.id,
       enforcerName: enforcerName,
       status: TicketStatus.unpaid,
       dateCreated: Timestamp.now(),
       ticketDueDate: Timestamp.now().getDueDate,
       violationDateTime: Timestamp.now(),
       violationPlace: location,
-      violationsID: [],
+      issuedViolations: [],
       ticketNumber: 0,
       totalFine: 0,
     );

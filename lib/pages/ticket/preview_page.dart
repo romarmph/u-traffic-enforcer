@@ -1,13 +1,13 @@
 import '../../config/utils/exports.dart';
 
-class TicketPreview extends StatefulWidget {
+class TicketPreview extends ConsumerStatefulWidget {
   const TicketPreview({super.key});
 
   @override
-  State<TicketPreview> createState() => _TicketPreviewState();
+  ConsumerState<TicketPreview> createState() => _TicketPreviewState();
 }
 
-class _TicketPreviewState extends State<TicketPreview>
+class _TicketPreviewState extends ConsumerState<TicketPreview>
     with SingleTickerProviderStateMixin {
   late TabController tabController;
   bool _isSaving = false;
@@ -85,15 +85,12 @@ class _TicketPreviewState extends State<TicketPreview>
   }
 
   void _showDialog() async {
-    final form = Provider.of<CreateTicketFormNotifier>(context, listen: false);
+    final form = ref.watch(createTicketFormProvider);
 
-    final evidenceProvider = Provider.of<EvidenceProvider>(
-      context,
-      listen: false,
-    );
+    final evidence = ref.watch(evidenceChangeNotifierProvider);
 
-    final signature = evidenceProvider.evidences
-        .where((element) => element.id == "signature");
+    final signature =
+        evidence.evidences.where((element) => element.id == "signature");
 
     if (!form.isDriverNotPresent) {
       if (signature.isEmpty) {
@@ -138,19 +135,9 @@ class _TicketPreviewState extends State<TicketPreview>
   }
 
   Future<void> saveTicket() async {
-    final evidenceProvider = Provider.of<EvidenceProvider>(
-      context,
-      listen: false,
-    );
-    final ticketProvider = Provider.of<TicketProvider>(
-      context,
-      listen: false,
-    );
-
-    final violationsProvider = Provider.of<ViolationProvider>(
-      context,
-      listen: false,
-    );
+    final evidenceProvider = ref.watch(evidenceChangeNotifierProvider);
+    final ticketProvider = ref.watch(ticketChangeNotifierProvider);
+    final violationProvider = ref.watch(violationsListProvider);
 
     QuickAlert.show(
         context: context,
@@ -158,12 +145,9 @@ class _TicketPreviewState extends State<TicketPreview>
         text: 'Saving ticket...',
         barrierDismissible: false);
     double totalFine = 0;
-    final temp = ticketProvider.ticket;
 
-    for (var violation in violationsProvider.getViolations) {
-      if (temp.violationsID.contains(violation.id)) {
-        totalFine += violation.fine;
-      }
+    for (var violation in ticketProvider.ticket.issuedViolations) {
+      totalFine = violation.fine + totalFine;
     }
 
     Ticket ticket = ticketProvider.ticket.copyWith(
@@ -208,7 +192,7 @@ class _TicketPreviewState extends State<TicketPreview>
   }
 
   void _showSaveSuccessDialog(Ticket ticket) async {
-    Provider.of<TicketProvider>(context, listen: false).updateTicket(ticket);
+    ref.watch(ticketChangeNotifierProvider).updateTicket(ticket);
 
     await QuickAlert.show(
       context: context,
@@ -230,52 +214,24 @@ class _TicketPreviewState extends State<TicketPreview>
       appBar: AppBar(
         title: const Text("Ticket Details"),
       ),
-      body: Consumer<CreateTicketFormNotifier>(
-        builder: (context, form, child) {
-          return Column(
-            children: [
-              TabBar(
-                controller: tabController,
-                tabs: _buildTabs(),
-              ),
-              Expanded(
-                child: TabBarView(
-                  controller: tabController,
-                  children: [
-                    _driverDetails(),
-                    _vehicleDetails(),
-                    _buildViolationsView(),
-                    Consumer<EvidenceProvider>(
-                      builder: (context, provider, child) {
-                        if (provider.evidences.isEmpty) {
-                          return const Center(
-                            child: Text("No signature found."),
-                          );
-                        }
-                        return ListView.separated(
-                          itemCount: provider.evidences.length,
-                          itemBuilder: (context, index) {
-                            final evidence = provider.evidences[index];
-
-                            return EvidenceCard(
-                              isPreview: true,
-                              evidence: evidence,
-                            );
-                          },
-                          separatorBuilder: (context, index) {
-                            return const SizedBox(
-                              height: USpace.space12,
-                            );
-                          },
-                        );
-                      },
-                    )
-                  ],
-                ),
-              ),
-            ],
-          );
-        },
+      body: Column(
+        children: [
+          TabBar(
+            controller: tabController,
+            tabs: _buildTabs(),
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: tabController,
+              children: [
+                _driverDetails(),
+                _vehicleDetails(),
+                _buildViolationsView(),
+                _buildEvidences(),
+              ],
+            ),
+          ),
+        ],
       ),
       bottomNavigationBar: _buildActionButtons(context),
     );
@@ -298,41 +254,72 @@ class _TicketPreviewState extends State<TicketPreview>
     ];
   }
 
+  Widget _buildEvidences() {
+    final evidenceProvider = ref.watch(evidenceChangeNotifierProvider);
+
+    if (evidenceProvider.evidences.isEmpty ||
+        evidenceProvider.evidences
+            .where((element) => element.id == "signature")
+            .isEmpty) {
+      return const Center(
+        child: Text("No images found."),
+      );
+    }
+
+    return ListView.separated(
+      itemCount: evidenceProvider.evidences.length,
+      itemBuilder: (context, index) {
+        final evidence = evidenceProvider.evidences[index];
+
+        return EvidenceCard(
+          isPreview: true,
+          evidence: evidence,
+        );
+      },
+      separatorBuilder: (context, index) {
+        return const SizedBox(
+          height: USpace.space12,
+        );
+      },
+    );
+  }
+
   Widget _buildViolationsView() {
-    return Consumer<ViolationProvider>(
-      builder: (context, value, child) {
-        final List<Violation> selected =
-            value.getViolations.where((element) => element.isSelected).toList();
+    final issuedViolations =
+        ref.watch(ticketChangeNotifierProvider).ticket.issuedViolations;
+    final violations = ref.watch(violationsListProvider);
+    return ListView.builder(
+      itemCount: issuedViolations.length,
+      itemBuilder: (context, index) {
+        final IssuedViolation violation = issuedViolations[index];
 
-        return ListView.builder(
-          itemCount: selected.length,
-          itemBuilder: (context, index) {
-            final Violation violation = selected[index];
+        final name = violations
+            .where((element) => element.id == violation.violationID)
+            .first
+            .name;
 
-            return ListTile(
-              title: Text(violation.name),
-              trailing: Text(
-                violation.fine.toString(),
-                style: const TextStyle(
-                  color: UColors.red400,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              titleTextStyle: const TextStyle(
-                color: UColors.gray600,
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-              ),
-            );
-          },
+        return ListTile(
+          title: Text(name),
+          trailing: Text(
+            violation.fine.toString(),
+            style: const TextStyle(
+              color: UColors.red400,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          titleTextStyle: const TextStyle(
+            color: UColors.gray600,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
         );
       },
     );
   }
 
   Widget _driverDetails() {
-    final ticket = Provider.of<TicketProvider>(context, listen: false).ticket;
+    final ticket = ref.watch(ticketChangeNotifierProvider).ticket;
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(USpace.space8),
@@ -372,7 +359,7 @@ class _TicketPreviewState extends State<TicketPreview>
   }
 
   Widget _vehicleDetails() {
-    final ticket = Provider.of<TicketProvider>(context, listen: false).ticket;
+    final ticket = ref.watch(ticketChangeNotifierProvider).ticket;
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(USpace.space8),

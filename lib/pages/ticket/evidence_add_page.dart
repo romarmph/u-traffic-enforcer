@@ -1,13 +1,13 @@
 import 'package:u_traffic_enforcer/config/utils/exports.dart';
 
-class EvidenceAddPage extends StatefulWidget {
+class EvidenceAddPage extends ConsumerStatefulWidget {
   const EvidenceAddPage({super.key});
 
   @override
-  State<EvidenceAddPage> createState() => _EvidenceAddPageState();
+  ConsumerState<EvidenceAddPage> createState() => _EvidenceAddPageState();
 }
 
-class _EvidenceAddPageState extends State<EvidenceAddPage> {
+class _EvidenceAddPageState extends ConsumerState<EvidenceAddPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
@@ -97,10 +97,8 @@ class _EvidenceAddPageState extends State<EvidenceAddPage> {
                     return;
                   }
                   if (_formKey.currentState!.validate()) {
-                    final evidenceProvider = Provider.of<EvidenceProvider>(
-                      context,
-                      listen: false,
-                    );
+                    final evidenceProvider =
+                        ref.watch(evidenceChangeNotifierProvider);
 
                     final isExisting = evidenceProvider.evidences
                         .where((element) => element.path == _file.path)

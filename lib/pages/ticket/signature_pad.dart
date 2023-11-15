@@ -3,24 +3,20 @@ import 'package:u_traffic_enforcer/services/signature.dart';
 
 import '../../config/utils/exports.dart';
 
-class SignaturePad extends StatefulWidget {
+class SignaturePad extends ConsumerStatefulWidget {
   const SignaturePad({super.key});
 
   @override
-  State<SignaturePad> createState() => _SignaturePadState();
+  ConsumerState<SignaturePad> createState() => _SignaturePadState();
 }
 
-class _SignaturePadState extends State<SignaturePad> {
+class _SignaturePadState extends ConsumerState<SignaturePad> {
   final _signaturePadKey = GlobalKey<SfSignaturePadState>();
   EvidenceProvider _evidenceProvider = EvidenceProvider();
 
   @override
-  void initState() {
-    super.initState();
-    _evidenceProvider = Provider.of<EvidenceProvider>(
-      context,
-      listen: false,
-    );
+  Widget build(BuildContext context) {
+    _evidenceProvider = ref.watch(evidenceChangeNotifierProvider);
 
     final signatureImage = _evidenceProvider.evidences
         .where((element) => element.id == "signature");
@@ -32,10 +28,6 @@ class _SignaturePadState extends State<SignaturePad> {
         ),
       );
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sign Ticket'),

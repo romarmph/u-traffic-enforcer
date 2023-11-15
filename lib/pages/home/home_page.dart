@@ -1,48 +1,18 @@
-import 'package:firebase_cached_image/firebase_cached_image.dart';
 import 'package:u_traffic_enforcer/pages/common/bottom_nav.dart';
 import '../../config/utils/exports.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends ConsumerState<HomePage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  Widget getProfileImage() {
-    final enforcer = Provider.of<EnforcerProvider>(context);
-
-    List<String> fileExtensions = ['jpg', 'jpeg', 'png'];
-
-    String baseurl = "gs://u-traffic.appspot.com/profileImage";
-    FirebaseUrl url = FirebaseUrl('');
-    for (var item in fileExtensions) {
-      try {
-        url = FirebaseUrl('$baseurl/${enforcer.enforcer.id}.$item');
-      } on Exception catch (e) {
-        // ignore: avoid_print
-        print(e);
-      }
-    }
-
-    return Image(
-      image: FirebaseImageProvider(
-        url,
-      ),
-      fit: BoxFit.cover,
-      width: 48,
-      height: 48,
-    );
-  }
-
   Widget userNav() {
-    final enforcer = Provider.of<EnforcerProvider>(
-      context,
-      listen: false,
-    );
+    final enforcer = ref.watch(enforcerProvider);
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: USpace.space16,
@@ -50,20 +20,24 @@ class _HomePageState extends State<HomePage> {
       child: Row(
         children: [
           ClipOval(
-            child: getProfileImage(),
+            child: CachedNetworkImage(
+              height: 36,
+              width: 36,
+              imageUrl: enforcer.photoUrl,
+            ),
           ),
           const SizedBox(width: USpace.space16),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "${enforcer.enforcer.firstName} ${enforcer.enforcer.lastName}",
+                "${enforcer.firstName} ${enforcer.lastName}",
                 style: const UTextStyle().textlgfontbold.copyWith(
                       color: UColors.gray700,
                     ),
               ),
               Text(
-                enforcer.enforcer.email,
+                enforcer.email,
                 style: const UTextStyle()
                     .textxsfontsemibold
                     .copyWith(color: UColors.gray500),
@@ -254,46 +228,49 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget recentTicketsList() {
-    final enforcer = Provider.of<EnforcerProvider>(context, listen: false);
-    final ticketDB = TicketDBHelper.instance;
+    final enforcer = ref.watch(enforcerProvider);
 
     return Expanded(
-        child: StreamBuilder<List<Ticket>>(
-      stream: ticketDB.getTicketsByEnforcerId(
-        enforcer.enforcer.id,
+      child: ref.watch(getTicketsByEnforcerIdStream(enforcer.id)).when(
+        data: (data) {
+          return ListView.builder(
+            itemCount: data.length,
+            itemBuilder: (context, index) {
+              Ticket ticket = data[index];
+              return ListTile(
+                title: Text(
+                  'Ticket # ${ticket.ticketNumber!.toString()}',
+                  style: const UTextStyle().textbasefontmedium.copyWith(
+                        color: UColors.gray700,
+                      ),
+                ),
+                subtitle: Text(ticket.driverName!),
+                onTap: () {
+                  viewRecentTicket(ticket, context);
+                },
+              );
+            },
+          );
+        },
+        error: (error, stackTrace) {
+          print(error);
+          print(stackTrace);
+          return Center(
+            child: Text(
+              'Error fetching tickets',
+              style: const UTextStyle().textbasefontmedium.copyWith(
+                    color: UColors.gray700,
+                  ),
+            ),
+          );
+        },
+        loading: () {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
       ),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (snapshot.hasError) {
-          debugPrint(snapshot.error.toString());
-          return const Center(child: Text("Error fetching tickets"));
-        }
-
-        final List<Ticket> tickets = snapshot.data!;
-
-        return ListView.builder(
-          itemCount: tickets.length,
-          itemBuilder: (context, index) {
-            Ticket ticket = tickets[index];
-            return ListTile(
-              title: Text(
-                'Ticket # ${ticket.ticketNumber!.toString()}',
-                style: const UTextStyle().textbasefontmedium.copyWith(
-                      color: UColors.gray700,
-                    ),
-              ),
-              subtitle: Text(ticket.driverName!),
-              onTap: () {
-                viewRecentTicket(ticket, context);
-              },
-            );
-          },
-        );
-      },
-    ));
+    );
   }
 
   Widget recentTicketView() {
@@ -325,6 +302,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(violationsListProvider);
+    ref.watch(vehicleTypeProvider);
     return Scaffold(
       key: _scaffoldKey,
       body: SafeArea(
@@ -367,30 +346,30 @@ class _HomePageState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
               children: [
-                ElevatedButton.icon(
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.all(USpace.space24),
-                  ),
-                  onPressed: () async {
-                    Navigator.of(context).pop();
-                    String barcodeScanRes =
-                        await FlutterBarcodeScanner.scanBarcode(
-                      '#ff6666',
-                      'Cancel',
-                      true,
-                      ScanMode.QR,
-                    );
+                // ElevatedButton.icon(
+                //   style: OutlinedButton.styleFrom(
+                //     padding: const EdgeInsets.all(USpace.space24),
+                //   ),
+                //   onPressed: () async {
+                //     Navigator.of(context).pop();
+                //     String barcodeScanRes =
+                //         await FlutterBarcodeScanner.scanBarcode(
+                //       '#ff6666',
+                //       'Cancel',
+                //       true,
+                //       ScanMode.QR,
+                //     );
 
-                    QRDetails qrDetails = QRDetails.fromJson(
-                      jsonDecode(barcodeScanRes),
-                    );
+                //     QRDetails qrDetails = QRDetails.fromJson(
+                //       jsonDecode(barcodeScanRes),
+                //     );
 
-                    goCreateTicketWithLicense(qrDetails);
-                  },
-                  label: const Text("Scan QR"),
-                  icon: const Icon(Icons.qr_code_scanner_outlined),
-                ),
-                const SizedBox(height: USpace.space12),
+                //     goCreateTicketWithLicense(qrDetails);
+                //   },
+                //   label: const Text("Scan QR"),
+                //   icon: const Icon(Icons.qr_code_scanner_outlined),
+                // ),
+                // const SizedBox(height: USpace.space12),
                 ElevatedButton.icon(
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.all(USpace.space24),

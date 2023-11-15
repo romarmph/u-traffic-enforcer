@@ -2,11 +2,11 @@ import 'package:u_traffic_enforcer/pages/common/bottom_nav.dart';
 
 import '../../config/utils/exports.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Settings"),
@@ -19,10 +19,7 @@ class SettingsPage extends StatelessWidget {
                   value: "logout",
                   padding: EdgeInsets.zero,
                   onTap: () {
-                    Provider.of<NavIndexProvider>(
-                      context,
-                      listen: false,
-                    ).changeIndex(0);
+                    ref.watch(navIndexProvider).changeIndex(0);
                     AuthService().signOut();
                   },
                   child: const ListTile(

@@ -90,3 +90,7 @@ class FormValidators {
     }
   }
 }
+
+final formValidatorProvider = Provider<FormValidators>((ref) {
+  return FormValidators();
+});

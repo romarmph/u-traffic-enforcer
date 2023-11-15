@@ -1,113 +1,67 @@
-import 'package:u_traffic_enforcer/pages/home_wrapper.dart';
+import 'package:u_traffic_enforcer/riverpod/enforcer.riverpod.dart';
 
 import '../config/utils/exports.dart';
 
-class Wrapper extends StatelessWidget {
+class Wrapper extends ConsumerWidget {
   const Wrapper({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final authService = Provider.of<AuthService>(context);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authService = ref.watch(authProvider);
 
-    return StreamBuilder<User?>(
-      stream: authService.user,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.active) {
-          if (snapshot.data == null) {
-            return const Login();
-          }
-
-          return FutureBuilder<bool>(
-            future: loadData(context),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Scaffold(
-                  body: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(USpace.space32),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Logging in...",
-                            style: const UTextStyle().textlgfontmedium,
-                          ),
-                          const SizedBox(height: USpace.space16),
-                          const LinearProgressIndicator(),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              }
-
-              if (snapshot.hasError || snapshot.data == false) {
-                return Scaffold(
-                  body: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+    return ref.watch(authStreamProvider).when(
+          data: (user) {
+            if (user == null) {
+              return const Login();
+            }
+            return ref.watch(enforcerStreamProvider).when(
+                  data: (data) {
+                    return const HomePage();
+                  },
+                  error: (error, stackTrace) {
+                    return Column(
                       children: [
-                        const Icon(
-                          Icons.error,
-                          color: UColors.red400,
-                          size: USpace.space28,
+                        const Text("An error occured!"),
+                        const SizedBox(
+                          height: 20,
                         ),
-                        const SizedBox(height: USpace.space16),
-                        const Text("Error loading data"),
-                        const SizedBox(height: USpace.space16),
                         ElevatedButton(
                           onPressed: () {
-                            SystemNavigator.pop();
+                            authService.signOut();
                           },
-                          child: const Text("Close App"),
+                          child: const Text("Sign out"),
                         ),
                       ],
+                    );
+                  },
+                  loading: () => const Scaffold(
+                    body: Center(
+                      child: CircularProgressIndicator(),
                     ),
                   ),
                 );
-              }
-
-              return const ViewWrapper();
-            },
-          );
-        }
-        return const Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(),
+          },
+          error: (error, stackTrace) {
+            return Column(
+              children: [
+                const Text("An error occured!"),
+                const SizedBox(
+                  height: 20,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    authService.signOut();
+                  },
+                  child: const Text("Sign out"),
+                ),
+              ],
+            );
+          },
+          loading: () => const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
           ),
         );
-      },
-    );
-  }
-
-  Future<bool> loadData(BuildContext context) async {
-    try {
-      final enforcerProvider = Provider.of<EnforcerProvider>(
-        context,
-        listen: false,
-      );
-
-      final violationsProvider = Provider.of<ViolationProvider>(
-        context,
-        listen: false,
-      );
-
-      final vehicleTypeProvider = Provider.of<VehicleTypeProvider>(
-        context,
-        listen: false,
-      );
-
-      final enforcer = await EnforcerDBHelper.instance.getEnforcer();
-      final violations = await ViolationsDatabase().getViolations();
-      final vehicleTypes = await VehicleTypeDBHelper.instance.getVehicleTypes();
-
-      violationsProvider.setViolations(violations);
-      enforcerProvider.setEnforcer(enforcer);
-      vehicleTypeProvider.setVehicleTypes(vehicleTypes);
-
-      return true;
-    } catch (e) {
-      rethrow;
-    }
   }
 }

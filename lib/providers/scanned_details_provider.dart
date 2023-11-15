@@ -24,3 +24,7 @@ class ScannedDetails extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+final scannedDetailsProvider = ChangeNotifierProvider<ScannedDetails>((ref) {
+  return ScannedDetails();
+});
