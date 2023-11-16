@@ -37,7 +37,7 @@ class DatePickerField extends StatelessWidget {
         );
 
         if (date != null) {
-          controller.text = date.toAmericanDate;
+          controller.text = date.toString().split(' ')[0];
         }
       },
     );

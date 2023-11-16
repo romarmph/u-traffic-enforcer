@@ -1,13 +1,13 @@
 import '../../config/utils/exports.dart';
 
-class DeviceScanPage extends StatefulWidget {
+class DeviceScanPage extends ConsumerStatefulWidget {
   const DeviceScanPage({super.key});
 
   @override
-  State<DeviceScanPage> createState() => DeviceScanPageState();
+  ConsumerState<DeviceScanPage> createState() => DeviceScanPageState();
 }
 
-class DeviceScanPageState extends State<DeviceScanPage> {
+class DeviceScanPageState extends ConsumerState<DeviceScanPage> {
   final _bluetooth = BluetoothPrint.instance;
 
   @override
@@ -112,10 +112,7 @@ class DeviceScanPageState extends State<DeviceScanPage> {
   }
 
   void insertDevice(BluetoothDevice device) {
-    Provider.of<PrinterProvider>(
-      context,
-      listen: false,
-    ).selectDevice(device);
+    ref.watch(printerProvider).selectDevice(device);
     Navigator.of(context).pop();
   }
 

@@ -13,6 +13,8 @@ class CreateTicketField extends StatelessWidget {
     this.maxLength,
     this.decoration,
     this.onTap,
+    this.minLines = 1,
+    this.maxLines = 1,
   });
 
   final String? Function(String?)? validator;
@@ -25,10 +27,14 @@ class CreateTicketField extends StatelessWidget {
   final int? maxLength;
   final InputDecoration? decoration;
   final VoidCallback? onTap;
+  final int minLines;
+  final int maxLines;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      minLines: minLines,
+      maxLines: maxLines,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       buildCounter: null,
       maxLength: maxLength,

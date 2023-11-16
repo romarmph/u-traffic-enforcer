@@ -1,13 +1,13 @@
 import 'package:u_traffic_enforcer/config/utils/exports.dart';
 
-class EvidenceAddPage extends StatefulWidget {
+class EvidenceAddPage extends ConsumerStatefulWidget {
   const EvidenceAddPage({super.key});
 
   @override
-  State<EvidenceAddPage> createState() => _EvidenceAddPageState();
+  ConsumerState<EvidenceAddPage> createState() => _EvidenceAddPageState();
 }
 
-class _EvidenceAddPageState extends State<EvidenceAddPage> {
+class _EvidenceAddPageState extends ConsumerState<EvidenceAddPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
@@ -26,6 +26,7 @@ class _EvidenceAddPageState extends State<EvidenceAddPage> {
 
   @override
   Widget build(BuildContext context) {
+    final evidences = ref.watch(evidenceListProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Add Evidence"),
@@ -97,17 +98,47 @@ class _EvidenceAddPageState extends State<EvidenceAddPage> {
                     return;
                   }
                   if (_formKey.currentState!.validate()) {
-                    final evidenceProvider = Provider.of<EvidenceProvider>(
-                      context,
-                      listen: false,
-                    );
-                    evidenceProvider.addEvidence(
+                    final evidenceProvider = ref.watch(evidenceListProvider);
+
+                    final isExisting = evidenceProvider
+                        .where((element) => element.path == _file.path)
+                        .isNotEmpty;
+
+                    if (isExisting) {
+                      QuickAlert.show(
+                        context: context,
+                        title: "Existing Evidence",
+                        text: "This evidence already exists",
+                        type: QuickAlertType.error,
+                      );
+                      return;
+                    }
+
+                    final isNameUsed = evidenceProvider
+                        .where((element) =>
+                            element.name.toLowerCase() ==
+                            _nameController.text.toLowerCase())
+                        .isNotEmpty;
+
+                    if (isNameUsed) {
+                      QuickAlert.show(
+                        context: context,
+                        title: "Name Used",
+                        text: "This name is already used",
+                        type: QuickAlertType.error,
+                      );
+                      return;
+                    }
+
+                    ref.read(evidenceListProvider.notifier).state = [
+                      ...evidenceProvider,
                       Evidence(
+                        id: DateTime.now().toString(),
                         name: _nameController.text,
                         description: _descriptionController.text,
                         path: _file.path,
                       ),
-                    );
+                    ];
 
                     Navigator.of(context).pop();
                   }

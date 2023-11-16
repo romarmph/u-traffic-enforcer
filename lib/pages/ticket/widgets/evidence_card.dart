@@ -1,15 +1,22 @@
 import 'package:u_traffic_enforcer/config/utils/exports.dart';
 
-class EvidenceCard extends StatelessWidget {
+class EvidenceCard extends ConsumerStatefulWidget {
   const EvidenceCard({
     super.key,
     required this.evidence,
     this.isPreview = false,
+    this.isNetowrkImage = false,
   });
 
   final bool isPreview;
   final Evidence evidence;
+  final bool isNetowrkImage;
 
+  @override
+  ConsumerState<EvidenceCard> createState() => _EvidenceCardState();
+}
+
+class _EvidenceCardState extends ConsumerState<EvidenceCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -31,18 +38,26 @@ class EvidenceCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Image.file(
-            height: 200,
-            File(evidence.path),
-            fit: BoxFit.fill,
-          ),
+          widget.isNetowrkImage
+              ? CachedNetworkImage(
+                  imageUrl: widget.evidence.path,
+                  placeholder: (context, url) =>
+                      const CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                  height: 200,
+                )
+              : Image.file(
+                  height: 200,
+                  File(widget.evidence.path),
+                  fit: BoxFit.fill,
+                ),
           ListTile(
             contentPadding: const EdgeInsets.all(0),
-            title: Text(evidence.name),
-            subtitle: evidence.description != null
-                ? Text(evidence.description!)
+            title: Text(widget.evidence.name),
+            subtitle: widget.evidence.description != null
+                ? Text(widget.evidence.description!)
                 : null,
-            trailing: isPreview
+            trailing: widget.isPreview
                 ? null
                 : IconButton(
                     onPressed: () {
@@ -65,17 +80,21 @@ class EvidenceCard extends StatelessWidget {
       showCancelBtn: true,
       confirmBtnText: "Delete",
       onConfirmBtnTap: () {
-        final provider = Provider.of<EvidenceProvider>(context, listen: false);
-        final licenseImage = Provider.of<LicenseImageProvider>(
-          context,
-          listen: false,
-        );
+        final licenseImage = ref.watch(licenseImageProvider);
 
-        if (evidence.id == "default") {
+        if (widget.evidence.id == "default") {
           licenseImage.resetLicense();
-          provider.removeEvidence(evidence);
+          ref.read(evidenceListProvider.notifier).update((state) {
+            final temp = state;
+            temp.removeWhere((element) => element.id == "default");
+            return temp;
+          });
         } else {
-          provider.removeEvidence(evidence);
+          ref.read(evidenceListProvider.notifier).update((state) {
+            final temp = state;
+            temp.remove(widget.evidence);
+            return temp;
+          });
         }
 
         Navigator.of(context).pop();

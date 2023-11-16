@@ -21,6 +21,9 @@ class ScannedDetails extends ChangeNotifier {
 
   void onChange(String key, String value) {
     _details[key] = value;
-    notifyListeners();
   }
 }
+
+final scannedDetailsProvider = ChangeNotifierProvider<ScannedDetails>((ref) {
+  return ScannedDetails();
+});

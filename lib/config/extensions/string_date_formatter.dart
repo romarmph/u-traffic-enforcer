@@ -38,12 +38,7 @@ extension StringDate on String {
 
   Timestamp get toTimestamp {
     try {
-      final stringDate = replaceAll('/', '-');
-      final dateParts = stringDate.split('-');
-
-      final date = DateTime.parse(
-        [dateParts[2], dateParts[0], dateParts[1]].join('-'),
-      );
+      final date = DateTime.parse(this);
 
       return Timestamp.fromDate(date);
     } catch (e) {

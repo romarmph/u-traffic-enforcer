@@ -13,7 +13,7 @@ class Evidence {
     required this.path,
   });
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return {
       'ticketNumber': ticketNumber,
       'name': name,
@@ -32,7 +32,7 @@ class Evidence {
     );
   }
 
-  Evidence copyWidget({
+  Evidence copyWith({
     String? id,
     int? ticketNumber,
     String? name,

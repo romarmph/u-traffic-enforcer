@@ -10,3 +10,7 @@ class PrinterProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+final printerProvider = ChangeNotifierProvider<PrinterProvider>((ref) {
+  return PrinterProvider();
+});

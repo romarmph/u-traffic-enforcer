@@ -19,4 +19,15 @@ class VehicleTypeDBHelper {
       );
     }).toList();
   }
+
+  Stream<List<VehicleType>> getVehicleTypesStream() {
+    return _firebase.collection('vehicleTypes').snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return VehicleType.fromJson(
+          doc.data(),
+          doc.id,
+        );
+      }).toList();
+    });
+  }
 }

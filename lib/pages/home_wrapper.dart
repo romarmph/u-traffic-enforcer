@@ -1,27 +1,18 @@
 import '../config/utils/exports.dart';
 
-class ViewWrapper extends StatefulWidget {
-  const ViewWrapper({Key? key}) : super(key: key);
+const List<Widget> pages = [
+  HomePage(),
+  SettingsPage(),
+];
+
+class ViewWrapper extends ConsumerWidget {
+  const ViewWrapper({super.key});
 
   @override
-  State<ViewWrapper> createState() => ViewWrapperState();
-}
-
-class ViewWrapperState extends State<ViewWrapper> {
-  final List<Widget> pages = [
-    const HomePage(),
-    const SettingsPage(),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<NavIndexProvider>(
-      builder: (context, navigator, child) {
-        return IndexedStack(
-          index: navigator.currentIndex,
-          children: pages,
-        );
-      },
+  Widget build(BuildContext context, WidgetRef ref) {
+    return IndexedStack(
+      index: ref.watch(navIndexProvider),
+      children: pages,
     );
   }
 }

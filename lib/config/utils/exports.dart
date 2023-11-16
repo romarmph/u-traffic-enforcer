@@ -10,7 +10,7 @@ export 'package:firebase_core/firebase_core.dart';
 export 'package:firebase_auth/firebase_auth.dart';
 export 'package:cloud_firestore/cloud_firestore.dart';
 export 'package:firebase_storage/firebase_storage.dart';
-export 'package:provider/provider.dart';
+// export 'package:provider/provider.dart';
 export 'package:google_fonts/google_fonts.dart';
 export 'package:image_cropper/image_cropper.dart';
 export 'package:image_picker/image_picker.dart';
@@ -24,6 +24,8 @@ export 'package:dropdown_textfield/dropdown_textfield.dart';
 export 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 export 'package:searchable_listview/searchable_listview.dart';
 export 'package:syncfusion_flutter_signaturepad/signaturepad.dart';
+export 'package:flutter_riverpod/flutter_riverpod.dart';
+export 'package:cached_network_image/cached_network_image.dart';
 
 ///
 ///
@@ -40,6 +42,9 @@ export 'package:u_traffic_enforcer/config/constants/plate_number_formats.dart';
 export 'package:u_traffic_enforcer/config/enums/device_connection.dart';
 export 'package:u_traffic_enforcer/config/enums/field_type.dart';
 export 'package:u_traffic_enforcer/config/enums/ticket_status.dart';
+export 'package:u_traffic_enforcer/config/enums/notification_types.dart';
+export 'package:u_traffic_enforcer/config/enums/notification_content.dart';
+export 'package:u_traffic_enforcer/config/enums/enforcer_status.dart';
 
 // extensions
 export 'package:u_traffic_enforcer/config/extensions/input_validator.dart';
@@ -71,7 +76,7 @@ export 'package:u_traffic_enforcer/model/driver_model.dart';
 export 'package:u_traffic_enforcer/model/enforcer_model.dart';
 export 'package:u_traffic_enforcer/model/license_detail_model.dart';
 export 'package:u_traffic_enforcer/model/ticket_model.dart';
-export 'package:u_traffic_enforcer/model/violation_model.dart';
+export 'package:u_traffic_enforcer/model/violations/violation_model.dart';
 export 'package:u_traffic_enforcer/model/location_model.dart';
 export 'package:u_traffic_enforcer/model/barangays.dart';
 export 'package:u_traffic_enforcer/model/city.dart';
@@ -79,6 +84,10 @@ export 'package:u_traffic_enforcer/model/province.dart';
 export 'package:u_traffic_enforcer/model/vehicle_type.dart';
 export 'package:u_traffic_enforcer/model/qr_details.dart';
 export 'package:u_traffic_enforcer/model/evidence.dart';
+export 'package:u_traffic_enforcer/model/leave_type.dart';
+export 'package:u_traffic_enforcer/model/violations/issued_violation.dart';
+export 'package:u_traffic_enforcer/model/violations/violation_offense.dart';
+export 'package:u_traffic_enforcer/model/driver_profiles.dart';
 
 // pages
 export 'package:u_traffic_enforcer/pages/auth/login_page.dart';
@@ -88,6 +97,10 @@ export 'package:u_traffic_enforcer/pages/leave/leave_page.dart';
 export 'package:u_traffic_enforcer/pages/settings/settings_page.dart';
 export 'package:u_traffic_enforcer/pages/settings/password_update_page.dart';
 export 'package:u_traffic_enforcer/pages/home/widgets/menu_button.dart';
+export 'package:u_traffic_enforcer/pages/home/widgets/notifications/notification_drawer.dart';
+export 'package:u_traffic_enforcer/pages/home/widgets/notifications/notification_bell_button.dart';
+export 'package:u_traffic_enforcer/pages/home/widgets/notifications/notification_tile.dart';
+export 'package:u_traffic_enforcer/pages/home/widgets/notifications/notification_empty.dart';
 export 'package:u_traffic_enforcer/pages/printer/device_scan_page.dart';
 export 'package:u_traffic_enforcer/pages/printer/printer_home.dart';
 export 'package:u_traffic_enforcer/pages/ticket/create_ticket_page.dart';
@@ -103,6 +116,7 @@ export 'package:u_traffic_enforcer/pages/ticket/widgets/keep_alive_wrapper.dart'
 export 'package:u_traffic_enforcer/pages/ticket/widgets/evidence_form.dart';
 export 'package:u_traffic_enforcer/pages/ticket/evidence_add_page.dart';
 export 'package:u_traffic_enforcer/pages/ticket/widgets/evidence_card.dart';
+
 export 'package:u_traffic_enforcer/pages/wrapper.dart';
 
 // Routes
@@ -112,14 +126,18 @@ export 'package:u_traffic_enforcer/config/routes.dart';
 export 'package:u_traffic_enforcer/providers/create_ticket_form_notifier.dart';
 export 'package:u_traffic_enforcer/providers/printer_provider.dart';
 export 'package:u_traffic_enforcer/providers/ticket_provider.dart';
-export 'package:u_traffic_enforcer/providers/violations_provider.dart';
-export 'package:u_traffic_enforcer/providers/enforcer_provider.dart';
 export 'package:u_traffic_enforcer/providers/image_provider.dart';
 export 'package:u_traffic_enforcer/providers/form_validator_provider.dart';
 export 'package:u_traffic_enforcer/providers/scanned_details_provider.dart';
-export 'package:u_traffic_enforcer/providers/vehicle_type_provider.dart';
-export 'package:u_traffic_enforcer/providers/nav_index_provider.dart';
-export 'package:u_traffic_enforcer/providers/evidence_provider.dart';
+
+// Riverpod
+export 'package:u_traffic_enforcer/riverpod/auth.riverpod.dart';
+export 'package:u_traffic_enforcer/riverpod/violations.riverpod.dart';
+export 'package:u_traffic_enforcer/riverpod/enforcer.riverpod.dart';
+export 'package:u_traffic_enforcer/riverpod/ticklet.riverpod.dart';
+export 'package:u_traffic_enforcer/riverpod/vehicle_type.riverpod.dart';
+export 'package:u_traffic_enforcer/riverpod/bottom_nav.riverpod.dart';
+export 'package:u_traffic_enforcer/riverpod/evidence.riverpod.dart';
 
 // Services
 export 'package:u_traffic_enforcer/services/auth_service.dart';

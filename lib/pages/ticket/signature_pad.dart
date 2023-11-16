@@ -3,39 +3,20 @@ import 'package:u_traffic_enforcer/services/signature.dart';
 
 import '../../config/utils/exports.dart';
 
-class SignaturePad extends StatefulWidget {
+class SignaturePad extends ConsumerStatefulWidget {
   const SignaturePad({super.key});
 
   @override
-  State<SignaturePad> createState() => _SignaturePadState();
+  ConsumerState<SignaturePad> createState() => _SignaturePadState();
 }
 
-class _SignaturePadState extends State<SignaturePad> {
+class _SignaturePadState extends ConsumerState<SignaturePad> {
   final _signaturePadKey = GlobalKey<SfSignaturePadState>();
-  EvidenceProvider _evidenceProvider = EvidenceProvider();
-
-  @override
-  void initState() {
-    super.initState();
-    _evidenceProvider = Provider.of<EvidenceProvider>(
-      context,
-      listen: false,
-    );
-
-    final signatureImage = _evidenceProvider.evidences
-        .where((element) => element.id == "signature");
-
-    if (signatureImage.isNotEmpty) {
-      SignatureServices().deleteFile(
-        File(
-          signatureImage.first.path,
-        ),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
+    final evidenceProvider = ref.watch(evidenceListProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sign Ticket'),
@@ -73,13 +54,14 @@ class _SignaturePadState extends State<SignaturePad> {
                       await _signaturePadKey.currentState!.toImage();
                   File file = await SignatureServices().saveImage(image);
 
-                  _evidenceProvider.addEvidence(
+                  ref.read(evidenceListProvider.notifier).state = [
+                    ...evidenceProvider,
                     Evidence(
-                      id: 'signature',
-                      name: "Driver Signature",
+                      id: "signature",
+                      name: "Signature",
                       path: file.path,
                     ),
-                  );
+                  ];
 
                   popCurrent();
                 },

@@ -2,96 +2,85 @@ import 'package:u_traffic_enforcer/services/license_scan_services.dart';
 
 import '../../../config/utils/exports.dart';
 
-class ImageScannerButton extends StatefulWidget {
+class ImageScannerButton extends ConsumerStatefulWidget {
   const ImageScannerButton({
     super.key,
   });
 
   @override
-  State<ImageScannerButton> createState() => _ImageScannerButtonState();
+  ConsumerState<ImageScannerButton> createState() => _ImageScannerButtonState();
 }
 
-class _ImageScannerButtonState extends State<ImageScannerButton> {
+class _ImageScannerButtonState extends ConsumerState<ImageScannerButton> {
   @override
   Widget build(BuildContext context) {
-    final imageProvider = Provider.of<LicenseImageProvider>(
-      context,
-    );
+    final form = ref.watch(createTicketFormProvider);
 
-    return Consumer<CreateTicketFormNotifier>(builder: (context, form, child) {
-      return GestureDetector(
-        onTap: () async {
-          if (form.isDriverNotPresent) return;
+    return GestureDetector(
+      onTap: () async {
+        if (form.isDriverNotPresent) return;
 
-          await onTap();
-        },
-        child: AspectRatio(
-          aspectRatio: 3 / 2,
-          child: Container(
-            decoration: BoxDecoration(
-              color: UColors.gray100,
-              borderRadius: BorderRadius.circular(
-                USpace.space12,
-              ),
-              border: Border.all(
-                color: UColors.gray200,
-                width: 2,
-                strokeAlign: BorderSide.strokeAlignInside,
-              ),
+        await onTap();
+      },
+      child: AspectRatio(
+        aspectRatio: 3 / 2,
+        child: Container(
+          decoration: BoxDecoration(
+            color: UColors.gray100,
+            borderRadius: BorderRadius.circular(
+              USpace.space12,
             ),
-            child: Center(
-              child: Consumer<CreateTicketFormNotifier>(
-                builder: (context, form, widget) {
-                  if (imageProvider.licenseImagePath.isEmpty) {
-                    return const Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.image,
-                          color: UColors.gray400,
-                          size: 48,
-                        ),
-                        SizedBox(height: USpace.space12),
-                        Text(
-                          "Tap here to scan license",
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w500,
-                            color: UColors.gray400,
-                          ),
-                        )
-                      ],
-                    );
-                  }
-                  return ClipRRect(
-                    borderRadius: BorderRadius.circular(USpace.space12),
-                    child: Image.file(
-                      File(imageProvider.licenseImagePath),
-                      fit: BoxFit.contain,
-                    ),
-                  );
-                },
-              ),
+            border: Border.all(
+              color: UColors.gray200,
+              width: 2,
+              strokeAlign: BorderSide.strokeAlignInside,
             ),
           ),
+          child: Center(
+            child: _buildImage(),
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildImage() {
+    final imageProvider = ref.watch(licenseImageProvider);
+
+    if (imageProvider.licenseImagePath.isEmpty) {
+      return const Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.image,
+            color: UColors.gray400,
+            size: 48,
+          ),
+          SizedBox(height: USpace.space12),
+          Text(
+            "Tap here to scan license",
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w500,
+              color: UColors.gray400,
+            ),
+          )
+        ],
       );
-    });
+    }
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(USpace.space12),
+      child: Image.file(
+        File(imageProvider.licenseImagePath),
+        fit: BoxFit.contain,
+      ),
+    );
   }
 
   Future<void> onTap() async {
-    final imageProvider = Provider.of<LicenseImageProvider>(
-      context,
-      listen: false,
-    );
-    final scanDetailsProvider = Provider.of<ScannedDetails>(
-      context,
-      listen: false,
-    );
-    final evidenceProvider = Provider.of<EvidenceProvider>(
-      context,
-      listen: false,
-    );
+    final imageProvider = ref.watch(licenseImageProvider);
+
+    final scanDetailsProvider = ref.watch(scannedDetailsProvider);
 
     showLoading(
       'Scanning License',
@@ -124,16 +113,25 @@ class _ImageScannerButtonState extends State<ImageScannerButton> {
       return;
     }
 
-    evidenceProvider.removeEvidenceByID('default');
+    ref.read(evidenceListProvider.notifier).update((state) {
+      final temp = state;
+      temp.removeWhere((element) => element.id == 'default');
+      return temp;
+    });
 
     imageProvider.setLicenseImagePath(cropped.path);
-    evidenceProvider.addEvidence(
-      Evidence(
-        id: 'default',
-        name: 'License Image - Front',
-        path: cropped.path,
-      ),
-    );
+
+    ref.read(evidenceListProvider.notifier).update((state) {
+      final temp = state;
+      temp.add(
+        Evidence(
+          id: 'default',
+          name: 'License Image - Front',
+          path: cropped.path,
+        ),
+      );
+      return temp;
+    });
 
     final scanApi = LicenseScanServices.instance;
     try {

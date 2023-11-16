@@ -1,13 +1,13 @@
 import '../../config/utils/exports.dart';
 
-class TicketPreview extends StatefulWidget {
+class TicketPreview extends ConsumerStatefulWidget {
   const TicketPreview({super.key});
 
   @override
-  State<TicketPreview> createState() => _TicketPreviewState();
+  ConsumerState<TicketPreview> createState() => _TicketPreviewState();
 }
 
-class _TicketPreviewState extends State<TicketPreview>
+class _TicketPreviewState extends ConsumerState<TicketPreview>
     with SingleTickerProviderStateMixin {
   late TabController tabController;
   bool _isSaving = false;
@@ -20,6 +20,7 @@ class _TicketPreviewState extends State<TicketPreview>
   }
 
   Widget _buildActionButtons(BuildContext context) {
+    final form = ref.watch(createTicketFormProvider);
     return Container(
       padding: const EdgeInsets.all(USpace.space8),
       color: UColors.white,
@@ -41,14 +42,29 @@ class _TicketPreviewState extends State<TicketPreview>
             ],
           ),
           const SizedBox(height: USpace.space12),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () {
-                goSignaturePad();
-              },
-              icon: const Icon(Icons.create_rounded),
-              label: const Text("Sign Ticket"),
+          Visibility(
+            visible: !form.isDriverNotPresent,
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  final evidences = ref.watch(evidenceListProvider);
+
+                  final signature =
+                      evidences.where((element) => element.id == "signature");
+
+                  if (signature.isNotEmpty) {
+                    ref.read(evidenceListProvider.notifier).state = [
+                      ...evidences
+                          .where((element) => element.id != "signature"),
+                    ];
+                  }
+
+                  goSignaturePad();
+                },
+                icon: const Icon(Icons.create_rounded),
+                label: const Text("Sign Ticket"),
+              ),
             ),
           ),
           const SizedBox(height: USpace.space12),
@@ -85,13 +101,11 @@ class _TicketPreviewState extends State<TicketPreview>
   }
 
   void _showDialog() async {
-    final form = Provider.of<CreateTicketFormNotifier>(context, listen: false);
+    final form = ref.watch(createTicketFormProvider);
 
-    final evidenceProvider =
-        Provider.of<EvidenceProvider>(context, listen: false);
+    final evidence = ref.watch(evidenceListProvider);
 
-    final signature = evidenceProvider.evidences
-        .where((element) => element.id == "signature");
+    final signature = evidence.where((element) => element.id == "signature");
 
     if (!form.isDriverNotPresent) {
       if (signature.isEmpty) {
@@ -136,36 +150,36 @@ class _TicketPreviewState extends State<TicketPreview>
   }
 
   Future<void> saveTicket() async {
-    final imageProvider = Provider.of<LicenseImageProvider>(
-      context,
-      listen: false,
-    );
-    final ticketProvider = Provider.of<TicketProvider>(
-      context,
-      listen: false,
-    );
+    final evidenceProvider = ref.watch(evidenceListProvider);
+    final ticketProvider = ref.watch(ticketChangeNotifierProvider);
 
     QuickAlert.show(
         context: context,
         type: QuickAlertType.loading,
         text: 'Saving ticket...',
         barrierDismissible: false);
+    double totalFine = 0;
 
-    Ticket ticket = ticketProvider.ticket;
+    for (var violation in ticketProvider.ticket.issuedViolations) {
+      totalFine = violation.fine + totalFine;
+    }
+
+    Ticket ticket = ticketProvider.ticket.copyWith(
+      totalFine: totalFine,
+    );
 
     final futureTicket = await TicketDBHelper.instance.createTicket(ticket);
+    final storageService = StorageService.instance;
 
-    if (imageProvider.licenseImagePath.isNotEmpty) {
-      final uploadStatus = await renameAndUpload(
-        imageProvider.licenseImagePath,
-        futureTicket.id!,
-      );
+    final uploadStatus = await storageService.uploadEvidence(
+      evidenceProvider,
+      futureTicket.ticketNumber!,
+    );
 
-      if (uploadStatus) {
-        _showUploadSucessDialog();
-      } else {
-        _showUploadFailedDialog();
-      }
+    if (uploadStatus) {
+      _showUploadSucessDialog();
+    } else {
+      _showUploadFailedDialog();
     }
 
     popCurrent();
@@ -192,13 +206,14 @@ class _TicketPreviewState extends State<TicketPreview>
   }
 
   void _showSaveSuccessDialog(Ticket ticket) async {
-    Provider.of<TicketProvider>(context, listen: false).updateTicket(ticket);
+    ref.watch(ticketChangeNotifierProvider).updateTicket(ticket);
 
     await QuickAlert.show(
       context: context,
       type: QuickAlertType.success,
       barrierDismissible: false,
       onConfirmBtnTap: () {
+        ref.read(evidenceListProvider.notifier).state = [];
         Navigator.pushNamedAndRemoveUntil(
           context,
           '/printer/',
@@ -214,52 +229,26 @@ class _TicketPreviewState extends State<TicketPreview>
       appBar: AppBar(
         title: const Text("Ticket Details"),
       ),
-      body: Consumer<CreateTicketFormNotifier>(
-        builder: (context, form, child) {
-          return Column(
-            children: [
-              TabBar(
-                controller: tabController,
-                tabs: _buildTabs(),
-              ),
-              Expanded(
-                child: TabBarView(
-                  controller: tabController,
-                  children: [
-                    _driverDetails(),
-                    _vehicleDetails(),
-                    _buildViolationsView(),
-                    Consumer<EvidenceProvider>(
-                      builder: (context, provider, child) {
-                        if (provider.evidences.isEmpty) {
-                          return const Center(
-                            child: Text("No signature found."),
-                          );
-                        }
-                        return ListView.separated(
-                          itemCount: provider.evidences.length,
-                          itemBuilder: (context, index) {
-                            final evidence = provider.evidences[index];
-
-                            return EvidenceCard(
-                              isPreview: true,
-                              evidence: evidence,
-                            );
-                          },
-                          separatorBuilder: (context, index) {
-                            return const SizedBox(
-                              height: USpace.space12,
-                            );
-                          },
-                        );
-                      },
-                    )
-                  ],
+      body: Column(
+        children: [
+          TabBar(
+            controller: tabController,
+            tabs: _buildTabs(),
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: tabController,
+              children: [
+                _driverDetails(),
+                _vehicleDetails(),
+                _buildViolationsView(),
+                _buildEvidences(
+                  ref.watch(evidenceListProvider),
                 ),
-              ),
-            ],
-          );
-        },
+              ],
+            ),
+          ),
+        ],
       ),
       bottomNavigationBar: _buildActionButtons(context),
     );
@@ -282,41 +271,67 @@ class _TicketPreviewState extends State<TicketPreview>
     ];
   }
 
+  Widget _buildEvidences(List<Evidence> evidences) {
+    if (evidences.isEmpty) {
+      return const Center(
+        child: Text("No images found."),
+      );
+    }
+
+    return ListView.separated(
+      itemCount: evidences.length,
+      itemBuilder: (context, index) {
+        final evidence = evidences[index];
+
+        return EvidenceCard(
+          isPreview: true,
+          evidence: evidence,
+        );
+      },
+      separatorBuilder: (context, index) {
+        return const SizedBox(
+          height: USpace.space12,
+        );
+      },
+    );
+  }
+
   Widget _buildViolationsView() {
-    return Consumer<ViolationProvider>(
-      builder: (context, value, child) {
-        final List<Violation> selected =
-            value.getViolations.where((element) => element.isSelected).toList();
+    final issuedViolations =
+        ref.watch(ticketChangeNotifierProvider).ticket.issuedViolations;
+    final violations = ref.watch(violationsListProvider);
+    return ListView.builder(
+      itemCount: issuedViolations.length,
+      itemBuilder: (context, index) {
+        final IssuedViolation violation = issuedViolations[index];
 
-        return ListView.builder(
-          itemCount: selected.length,
-          itemBuilder: (context, index) {
-            final Violation violation = selected[index];
+        final name = violations
+            .where((element) => element.id == violation.violationID)
+            .first
+            .name;
 
-            return ListTile(
-              title: Text(violation.name),
-              trailing: Text(
-                violation.fine.toString(),
-                style: const TextStyle(
-                  color: UColors.red400,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              titleTextStyle: const TextStyle(
-                color: UColors.gray600,
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-              ),
-            );
-          },
+        return ListTile(
+          title: Text(name),
+          trailing: Text(
+            violation.fine.toString(),
+            style: const TextStyle(
+              color: UColors.red400,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          titleTextStyle: const TextStyle(
+            color: UColors.gray600,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
         );
       },
     );
   }
 
   Widget _driverDetails() {
-    final ticket = Provider.of<TicketProvider>(context, listen: false).ticket;
+    final ticket = ref.watch(ticketChangeNotifierProvider).ticket;
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(USpace.space8),
@@ -356,7 +371,7 @@ class _TicketPreviewState extends State<TicketPreview>
   }
 
   Widget _vehicleDetails() {
-    final ticket = Provider.of<TicketProvider>(context, listen: false).ticket;
+    final ticket = ref.watch(ticketChangeNotifierProvider).ticket;
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(USpace.space8),
@@ -364,7 +379,7 @@ class _TicketPreviewState extends State<TicketPreview>
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             PreviewListTile(
-              title: ticket.vehicleTypeID,
+              title: ticket.vehicleTypeName,
               subtitle: 'Vehicle Type',
             ),
             PreviewListTile(

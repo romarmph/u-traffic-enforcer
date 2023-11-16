@@ -15,3 +15,8 @@ class LicenseImageProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+final licenseImageProvider =
+    ChangeNotifierProvider<LicenseImageProvider>((ref) {
+  return LicenseImageProvider();
+});

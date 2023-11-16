@@ -1,18 +1,207 @@
 import '../../config/utils/exports.dart';
 
-class ViolationsList extends StatefulWidget {
-  const ViolationsList({super.key});
+final searchQueryProvider = StateProvider<String>((ref) {
+  return "";
+});
+
+class ViolationList extends ConsumerStatefulWidget {
+  const ViolationList({super.key});
 
   @override
-  State<ViolationsList> createState() => _ViolationsListState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _ViolationListState();
 }
 
-class _ViolationsListState extends State<ViolationsList> {
-  @override
-  void initState() {
-    super.initState();
+class _ViolationListState extends ConsumerState<ViolationList> {
+  final _searchController = TextEditingController();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-    Provider.of<ViolationProvider>(context, listen: false).listenToViolations();
+  @override
+  Widget build(BuildContext context) {
+    final selectedViolations = ref.watch(selectedViolationsProvider);
+    return Scaffold(
+      key: _scaffoldKey,
+      appBar: AppBar(
+        title: const Text("Select Violations"),
+        actions: [
+          IconButton(
+            onPressed: () {
+              _scaffoldKey.currentState!.openEndDrawer();
+            },
+            icon: Badge(
+              label: Text(
+                selectedViolations.length.toString(),
+                style: const TextStyle(
+                  color: UColors.white,
+                ),
+              ),
+              child: const Icon(Icons.library_books),
+            ),
+          ),
+        ],
+      ),
+      endDrawer: Drawer(
+        backgroundColor: UColors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(USpace.space8),
+        ),
+        width: MediaQuery.of(context).size.width * 0.9,
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: USpace.space8,
+              vertical: USpace.space16,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Text(
+                      "Selected Violations",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Spacer(),
+                    TextButton(
+                      onPressed: () async {
+                        final remove = await QuickAlert.show(
+                          context: context,
+                          type: QuickAlertType.confirm,
+                          title: "Remove all Violation",
+                          text:
+                              "Are you sure you want to remove all violations?",
+                          onConfirmBtnTap: () {
+                            Navigator.of(context).pop(true);
+                          },
+                        );
+
+                        if (remove == null) {
+                          return;
+                        }
+                        ref.read(selectedViolationsProvider.notifier).update(
+                              (state) => [],
+                            );
+                      },
+                      child: const Text('Clear all'),
+                    ),
+                  ],
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: selectedViolations.length,
+                    itemBuilder: (context, index) {
+                      final IssuedViolation issuedViolation =
+                          selectedViolations[index];
+                      return ListTile(
+                        visualDensity: VisualDensity.comfortable,
+                        title: Text(
+                          issuedViolation.violation,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        subtitle: Text(
+                          "Fine: ${issuedViolation.fine}",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: UColors.red500,
+                          ),
+                        ),
+                        trailing: IconButton(
+                          onPressed: () async {
+                            final remove = await QuickAlert.show(
+                              context: context,
+                              type: QuickAlertType.confirm,
+                              title: "Remove Violation",
+                              text:
+                                  "Are you sure you want to remove this violation?",
+                              onConfirmBtnTap: () {
+                                Navigator.of(context).pop(true);
+                              },
+                            );
+
+                            if (remove == null) {
+                              return;
+                            }
+
+                            final List<IssuedViolation>
+                                updatedSelectedViolations = [
+                              ...selectedViolations
+                            ];
+
+                            updatedSelectedViolations.removeWhere((element) =>
+                                element.violationID ==
+                                issuedViolation.violationID);
+
+                            ref
+                                .read(selectedViolationsProvider.notifier)
+                                .update(
+                                  (state) => updatedSelectedViolations,
+                                );
+                          },
+                          icon: const Icon(Icons.clear),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: USpace.space16,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(
+                vertical: USpace.space16,
+              ),
+              color: UColors.white,
+              child: TextField(
+                controller: _searchController,
+                onChanged: (value) {
+                  ref.read(searchQueryProvider.notifier).state = value;
+                },
+                decoration: InputDecoration(
+                  hintText: "Search Violation",
+                  prefixIcon: const Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(USpace.space8),
+                  ),
+                  suffixIcon: Visibility(
+                    visible: _searchController.text.isNotEmpty,
+                    child: IconButton(
+                      onPressed: () {
+                        _searchController.clear();
+                        ref.read(searchQueryProvider.notifier).state = "";
+                      },
+                      icon: const Icon(Icons.clear),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: USpace.space16,
+            ),
+            Expanded(
+              child: ClipRRect(
+                clipBehavior: Clip.antiAlias,
+                child: _buildViolationsList(),
+              ),
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: _buildActionButtons(),
+    );
   }
 
   Widget _buildActionButtons() {
@@ -42,113 +231,102 @@ class _ViolationsListState extends State<ViolationsList> {
   }
 
   Widget _buildViolationsList() {
-    final ticket = Provider.of<TicketProvider>(context, listen: false).ticket;
-
-    return Consumer<ViolationProvider>(
-      builder: (context, violation, child) {
-        if (ticket.licenseNumber != null && ticket.licenseNumber!.isEmpty) {
-          violation.getViolations
-              .where((element) => element.id == '2z8KdHRfLapkAeAhbjOt')
-              .first
-              .isSelected = true;
-        }
-
-        if (ticket.plateNumber != null && ticket.plateNumber!.isEmpty) {
-          violation.getViolations
-              .where((element) => element.id == 'V0ORjFu2Y0H9Hu88WgbO')
-              .first
-              .isSelected = true;
-        }
-
-        return SearchableList<Violation>(
-          inputDecoration: const InputDecoration(
-            labelText: "Search Violations",
-          ),
-          initialList: violation.getViolations,
-          filter: (query) => violation.getViolations
-              .where((element) =>
-                  element.name.toLowerCase().contains(query.toLowerCase()))
-              .toList(),
-          builder: (displayedList, itemIndex, item) {
-            if (item.id == '2z8KdHRfLapkAeAhbjOt' &&
-                ticket.licenseNumber != null &&
-                ticket.licenseNumber!.isEmpty) {
-              return CheckboxListTile(
-                enabled: false,
-                value: item.isSelected,
-                onChanged: (value) {
-                  violation.selectViolation(item.id);
-                },
-                title: Text(item.name),
-                subtitle: Text(
-                  "Fine: ${item.fine.toString()}",
+    final selectedViolations = ref.watch(selectedViolationsProvider);
+    return ref.watch(violationsStreamProvider).when(
+      data: (violations) {
+        final query = ref.watch(searchQueryProvider);
+        violations = _searchViolation(violations, query);
+        return ListView.separated(
+          itemCount: violations.length,
+          itemBuilder: (context, index) {
+            final Violation violation = violations[index];
+            final isSelected = selectedViolations
+                .any((element) => element.violationID == violation.id);
+            return Container(
+              decoration: BoxDecoration(
+                color: isSelected ? UColors.blue100 : UColors.white,
+                borderRadius: BorderRadius.circular(USpace.space8),
+                border: Border.all(
+                  color: isSelected ? UColors.blue700 : Colors.transparent,
                 ),
-              );
-            }
+              ),
+              child: ListTile(
+                onTap: () {
+                  if (selectedViolations
+                      .any((element) => element.violationID == violation.id)) {
+                    final List<IssuedViolation> updatedSelectedViolations = [
+                      ...selectedViolations
+                    ];
 
-            if (item.id == 'V0ORjFu2Y0H9Hu88WgbO' &&
-                ticket.plateNumber != null &&
-                ticket.plateNumber!.isEmpty) {
-              return CheckboxListTile(
-                enabled: false,
-                value: item.isSelected,
-                onChanged: (value) {
-                  violation.selectViolation(item.id);
+                    updatedSelectedViolations.removeWhere(
+                        (element) => element.violationID == violation.id);
+
+                    ref.read(selectedViolationsProvider.notifier).update(
+                          (state) => updatedSelectedViolations,
+                        );
+                    return;
+                  }
+
+                  final List<IssuedViolation> updatedSelectedViolations = [
+                    ...selectedViolations
+                  ];
+
+                  updatedSelectedViolations.add(
+                    IssuedViolation(
+                      fine: violation.offense.first.fine,
+                      violation: violation.name,
+                      violationID: violation.id!,
+                      isBigVehicle: true,
+                      offense: violation.offense.first.level,
+                    ),
+                  );
+
+                  ref.read(selectedViolationsProvider.notifier).update((state) {
+                    return updatedSelectedViolations;
+                  });
                 },
-                title: Text(item.name),
-                subtitle: Text(
-                  "Fine: ${item.fine.toString()}",
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(USpace.space8),
                 ),
-              );
-            }
-
-            return CheckboxListTile(
-              value: item.isSelected,
-              onChanged: (value) {
-                violation.selectViolation(item.id);
-              },
-              title: Text(item.name),
-              subtitle: Text(
-                "Fine: ${item.fine.toString()}",
+                selected: isSelected,
+                selectedTileColor: UColors.blue100,
+                title: Text(
+                  violation.name,
+                  style: TextStyle(
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
+                    color: isSelected ? UColors.gray700 : UColors.gray600,
+                  ),
+                ),
               ),
             );
           },
+          separatorBuilder: (context, index) {
+            return const SizedBox(
+              height: USpace.space12,
+            );
+          },
+        );
+      },
+      error: (error, stackTrace) {
+        return Center(
+          child: Text(error.toString()),
+        );
+      },
+      loading: () {
+        return const Center(
+          child: CircularProgressIndicator(),
         );
       },
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Create Violations"),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(USpace.space16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Please select the violations below:",
-              style: const UTextStyle().textlgfontmedium,
-            ),
-            const SizedBox(height: USpace.space16),
-            Expanded(
-              child: _buildViolationsList(),
-            ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: _buildActionButtons(),
-    );
-  }
-
   void _previewTicket() {
-    final provider = Provider.of<ViolationProvider>(context, listen: false);
-    final ticketProvier = Provider.of<TicketProvider>(context, listen: false);
+    final ticketProvier = ref.watch(ticketChangeNotifierProvider);
+    final List<IssuedViolation> selectedViolations =
+        ref.watch(selectedViolationsProvider);
 
-    if (provider.getViolations.where((element) => element.isSelected).isEmpty) {
+    if (selectedViolations.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Please select at least one violation"),
@@ -157,17 +335,18 @@ class _ViolationsListState extends State<ViolationsList> {
       return;
     }
 
-    final List<String?> selectedViolations = provider.getViolations
-        .where((element) => element.isSelected)
-        .map((e) => e.id)
-        .toList();
-
     Ticket updatedTicket = ticketProvier.ticket.copyWith(
-      violationsID: selectedViolations,
+      issuedViolations: selectedViolations,
     );
 
     ticketProvier.updateTicket(updatedTicket);
 
     goPreviewTicket();
+  }
+
+  List<Violation> _searchViolation(List<Violation> violations, String query) {
+    return violations.where((violation) {
+      return violation.name.toLowerCase().contains(query.toLowerCase());
+    }).toList();
   }
 }

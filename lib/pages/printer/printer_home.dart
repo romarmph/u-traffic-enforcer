@@ -2,14 +2,14 @@ import 'package:intl/intl.dart';
 
 import '../../../config/utils/exports.dart';
 
-class PrinterHome extends StatefulWidget {
+class PrinterHome extends ConsumerStatefulWidget {
   const PrinterHome({super.key});
 
   @override
-  State<PrinterHome> createState() => _PrinterHomeState();
+  ConsumerState<PrinterHome> createState() => _PrinterHomeState();
 }
 
-class _PrinterHomeState extends State<PrinterHome> {
+class _PrinterHomeState extends ConsumerState<PrinterHome> {
   static final _printer = BluetoothPrint.instance;
   final isConnectedStream = Stream.fromFuture(_printer.isConnected);
 
@@ -120,17 +120,9 @@ class _PrinterHomeState extends State<PrinterHome> {
       'width': 48,
     };
 
-    final ticket = Provider.of<TicketProvider>(context, listen: false).ticket;
+    final ticket = ref.watch(ticketChangeNotifierProvider).ticket;
 
-    final violationProvider = Provider.of<ViolationProvider>(
-      context,
-      listen: false,
-    );
-
-    final vehicleType = Provider.of<VehicleTypeProvider>(
-      context,
-      listen: false,
-    ).getVehicleTypeName(ticket.vehicleTypeID);
+    final vehicleType = ref.watch(vehicleTypeProvider);
 
     final dateFormatter = DateFormat("yyyy-MM-dd hh:mm:ss");
 
@@ -295,15 +287,19 @@ class _PrinterHomeState extends State<PrinterHome> {
       ),
     );
 
-    final List<Violation> driverViolations = violationProvider.getViolations
-        .where((element) => ticket.violationsID.contains(element.id))
-        .toList();
+    final List<IssuedViolation> driverViolations = ticket.issuedViolations;
+    final List<Violation> violations = ref.watch(violationsListProvider);
 
     for (final violation in driverViolations) {
+      final name = violations
+          .firstWhere(
+            (element) => element.id == violation.violationID,
+          )
+          .name;
       list.add(
         LineText(
           type: LineText.TYPE_TEXT,
-          content: "  ${violation.name}",
+          content: "  $name",
           weight: 2,
           height: 2,
           width: 2,
@@ -390,7 +386,7 @@ class _PrinterHomeState extends State<PrinterHome> {
     return number.toString().padLeft(12, '0');
   }
 
-  int _getFineTotal(List<Violation> violations) {
+  int _getFineTotal(List<IssuedViolation> violations) {
     int total = 0;
 
     for (var element in violations) {

@@ -29,7 +29,8 @@ class TicketProvider extends ChangeNotifier {
       lat: 0.0,
       long: 0.0,
     ),
-    violationsID: [],
+    issuedViolations: [],
+    totalFine: 0,
   );
 
   Ticket get ticket => _ticket;
@@ -39,3 +40,8 @@ class TicketProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+final ticketChangeNotifierProvider =
+    ChangeNotifierProvider<TicketProvider>((ref) {
+  return TicketProvider();
+});

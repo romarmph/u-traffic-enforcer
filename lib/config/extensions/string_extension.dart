@@ -10,4 +10,12 @@ extension StringExtension on String? {
 
     return this!;
   }
+
+  int get toInt {
+    if (this == null) {
+      return 0;
+    }
+
+    return int.parse(this!);
+  }
 }

@@ -2,16 +2,16 @@ import 'package:intl/intl.dart';
 
 import '../../config/utils/exports.dart';
 
-class RecentTicketView extends StatefulWidget {
+class RecentTicketView extends ConsumerStatefulWidget {
   const RecentTicketView({super.key, required this.ticket});
 
   final Ticket ticket;
 
   @override
-  State<RecentTicketView> createState() => _RecentTicketViewState();
+  ConsumerState<RecentTicketView> createState() => _RecentTicketViewState();
 }
 
-class _RecentTicketViewState extends State<RecentTicketView>
+class _RecentTicketViewState extends ConsumerState<RecentTicketView>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final timeFormat = DateFormat('hh:mm a');
@@ -19,7 +19,7 @@ class _RecentTicketViewState extends State<RecentTicketView>
   @override
   void initState() {
     _tabController = TabController(
-      length: 4,
+      length: 5,
       vsync: this,
     );
     super.initState();
@@ -27,7 +27,8 @@ class _RecentTicketViewState extends State<RecentTicketView>
 
   @override
   Widget build(BuildContext context) {
-    final vehicleTypes = Provider.of<VehicleTypeProvider>(context);
+    final vehicleTypes = ref.watch(vehicleTypeProvider);
+    final violations = ref.watch(violationsListProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -47,6 +48,9 @@ class _RecentTicketViewState extends State<RecentTicketView>
               ),
               Tab(
                 text: 'Violations',
+              ),
+              Tab(
+                text: 'Evidence',
               ),
               Tab(
                 text: 'Other Detials',
@@ -92,9 +96,10 @@ class _RecentTicketViewState extends State<RecentTicketView>
                   ListView(
                     children: [
                       PreviewListTile(
-                        title: vehicleTypes.getVehicleTypeName(
-                          widget.ticket.vehicleTypeID,
-                        ),
+                        title: vehicleTypes
+                            .firstWhere((element) =>
+                                element.id == widget.ticket.vehicleTypeID)
+                            .typeName,
                         subtitle: 'Vehicle Type',
                       ),
                       PreviewListTile(
@@ -119,35 +124,67 @@ class _RecentTicketViewState extends State<RecentTicketView>
                       ),
                     ],
                   ),
-                  Consumer<ViolationProvider>(
-                    builder: (context, value, child) {
-                      final List<Violation> selected = [];
+                  ListView.builder(
+                    itemCount: widget.ticket.issuedViolations.length,
+                    itemBuilder: (context, index) {
+                      final IssuedViolation violation =
+                          widget.ticket.issuedViolations[index];
 
-                      for (final violation in value.getViolations) {
-                        if (widget.ticket.violationsID.contains(violation.id)) {
-                          selected.add(violation);
-                        }
+                      final name = violations
+                          .where(
+                              (element) => element.id == violation.violationID)
+                          .first
+                          .name;
+
+                      return ListTile(
+                        title: Text(name),
+                        trailing: Text(
+                          violation.fine.toString(),
+                          style: const TextStyle(
+                            color: UColors.red400,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        titleTextStyle: const TextStyle(
+                          color: UColors.gray600,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      );
+                    },
+                  ),
+                  FutureBuilder(
+                    future: StorageService.instance.fetchEvidences(
+                      widget.ticket.ticketNumber!,
+                    ),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
                       }
 
-                      return ListView.builder(
-                        itemCount: selected.length,
-                        itemBuilder: (context, index) {
-                          final Violation violation = selected[index];
+                      if (snapshot.hasError) {
+                        return const Center(
+                          child: Text('Error fetching evidences'),
+                        );
+                      }
 
-                          return ListTile(
-                            title: Text(violation.name),
-                            trailing: Text(
-                              violation.fine.toString(),
-                              style: const TextStyle(
-                                color: UColors.red400,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            titleTextStyle: const TextStyle(
-                              color: UColors.gray600,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
+                      final List<Evidence> evidences =
+                          snapshot.data as List<Evidence>;
+
+                      return ListView.builder(
+                        itemCount: evidences.length,
+                        itemBuilder: (context, index) {
+                          final Evidence evidence = evidences[index];
+
+                          return GestureDetector(
+                            onTap: () => _previewImage(evidence),
+                            child: EvidenceCard(
+                              isNetowrkImage: true,
+                              isPreview: true,
+                              evidence: evidence,
                             ),
                           );
                         },
@@ -156,6 +193,10 @@ class _RecentTicketViewState extends State<RecentTicketView>
                   ),
                   ListView(
                     children: [
+                      PreviewListTile(
+                        title: widget.ticket.ticketNumber.toString(),
+                        subtitle: 'Ticket Number',
+                      ),
                       PreviewListTile(
                         title: widget.ticket.violationDateTime.toAmericanDate,
                         subtitle: 'Violation Date',
@@ -169,7 +210,7 @@ class _RecentTicketViewState extends State<RecentTicketView>
                         subtitle: 'Place of Violation',
                       ),
                       PreviewListTile(
-                        title: formatStatus(widget.ticket.status),
+                        title: _formatStatus(widget.ticket.status),
                         subtitle: 'Ticket Status',
                       ),
                     ],
@@ -180,24 +221,94 @@ class _RecentTicketViewState extends State<RecentTicketView>
           )
         ],
       ),
-      bottomNavigationBar: Padding(
+      bottomNavigationBar: Container(
         padding: const EdgeInsets.all(8.0),
-        child: ElevatedButton(
-          onPressed: () {
-            final ticketProvider =
-                Provider.of<TicketProvider>(context, listen: false);
+        color: UColors.white,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Divider(),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Total Fine',
+                    style: TextStyle(
+                      color: UColors.gray600,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    widget.ticket.totalFine.toString(),
+                    style: const TextStyle(
+                      color: UColors.red400,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final ticketProvider = ref.watch(ticketChangeNotifierProvider);
 
-            ticketProvider.updateTicket(widget.ticket);
-            goPrinter();
-          },
-          child: const Text('Print Ticket'),
+                ticketProvider.updateTicket(widget.ticket);
+                goPrinter();
+              },
+              child: const Text('Print Ticket'),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  String formatStatus(TicketStatus status) {
+  String _formatStatus(TicketStatus status) {
     return status.toString().split('.').last.split('').first.toUpperCase() +
         status.toString().split('.').last.substring(1);
+  }
+
+  void _previewImage(Evidence evidence) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Preview Image'),
+          backgroundColor: UColors.white,
+          surfaceTintColor: UColors.white,
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: USpace.space16,
+            vertical: USpace.space0,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          content: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: CachedNetworkImage(
+              imageUrl: evidence.path,
+              alignment: Alignment.center,
+              fit: BoxFit.contain,
+              placeholder: (context, url) => const CircularProgressIndicator(),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Close'),
+            ),
+          ],
+          actionsAlignment: MainAxisAlignment.spaceAround,
+        );
+      },
+    );
   }
 }

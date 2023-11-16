@@ -2,11 +2,11 @@ import 'package:u_traffic_enforcer/pages/common/bottom_nav.dart';
 
 import '../../config/utils/exports.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Settings"),
@@ -19,10 +19,7 @@ class SettingsPage extends StatelessWidget {
                   value: "logout",
                   padding: EdgeInsets.zero,
                   onTap: () {
-                    Provider.of<NavIndexProvider>(
-                      context,
-                      listen: false,
-                    ).changeIndex(0);
+                    ref.read(navIndexProvider.notifier).state = 0;
                     AuthService().signOut();
                   },
                   child: const ListTile(
@@ -47,12 +44,18 @@ class SettingsPage extends StatelessWidget {
               },
               trailing: const Icon(Icons.arrow_forward_ios),
             ),
-            ListTile(
-              leading: const Icon(Icons.event),
-              title: const Text("Request Leave"),
-              onTap: () {              },
-              trailing: const Icon(Icons.arrow_forward_ios),
-            ),
+            // ListTile(
+            //   leading: const Icon(Icons.event),
+            //   title: const Text("Leave Application"),
+            //   onTap: () {
+            //     Navigator.of(context).push(
+            //       MaterialPageRoute(
+            //         builder: (context) => const LeavePage(),
+            //       ),
+            //     );
+            //   },
+            //   trailing: const Icon(Icons.arrow_forward_ios),
+            // ),
           ],
         ),
       ),

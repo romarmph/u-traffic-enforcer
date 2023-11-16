@@ -16,8 +16,8 @@ class AuthService {
     return _userFromFirebase(_firebaseAuth.currentUser)!;
   }
 
-  Stream<User?>? get user {
-    return _firebaseAuth.authStateChanges().map(_userFromFirebase);
+  Stream<User?> get user {
+    return _firebaseAuth.authStateChanges();
   }
 
   Future<Enforcer?> getEnforcer(String email) async {
