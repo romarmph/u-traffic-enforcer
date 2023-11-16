@@ -1,12 +1,12 @@
 import 'package:u_traffic_enforcer/config/utils/exports.dart';
 
-class NotificationDrawer extends StatelessWidget {
+class NotificationDrawer extends ConsumerWidget {
   const NotificationDrawer({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Drawer(
       backgroundColor: UColors.white,
       child: SafeArea(
@@ -32,9 +32,7 @@ class NotificationDrawer extends StatelessWidget {
                   },
                 ),
               ),
-              // const Expanded(
-              //   child: NotificationsEmptyState(),
-              // ),
+             
             ],
           ),
         ),
