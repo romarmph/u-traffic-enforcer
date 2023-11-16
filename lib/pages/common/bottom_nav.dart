@@ -5,15 +5,16 @@ class BottomNav extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final navigator = ref.watch(navIndexProvider);
     return Container(
       decoration: const BoxDecoration(
         border: Border(top: BorderSide(width: 1, color: UColors.gray200)),
       ),
       child: BottomNavigationBar(
-        currentIndex: navigator.currentIndex,
+        currentIndex: ref.watch(navIndexProvider),
         onTap: (index) {
-          navigator.changeIndex(index);
+          ref.read(navIndexProvider.notifier).update((state) {
+            return state = index;
+          });
         },
         backgroundColor: UColors.white,
         selectedItemColor: UColors.blue700,

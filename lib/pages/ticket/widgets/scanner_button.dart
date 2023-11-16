@@ -81,7 +81,6 @@ class _ImageScannerButtonState extends ConsumerState<ImageScannerButton> {
     final imageProvider = ref.watch(licenseImageProvider);
 
     final scanDetailsProvider = ref.watch(scannedDetailsProvider);
-    final evidenceProvider = ref.watch(evidenceChangeNotifierProvider);
 
     showLoading(
       'Scanning License',
@@ -114,16 +113,25 @@ class _ImageScannerButtonState extends ConsumerState<ImageScannerButton> {
       return;
     }
 
-    evidenceProvider.removeEvidenceByID('default');
+    ref.read(evidenceListProvider.notifier).update((state) {
+      final temp = state;
+      temp.removeWhere((element) => element.id == 'default');
+      return temp;
+    });
 
     imageProvider.setLicenseImagePath(cropped.path);
-    evidenceProvider.addEvidence(
-      Evidence(
-        id: 'default',
-        name: 'License Image - Front',
-        path: cropped.path,
-      ),
-    );
+
+    ref.read(evidenceListProvider.notifier).update((state) {
+      final temp = state;
+      temp.add(
+        Evidence(
+          id: 'default',
+          name: 'License Image - Front',
+          path: cropped.path,
+        ),
+      );
+      return temp;
+    });
 
     final scanApi = LicenseScanServices.instance;
     try {

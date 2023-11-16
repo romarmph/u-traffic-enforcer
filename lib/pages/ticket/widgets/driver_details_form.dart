@@ -47,7 +47,10 @@ class DriverDetailsForm extends ConsumerWidget {
           },
         ),
         const SizedBox(height: USpace.space12),
-        const ImageScannerButton(),
+        Visibility(
+          visible: !form.hasNoLicense,
+          child: const ImageScannerButton(),
+        ),
         const SizedBox(height: USpace.space12),
         CreateTicketField(
           formatters: [
@@ -131,26 +134,33 @@ class DriverDetailsForm extends ConsumerWidget {
           validator: formValidator.validateEmail,
         ),
         const SizedBox(height: USpace.space12),
-        const Text("License Number"),
-        const SizedBox(height: USpace.space12),
-        CreateTicketField(
-          formatters: [
-            UpperCaseTextFormatter(),
-          ],
-          enabled: !form.isDriverNotPresent,
-          controller: licenseNumberController,
-          decoration: const InputDecoration(
-            fillColor: UColors.gray100,
-            labelText: 'License Number',
-            labelStyle: TextStyle(
-              color: UColors.gray400,
-            ),
+        Visibility(
+          visible: !form.hasNoLicense,
+          child: Column(
+            children: [
+              const Text("License Number"),
+              const SizedBox(height: USpace.space12),
+              CreateTicketField(
+                formatters: [
+                  UpperCaseTextFormatter(),
+                ],
+                enabled: !form.isDriverNotPresent,
+                controller: licenseNumberController,
+                decoration: const InputDecoration(
+                  fillColor: UColors.gray100,
+                  labelText: 'License Number',
+                  labelStyle: TextStyle(
+                    color: UColors.gray400,
+                  ),
+                ),
+                validator: (value) => formValidator.validateLicenseNumber(
+                  value,
+                  form.hasNoLicense,
+                ),
+                onChanged: (value) {},
+              ),
+            ],
           ),
-          validator: (value) => formValidator.validateLicenseNumber(
-            value,
-            form.hasNoLicense,
-          ),
-          onChanged: (value) {},
         ),
       ],
     );

@@ -20,6 +20,7 @@ class _TicketPreviewState extends ConsumerState<TicketPreview>
   }
 
   Widget _buildActionButtons(BuildContext context) {
+    final form = ref.watch(createTicketFormProvider);
     return Container(
       padding: const EdgeInsets.all(USpace.space8),
       color: UColors.white,
@@ -41,14 +42,29 @@ class _TicketPreviewState extends ConsumerState<TicketPreview>
             ],
           ),
           const SizedBox(height: USpace.space12),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () {
-                goSignaturePad();
-              },
-              icon: const Icon(Icons.create_rounded),
-              label: const Text("Sign Ticket"),
+          Visibility(
+            visible: !form.isDriverNotPresent,
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  final evidences = ref.watch(evidenceListProvider);
+
+                  final signature =
+                      evidences.where((element) => element.id == "signature");
+
+                  if (signature.isNotEmpty) {
+                    ref.read(evidenceListProvider.notifier).state = [
+                      ...evidences
+                          .where((element) => element.id != "signature"),
+                    ];
+                  }
+
+                  goSignaturePad();
+                },
+                icon: const Icon(Icons.create_rounded),
+                label: const Text("Sign Ticket"),
+              ),
             ),
           ),
           const SizedBox(height: USpace.space12),
@@ -87,10 +103,9 @@ class _TicketPreviewState extends ConsumerState<TicketPreview>
   void _showDialog() async {
     final form = ref.watch(createTicketFormProvider);
 
-    final evidence = ref.watch(evidenceChangeNotifierProvider);
+    final evidence = ref.watch(evidenceListProvider);
 
-    final signature =
-        evidence.evidences.where((element) => element.id == "signature");
+    final signature = evidence.where((element) => element.id == "signature");
 
     if (!form.isDriverNotPresent) {
       if (signature.isEmpty) {
@@ -135,9 +150,8 @@ class _TicketPreviewState extends ConsumerState<TicketPreview>
   }
 
   Future<void> saveTicket() async {
-    final evidenceProvider = ref.watch(evidenceChangeNotifierProvider);
+    final evidenceProvider = ref.watch(evidenceListProvider);
     final ticketProvider = ref.watch(ticketChangeNotifierProvider);
-    final violationProvider = ref.watch(violationsListProvider);
 
     QuickAlert.show(
         context: context,
@@ -158,7 +172,7 @@ class _TicketPreviewState extends ConsumerState<TicketPreview>
     final storageService = StorageService.instance;
 
     final uploadStatus = await storageService.uploadEvidence(
-      evidenceProvider.evidences,
+      evidenceProvider,
       futureTicket.ticketNumber!,
     );
 
@@ -199,6 +213,7 @@ class _TicketPreviewState extends ConsumerState<TicketPreview>
       type: QuickAlertType.success,
       barrierDismissible: false,
       onConfirmBtnTap: () {
+        ref.read(evidenceListProvider.notifier).state = [];
         Navigator.pushNamedAndRemoveUntil(
           context,
           '/printer/',
@@ -227,7 +242,9 @@ class _TicketPreviewState extends ConsumerState<TicketPreview>
                 _driverDetails(),
                 _vehicleDetails(),
                 _buildViolationsView(),
-                _buildEvidences(),
+                _buildEvidences(
+                  ref.watch(evidenceListProvider),
+                ),
               ],
             ),
           ),
@@ -254,22 +271,17 @@ class _TicketPreviewState extends ConsumerState<TicketPreview>
     ];
   }
 
-  Widget _buildEvidences() {
-    final evidenceProvider = ref.watch(evidenceChangeNotifierProvider);
-
-    if (evidenceProvider.evidences.isEmpty ||
-        evidenceProvider.evidences
-            .where((element) => element.id == "signature")
-            .isEmpty) {
+  Widget _buildEvidences(List<Evidence> evidences) {
+    if (evidences.isEmpty) {
       return const Center(
         child: Text("No images found."),
       );
     }
 
     return ListView.separated(
-      itemCount: evidenceProvider.evidences.length,
+      itemCount: evidences.length,
       itemBuilder: (context, index) {
-        final evidence = evidenceProvider.evidences[index];
+        final evidence = evidences[index];
 
         return EvidenceCard(
           isPreview: true,

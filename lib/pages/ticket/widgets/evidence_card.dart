@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:u_traffic_enforcer/config/utils/exports.dart';
 
 class EvidenceCard extends ConsumerStatefulWidget {
@@ -81,14 +80,21 @@ class _EvidenceCardState extends ConsumerState<EvidenceCard> {
       showCancelBtn: true,
       confirmBtnText: "Delete",
       onConfirmBtnTap: () {
-        final provider = ref.watch(evidenceChangeNotifierProvider);
         final licenseImage = ref.watch(licenseImageProvider);
 
         if (widget.evidence.id == "default") {
           licenseImage.resetLicense();
-          provider.removeEvidence(widget.evidence);
+          ref.read(evidenceListProvider.notifier).update((state) {
+            final temp = state;
+            temp.removeWhere((element) => element.id == "default");
+            return temp;
+          });
         } else {
-          provider.removeEvidence(widget.evidence);
+          ref.read(evidenceListProvider.notifier).update((state) {
+            final temp = state;
+            temp.remove(widget.evidence);
+            return temp;
+          });
         }
 
         Navigator.of(context).pop();

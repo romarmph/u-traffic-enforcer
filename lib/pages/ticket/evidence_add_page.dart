@@ -26,6 +26,7 @@ class _EvidenceAddPageState extends ConsumerState<EvidenceAddPage> {
 
   @override
   Widget build(BuildContext context) {
+    final evidences = ref.watch(evidenceListProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Add Evidence"),
@@ -97,10 +98,9 @@ class _EvidenceAddPageState extends ConsumerState<EvidenceAddPage> {
                     return;
                   }
                   if (_formKey.currentState!.validate()) {
-                    final evidenceProvider =
-                        ref.watch(evidenceChangeNotifierProvider);
+                    final evidenceProvider = ref.watch(evidenceListProvider);
 
-                    final isExisting = evidenceProvider.evidences
+                    final isExisting = evidenceProvider
                         .where((element) => element.path == _file.path)
                         .isNotEmpty;
 
@@ -114,7 +114,7 @@ class _EvidenceAddPageState extends ConsumerState<EvidenceAddPage> {
                       return;
                     }
 
-                    final isNameUsed = evidenceProvider.evidences
+                    final isNameUsed = evidenceProvider
                         .where((element) =>
                             element.name.toLowerCase() ==
                             _nameController.text.toLowerCase())
@@ -130,13 +130,15 @@ class _EvidenceAddPageState extends ConsumerState<EvidenceAddPage> {
                       return;
                     }
 
-                    evidenceProvider.addEvidence(
+                    ref.read(evidenceListProvider.notifier).state = [
+                      ...evidenceProvider,
                       Evidence(
+                        id: DateTime.now().toString(),
                         name: _nameController.text,
                         description: _descriptionController.text,
                         path: _file.path,
                       ),
-                    );
+                    ];
 
                     Navigator.of(context).pop();
                   }

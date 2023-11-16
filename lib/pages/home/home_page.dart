@@ -253,8 +253,6 @@ class _HomePageState extends ConsumerState<HomePage> {
           );
         },
         error: (error, stackTrace) {
-          print(error);
-          print(stackTrace);
           return Center(
             child: Text(
               'Error fetching tickets',

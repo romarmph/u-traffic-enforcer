@@ -1,5 +1,3 @@
-import 'package:u_traffic_enforcer/riverpod/vehicle_type.riverpod.dart';
-
 import '../../../config/utils/exports.dart';
 
 class VehiecleDetailsForm extends ConsumerWidget {
@@ -165,31 +163,64 @@ class VehicleTypeInputField extends ConsumerWidget {
         final VehicleType? type = await showDialog(
           context: context,
           builder: (context) {
-            return ref.watch(vehicleTypeStreamProvider).when(
-                  data: (types) {
-                    return SimpleDialog(
-                      children: types
-                          .map(
-                            (vehicleType) => SimpleDialogOption(
-                              padding: const EdgeInsets.all(USpace.space16),
-                              onPressed: () {
-                                Navigator.pop(context, vehicleType);
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              contentPadding: const EdgeInsets.all(8),
+              content: ref.watch(vehicleTypeStreamProvider).when(
+                    data: (data) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          const Text("Select Vehicle Type"),
+                          const SizedBox(
+                            height: 16,
+                          ),
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: data.length,
+                              itemBuilder: (context, index) {
+                                final vehicle = data[index];
+                                return ListTile(
+                                  dense: true,
+                                  visualDensity: VisualDensity.compact,
+                                  onTap: () {
+                                    Navigator.pop(context, vehicle);
+                                  },
+                                  title: Text(vehicle.typeName),
+                                  subtitle: Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(4),
+                                      color: vehicle.isPublic
+                                          ? UColors.yellow400
+                                          : UColors.blue400,
+                                    ),
+                                    child: Text(
+                                      vehicle.isPublic ? "Public" : "Private",
+                                      style: const TextStyle(
+                                        color: UColors.white,
+                                      ),
+                                    ),
+                                  ),
+                                );
                               },
-                              child: Text(vehicleType.typeName),
                             ),
-                          )
-                          .toList(),
-                    );
-                  },
-                  error: (error, stackTrace) {
-                    return const Center(
-                      child: Text("Error loading vehicle types"),
-                    );
-                  },
-                  loading: () => const Center(
-                    child: CircularProgressIndicator(),
+                          ),
+                        ],
+                      );
+                    },
+                    error: (error, stackTrace) {
+                      return const Center(
+                        child: Text("Error loading vehicle types"),
+                      );
+                    },
+                    loading: () => const Center(
+                      child: CircularProgressIndicator(),
+                    ),
                   ),
-                );
+            );
           },
         );
 

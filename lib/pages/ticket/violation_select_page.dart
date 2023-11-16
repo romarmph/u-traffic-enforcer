@@ -45,105 +45,110 @@ class _ViolationListState extends ConsumerState<ViolationList> {
           borderRadius: BorderRadius.circular(USpace.space8),
         ),
         width: MediaQuery.of(context).size.width * 0.9,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: USpace.space8,
-            vertical: USpace.space16,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  const Text(
-                    "Selected Violations",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: USpace.space8,
+              vertical: USpace.space16,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Text(
+                      "Selected Violations",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  const Spacer(),
-                  TextButton(
-                    onPressed: () async {
-                      final remove = await QuickAlert.show(
-                        context: context,
-                        type: QuickAlertType.confirm,
-                        title: "Remove all Violation",
-                        text: "Are you sure you want to remove all violations?",
-                        onConfirmBtnTap: () {
-                          Navigator.of(context).pop(true);
-                        },
-                      );
+                    const Spacer(),
+                    TextButton(
+                      onPressed: () async {
+                        final remove = await QuickAlert.show(
+                          context: context,
+                          type: QuickAlertType.confirm,
+                          title: "Remove all Violation",
+                          text:
+                              "Are you sure you want to remove all violations?",
+                          onConfirmBtnTap: () {
+                            Navigator.of(context).pop(true);
+                          },
+                        );
 
-                      if (remove == null) {
-                        return;
-                      }
-                      ref.read(selectedViolationsProvider.notifier).update(
-                            (state) => [],
-                          );
-                    },
-                    child: const Text('Clear all'),
-                  ),
-                ],
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: selectedViolations.length,
-                  itemBuilder: (context, index) {
-                    final IssuedViolation issuedViolation =
-                        selectedViolations[index];
-                    return ListTile(
-                      visualDensity: VisualDensity.comfortable,
-                      title: Text(
-                        issuedViolation.violation,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      subtitle: Text(
-                        "Fine: ${issuedViolation.fine}",
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: UColors.red500,
-                        ),
-                      ),
-                      trailing: IconButton(
-                        onPressed: () async {
-                          final remove = await QuickAlert.show(
-                            context: context,
-                            type: QuickAlertType.confirm,
-                            title: "Remove Violation",
-                            text:
-                                "Are you sure you want to remove this violation?",
-                            onConfirmBtnTap: () {
-                              Navigator.of(context).pop(true);
-                            },
-                          );
-
-                          if (remove == null) {
-                            return;
-                          }
-
-                          final List<IssuedViolation>
-                              updatedSelectedViolations = [
-                            ...selectedViolations
-                          ];
-
-                          updatedSelectedViolations.removeWhere((element) =>
-                              element.violationID ==
-                              issuedViolation.violationID);
-
-                          ref.read(selectedViolationsProvider.notifier).update(
-                                (state) => updatedSelectedViolations,
-                              );
-                        },
-                        icon: const Icon(Icons.clear),
-                      ),
-                    );
-                  },
+                        if (remove == null) {
+                          return;
+                        }
+                        ref.read(selectedViolationsProvider.notifier).update(
+                              (state) => [],
+                            );
+                      },
+                      child: const Text('Clear all'),
+                    ),
+                  ],
                 ),
-              ),
-            ],
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: selectedViolations.length,
+                    itemBuilder: (context, index) {
+                      final IssuedViolation issuedViolation =
+                          selectedViolations[index];
+                      return ListTile(
+                        visualDensity: VisualDensity.comfortable,
+                        title: Text(
+                          issuedViolation.violation,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        subtitle: Text(
+                          "Fine: ${issuedViolation.fine}",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: UColors.red500,
+                          ),
+                        ),
+                        trailing: IconButton(
+                          onPressed: () async {
+                            final remove = await QuickAlert.show(
+                              context: context,
+                              type: QuickAlertType.confirm,
+                              title: "Remove Violation",
+                              text:
+                                  "Are you sure you want to remove this violation?",
+                              onConfirmBtnTap: () {
+                                Navigator.of(context).pop(true);
+                              },
+                            );
+
+                            if (remove == null) {
+                              return;
+                            }
+
+                            final List<IssuedViolation>
+                                updatedSelectedViolations = [
+                              ...selectedViolations
+                            ];
+
+                            updatedSelectedViolations.removeWhere((element) =>
+                                element.violationID ==
+                                issuedViolation.violationID);
+
+                            ref
+                                .read(selectedViolationsProvider.notifier)
+                                .update(
+                                  (state) => updatedSelectedViolations,
+                                );
+                          },
+                          icon: const Icon(Icons.clear),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

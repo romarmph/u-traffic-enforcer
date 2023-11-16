@@ -11,3 +11,7 @@ final vehicleTypeProvider = Provider<List<VehicleType>>((ref) {
         loading: () => [],
       );
 });
+
+final vehicleTypeSearchQueryProvider = StateProvider<String>((ref) {
+  return "";
+});

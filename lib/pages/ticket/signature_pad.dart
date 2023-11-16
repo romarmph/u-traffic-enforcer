@@ -12,22 +12,11 @@ class SignaturePad extends ConsumerStatefulWidget {
 
 class _SignaturePadState extends ConsumerState<SignaturePad> {
   final _signaturePadKey = GlobalKey<SfSignaturePadState>();
-  EvidenceProvider _evidenceProvider = EvidenceProvider();
 
   @override
   Widget build(BuildContext context) {
-    _evidenceProvider = ref.watch(evidenceChangeNotifierProvider);
+    final evidenceProvider = ref.watch(evidenceListProvider);
 
-    final signatureImage = _evidenceProvider.evidences
-        .where((element) => element.id == "signature");
-
-    if (signatureImage.isNotEmpty) {
-      SignatureServices().deleteFile(
-        File(
-          signatureImage.first.path,
-        ),
-      );
-    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sign Ticket'),
@@ -65,13 +54,14 @@ class _SignaturePadState extends ConsumerState<SignaturePad> {
                       await _signaturePadKey.currentState!.toImage();
                   File file = await SignatureServices().saveImage(image);
 
-                  _evidenceProvider.addEvidence(
+                  ref.read(evidenceListProvider.notifier).state = [
+                    ...evidenceProvider,
                     Evidence(
-                      id: 'signature',
-                      name: "Driver Signature",
+                      id: "signature",
+                      name: "Signature",
                       path: file.path,
                     ),
-                  );
+                  ];
 
                   popCurrent();
                 },

@@ -1,4 +1,4 @@
-import 'package:u_traffic_enforcer/riverpod/enforcer.riverpod.dart';
+import 'package:u_traffic_enforcer/pages/home_wrapper.dart';
 
 import '../config/utils/exports.dart';
 
@@ -16,7 +16,7 @@ class Wrapper extends ConsumerWidget {
             }
             return ref.watch(enforcerStreamProvider).when(
                   data: (data) {
-                    return const HomePage();
+                    return const ViewWrapper();
                   },
                   error: (error, stackTrace) {
                     return Column(

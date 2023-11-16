@@ -129,8 +129,6 @@ export 'package:u_traffic_enforcer/providers/ticket_provider.dart';
 export 'package:u_traffic_enforcer/providers/image_provider.dart';
 export 'package:u_traffic_enforcer/providers/form_validator_provider.dart';
 export 'package:u_traffic_enforcer/providers/scanned_details_provider.dart';
-export 'package:u_traffic_enforcer/providers/nav_index_provider.dart';
-export 'package:u_traffic_enforcer/providers/evidence_provider.dart';
 
 // Riverpod
 export 'package:u_traffic_enforcer/riverpod/auth.riverpod.dart';
@@ -138,6 +136,8 @@ export 'package:u_traffic_enforcer/riverpod/violations.riverpod.dart';
 export 'package:u_traffic_enforcer/riverpod/enforcer.riverpod.dart';
 export 'package:u_traffic_enforcer/riverpod/ticklet.riverpod.dart';
 export 'package:u_traffic_enforcer/riverpod/vehicle_type.riverpod.dart';
+export 'package:u_traffic_enforcer/riverpod/bottom_nav.riverpod.dart';
+export 'package:u_traffic_enforcer/riverpod/evidence.riverpod.dart';
 
 // Services
 export 'package:u_traffic_enforcer/services/auth_service.dart';

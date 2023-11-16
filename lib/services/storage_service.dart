@@ -7,45 +7,32 @@ class StorageService {
 
   final _storageReference = FirebaseStorage.instance.ref();
 
-  Future<Uint8List?> fetchProfileImage(String uid) async {
-    final Reference profileImagesRef =
-        _storageReference.child("$profileImage/$uid.png");
-
-    const oneMegabyte = 1024 * 1024;
-    try {
-      final Uint8List? data = await profileImagesRef.getData(oneMegabyte);
-      return data;
-    } on FirebaseException catch (e) {
-      if (e.code == 'object-not-found') {
-        print("The requested file doesn't exist.");
-      } else if (e.code == 'unauthenticated') {
-        print('The user is not authenticated.');
-      } else {
-        print('An unknown error occurred.');
-      }
-      rethrow;
-    }
-  }
-
   Future<bool> uploadEvidence(
-      List<Evidence> evidences, int ticketNumber) async {
+    List<Evidence> evidences,
+    int ticketNumber,
+  ) async {
     final firestore = FirebaseFirestore.instance;
     const evidenceRoot = "ticket-evidences";
 
     try {
       for (Evidence evidence in evidences) {
+        print(evidence.name);
+        print(evidence.path);
         final Reference evidenceRef = _storageReference.child(
           "$evidenceRoot/$ticketNumber/${evidence.name}.png",
         );
+
+        await evidenceRef.putFile(File(evidence.path));
+
+        final path = await evidenceRef.getDownloadURL();
         firestore.collection("evidences").add(
               evidence
                   .copyWith(
                     ticketNumber: ticketNumber,
+                    path: path,
                   )
                   .toJson(),
             );
-
-        await evidenceRef.putFile(File(evidence.path));
       }
 
       return true;

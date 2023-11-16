@@ -390,7 +390,7 @@ class _PrinterHomeState extends ConsumerState<PrinterHome> {
     int total = 0;
 
     for (var element in violations) {
-      total += element.fine as int;
+      total += element.fine;
     }
     return total;
   }

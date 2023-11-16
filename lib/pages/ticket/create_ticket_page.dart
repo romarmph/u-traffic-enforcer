@@ -101,8 +101,6 @@ class _CreateTicketPageState extends ConsumerState<CreateTicketPage>
       _licenseNumberController.text = details.details['licensenumber'] ?? "";
       _birthDateController.text =
           _parseScannedDate(details.details['birthdate']);
-
-      details.clearDetails();
     }
     return WillPopScope(
       onWillPop: _showCancelConfirm,
@@ -323,7 +321,7 @@ class _CreateTicketPageState extends ConsumerState<CreateTicketPage>
     }
 
     return () {
-      final evidenceProvider = ref.watch(evidenceChangeNotifierProvider);
+      final evidenceProvider = ref.watch(evidenceListProvider);
 
       if (!_isDriverFormValid()) {
         _tabController.animateTo(0);
@@ -334,7 +332,7 @@ class _CreateTicketPageState extends ConsumerState<CreateTicketPage>
         return;
       }
 
-      if (evidenceProvider.evidences.isEmpty) {
+      if (evidenceProvider.isEmpty) {
         QuickAlert.show(
           context: context,
           type: QuickAlertType.error,
@@ -416,6 +414,10 @@ class _CreateTicketPageState extends ConsumerState<CreateTicketPage>
     );
 
     if (result != null && result) {
+      ref.watch(createTicketFormProvider).reset();
+      ref.watch(evidenceListProvider.notifier).state = [];
+      ref.watch(licenseImageProvider).resetLicense();
+      ref.watch(selectedViolationsProvider.notifier).state = [];
       clearField();
       popCurrent();
       return true;

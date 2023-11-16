@@ -1,5 +1,4 @@
 import 'package:u_traffic_enforcer/config/utils/exports.dart';
-import 'package:u_traffic_enforcer/pages/home/widgets/notifications/notification_empty.dart';
 
 class NotificationDrawer extends StatelessWidget {
   const NotificationDrawer({

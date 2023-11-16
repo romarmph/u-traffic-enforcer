@@ -10,22 +10,27 @@ class EvidenceForm extends ConsumerStatefulWidget {
 class _EvidenceFormState extends ConsumerState<EvidenceForm> {
   @override
   Widget build(BuildContext context) {
+    final evidenceProvider = ref.watch(evidenceListProvider);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Expanded(
-          child: _buildEvidences(),
+          child: _buildEvidences(
+            evidenceProvider,
+          ),
         ),
         const SizedBox(
           height: USpace.space16,
         ),
         ElevatedButton.icon(
           onPressed: () async {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) {
-                return const EvidenceAddPage();
-              },
-            ));
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) {
+                  return const EvidenceAddPage();
+                },
+              ),
+            );
           },
           label: const Text("Add Evidence"),
           icon: const Icon(Icons.add_a_photo_rounded),
@@ -34,10 +39,8 @@ class _EvidenceFormState extends ConsumerState<EvidenceForm> {
     );
   }
 
-  Widget _buildEvidences() {
-    final provider = ref.watch(evidenceChangeNotifierProvider);
-
-    if (provider.evidences.isEmpty) {
+  Widget _buildEvidences(List<Evidence> provider) {
+    if (provider.isEmpty) {
       return const Center(
         child: Text(
           "No evidence added yet",
@@ -50,12 +53,12 @@ class _EvidenceFormState extends ConsumerState<EvidenceForm> {
     }
 
     return ListView.separated(
-      itemCount: provider.evidences.length,
+      itemCount: provider.length,
       separatorBuilder: (context, index) => const SizedBox(
         height: USpace.space20,
       ),
       itemBuilder: (context, index) {
-        final evidence = provider.evidences[index];
+        final evidence = provider[index];
         return EvidenceCard(evidence: evidence);
       },
     );
