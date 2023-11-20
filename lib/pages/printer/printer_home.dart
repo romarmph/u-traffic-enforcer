@@ -122,7 +122,10 @@ class _PrinterHomeState extends ConsumerState<PrinterHome> {
 
     final ticket = ref.watch(ticketChangeNotifierProvider).ticket;
 
-    final vehicleType = ref.watch(vehicleTypeProvider);
+    final vehicleType = ref
+        .watch(vehicleTypeProvider)
+        .where((element) => element.id == ticket.vehicleTypeID)
+        .first;
 
     final dateFormatter = DateFormat("yyyy-MM-dd hh:mm:ss");
 
@@ -220,7 +223,8 @@ class _PrinterHomeState extends ConsumerState<PrinterHome> {
     list.add(
       LineText(
         type: LineText.TYPE_TEXT,
-        content: "Vehicle Type:\n  $vehicleType",
+        content:
+            "Vehicle Type:\n  ${vehicleType.typeName} - ${vehicleType.isPublic ? 'Public' : 'Private'}",
         weight: 2,
         height: 2,
         width: 2,
@@ -228,6 +232,7 @@ class _PrinterHomeState extends ConsumerState<PrinterHome> {
         linefeed: 1,
       ),
     );
+
     list.add(
       LineText(
         type: LineText.TYPE_TEXT,
