@@ -11,17 +11,31 @@ class _LoginState extends ConsumerState<Login> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool isObscure = true;
+  String _emailError = "";
+  bool _isObscure = true;
+  bool _isLoading = false;
 
   void loginBtnPressed() async {
+    setState(() {
+      _isLoading = true;
+    });
     if (_formKey.currentState!.validate()) {
       final email = _emailController.text;
       final password = _passwordController.text;
       final authService = ref.watch(authProvider);
-      await authService.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      try {
+        await authService.signInWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+      } on Exception catch (e) {
+        if (e.toString().contains('account-not-enforcer')) {
+          setState(() {
+            _isLoading = false;
+            _emailError = "Account is not an enforcer!";
+          });
+        }
+      }
     }
   }
 
@@ -54,16 +68,27 @@ class _LoginState extends ConsumerState<Login> {
             if (value == null || value.isEmpty) {
               return 'Please enter your email';
             }
+
             return null;
           },
+        ),
+        Visibility(
+          visible: _emailError.isNotEmpty,
+          child: Column(
+            children: [
+              const SizedBox(height: USpace.space4),
+              Text(
+                _emailError,
+                style: const UTextStyle().textbasefontnormal.copyWith(
+                      color: UColors.red400,
+                    ),
+              ),
+            ],
+          ),
         ),
       ],
     );
   }
-
-  // Widget passwordVisibility() {
-  //   return IconButton(onPressed: onPressed, icon: icon)
-  // }
 
   Widget passwordField() {
     return Column(
@@ -73,10 +98,20 @@ class _LoginState extends ConsumerState<Login> {
         const SizedBox(height: USpace.space4),
         TextFormField(
           controller: _passwordController,
-          obscureText: true,
-          decoration: const InputDecoration(
+          obscureText: _isObscure,
+          decoration: InputDecoration(
             hintText: 'Type your password here',
-            prefixIcon: Icon(Icons.lock),
+            prefixIcon: const Icon(Icons.lock),
+            suffixIcon: IconButton(
+              onPressed: () {
+                setState(() {
+                  _isObscure = !_isObscure;
+                });
+              },
+              icon: Icon(
+                _isObscure ? Icons.visibility : Icons.visibility_off,
+              ),
+            ),
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
@@ -92,7 +127,11 @@ class _LoginState extends ConsumerState<Login> {
   Widget loginButton() {
     return ElevatedButton(
       onPressed: loginBtnPressed,
-      child: const Text('Login'),
+      child: _isLoading
+          ? const CircularProgressIndicator(
+              color: UColors.white,
+            )
+          : const Text('Login'),
     );
   }
 
