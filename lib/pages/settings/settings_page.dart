@@ -19,7 +19,6 @@ class SettingsPage extends ConsumerWidget {
                   value: "logout",
                   padding: EdgeInsets.zero,
                   onTap: () {
-                    ref.read(navIndexProvider.notifier).state = 0;
                     AuthService().signOut();
                   },
                   child: const ListTile(

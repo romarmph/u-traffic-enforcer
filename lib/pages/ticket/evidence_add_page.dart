@@ -26,7 +26,6 @@ class _EvidenceAddPageState extends ConsumerState<EvidenceAddPage> {
 
   @override
   Widget build(BuildContext context) {
-    final evidences = ref.watch(evidenceListProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Add Evidence"),
