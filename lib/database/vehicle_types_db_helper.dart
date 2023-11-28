@@ -21,7 +21,11 @@ class VehicleTypeDBHelper {
   }
 
   Stream<List<VehicleType>> getVehicleTypesStream() {
-    return _firebase.collection('vehicleTypes').snapshots().map((snapshot) {
+    return _firebase
+        .collection('vehicleTypes')
+        .where('isHidden', isEqualTo: false)
+        .snapshots()
+        .map((snapshot) {
       return snapshot.docs.map((doc) {
         return VehicleType.fromJson(
           doc.data(),
