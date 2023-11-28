@@ -45,9 +45,9 @@ class _HomePageState extends ConsumerState<HomePage> {
             ],
           ),
           const Spacer(),
-          NotificationBellButton(
-            scaffoldKey: _scaffoldKey,
-          ),
+          // NotificationBellButton(
+          //   scaffoldKey: _scaffoldKey,
+          // ),
         ],
       ),
     );

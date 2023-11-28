@@ -14,7 +14,6 @@ class _VehicleTypeSelectPageState extends ConsumerState<VehicleTypeSelectPage>
 
   @override
   void initState() {
-    print('here');
     _tabController = TabController(
       length: 2,
       vsync: this,
@@ -94,6 +93,8 @@ class _VehicleTypeSelectPageState extends ConsumerState<VehicleTypeSelectPage>
               );
             },
             error: (error, stackTrace) {
+              print(error);
+              print(stackTrace);
               return const Center(
                 child: Text("Error loading vehicle types"),
               );

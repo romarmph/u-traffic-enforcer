@@ -4,7 +4,7 @@ class VehicleType {
   final String? id;
   final String typeName;
   final Timestamp dateCreated;
-  final Timestamp dateEdited;
+  final Timestamp? dateEdited;
   final String createdBy;
   final String editedBy;
   final bool isCommon;
@@ -15,9 +15,9 @@ class VehicleType {
     required this.id,
     required this.typeName,
     required this.dateCreated,
-    required this.dateEdited,
+    this.dateEdited,
     required this.createdBy,
-    required this.editedBy,
+    this.editedBy = "",
     required this.isCommon,
     this.isPublic = false,
     this.isHidden = false,
