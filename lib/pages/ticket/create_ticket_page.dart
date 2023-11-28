@@ -1,5 +1,7 @@
 import '../../../config/utils/exports.dart';
 
+final scanFinishFlagProvider = StateProvider<bool>((ref) => false);
+
 class CreateTicketPage extends ConsumerStatefulWidget {
   const CreateTicketPage({
     super.key,
@@ -94,6 +96,8 @@ class _CreateTicketPageState extends ConsumerState<CreateTicketPage>
   Widget build(BuildContext context) {
     final details = ref.watch(scannedDetailsProvider);
 
+    print(details.details);
+
     if (details.details.isNotEmpty) {
       _nameController.text = details.details['fullname'] ?? "";
       _addressController.text = details.details['address'] ?? "";
@@ -101,6 +105,10 @@ class _CreateTicketPageState extends ConsumerState<CreateTicketPage>
       _licenseNumberController.text = details.details['licensenumber'] ?? "";
       _birthDateController.text =
           _parseScannedDate(details.details['birthdate']);
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(scannedDetailsProvider).clearDetails();
+      });
     }
     return WillPopScope(
       onWillPop: _showCancelConfirm,
