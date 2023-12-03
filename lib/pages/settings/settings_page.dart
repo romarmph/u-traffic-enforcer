@@ -8,8 +8,11 @@ class SettingsPage extends ConsumerWidget {
   void invalidateProviders(WidgetRef ref) {
     ref.invalidate(ticketChangeNotifierProvider);
     ref.invalidate(violationsStreamProvider);
+    ref.invalidate(enforcerStreamProvider);
+    ref.invalidate(getTicketsByEnforcerIdStream);
     ref.invalidate(violationsListProvider);
     ref.invalidate(selectedViolationsProvider);
+    ref.invalidate(navIndexProvider);
   }
 
   @override

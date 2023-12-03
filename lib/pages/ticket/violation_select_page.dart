@@ -309,8 +309,8 @@ class _ViolationListState extends ConsumerState<ViolationList> {
         );
       },
       error: (error, stackTrace) {
-        return Center(
-          child: Text(error.toString()),
+        return const Center(
+          child: Text('Error fetching violatios'),
         );
       },
       loading: () {

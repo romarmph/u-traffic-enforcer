@@ -12,9 +12,20 @@ class BottomNav extends ConsumerWidget {
       child: BottomNavigationBar(
         currentIndex: ref.watch(navIndexProvider),
         onTap: (index) {
-          ref.read(navIndexProvider.notifier).update((state) {
-            return state = index;
-          });
+          if (index == 0) {
+            Navigator.of(navigatorKey.currentContext!).pushReplacement(
+              PageRouteBuilder(
+                pageBuilder: (_, __, ___) => const HomePage(),
+              ),
+            );
+          } else {
+            Navigator.of(navigatorKey.currentContext!).pushReplacement(
+              PageRouteBuilder(
+                pageBuilder: (_, __, ___) => const SettingsPage(),
+              ),
+            );
+          }
+          ref.watch(navIndexProvider.notifier).state = index;
         },
         backgroundColor: UColors.white,
         selectedItemColor: UColors.blue700,

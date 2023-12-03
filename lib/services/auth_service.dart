@@ -4,16 +4,8 @@ class AuthService {
   static final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  User? _userFromFirebase(User? user) {
-    if (user == null) {
-      return null;
-    }
-
-    return user;
-  }
-
-  User get currentUser {
-    return _userFromFirebase(_firebaseAuth.currentUser)!;
+  User? get currentUser {
+    return _firebaseAuth.currentUser;
   }
 
   Stream<User?> get user {
@@ -50,7 +42,7 @@ class AuthService {
     final UserCredential userCredential = await _firebaseAuth
         .signInWithEmailAndPassword(email: email, password: password);
 
-    return _userFromFirebase(userCredential.user);
+    return userCredential.user;
   }
 
   Future<User?> createUserWithEmailAndPassword({
@@ -63,7 +55,7 @@ class AuthService {
       password: password,
     );
 
-    return _userFromFirebase(userCredential.user);
+    return userCredential.user;
   }
 
   Future<void> signOut() async {
