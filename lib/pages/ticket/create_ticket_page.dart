@@ -96,7 +96,6 @@ class _CreateTicketPageState extends ConsumerState<CreateTicketPage>
   Widget build(BuildContext context) {
     final details = ref.watch(scannedDetailsProvider);
 
-    print(details.details);
 
     if (details.details.isNotEmpty) {
       _nameController.text = details.details['fullname'] ?? "";

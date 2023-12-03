@@ -1,4 +1,7 @@
+import 'package:u_traffic_enforcer/config/enums/shift_period.dart';
 import 'package:u_traffic_enforcer/pages/common/bottom_nav.dart';
+import 'package:u_traffic_enforcer/riverpod/sched.riverpod.dart';
+import 'package:u_traffic_enforcer/riverpod/trafficpost.riverpod.dart';
 import '../../config/utils/exports.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -21,8 +24,8 @@ class _HomePageState extends ConsumerState<HomePage> {
         children: [
           ClipOval(
             child: CachedNetworkImage(
-              height: 36,
-              width: 36,
+              height: 48,
+              width: 48,
               imageUrl: enforcer.photoUrl,
             ),
           ),
@@ -32,14 +35,14 @@ class _HomePageState extends ConsumerState<HomePage> {
             children: [
               Text(
                 "${enforcer.firstName} ${enforcer.lastName}",
-                style: const UTextStyle().textlgfontbold.copyWith(
+                style: const UTextStyle().textxlfontbold.copyWith(
                       color: UColors.gray700,
                     ),
               ),
               Text(
                 enforcer.email,
                 style: const UTextStyle()
-                    .textxsfontsemibold
+                    .textbasefontmedium
                     .copyWith(color: UColors.gray500),
               ),
             ],
@@ -53,14 +56,15 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
-  Widget viewScheduleBtn() {
-    return TextButton(
-      onPressed: () {},
-      child: const Text("View Schedule"),
-    );
-  }
+  // Widget viewScheduleBtn() {
+  //   return TextButton(
+  //     onPressed: () {},
+  //     child: const Text("View Schedule"),
+  //   );
+  // }
 
   Widget miniDashboard() {
+    final enforcer = ref.watch(enforcerProvider);
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: USpace.space16,
@@ -71,150 +75,181 @@ class _HomePageState extends ConsumerState<HomePage> {
           borderRadius: BorderRadius.circular(USpace.space12),
           color: UColors.gray100,
         ),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Today's Shift",
-                  style: const UTextStyle().textxsfontnormal.copyWith(
-                        color: UColors.gray600,
+        child: ref.watch(schedProvider(enforcer.id)).when(
+          data: (sched) {
+            if (sched == null) {
+              return Center(
+                child: Text(
+                  'You have no schedule set yet',
+                  style: const UTextStyle().textbasefontmedium.copyWith(
+                        color: UColors.gray700,
                       ),
                 ),
+              );
+            }
+
+            return Column(
+              children: [
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
-                      "On Duty",
-                      style: const UTextStyle().textxsfontnormal.copyWith(
-                            color: UColors.green500,
+                      enforcer.status.name.capitalize,
+                      style: const UTextStyle().textsmfontnormal.copyWith(
+                            color: enforcer.status == EmployeeStatus.onDuty
+                                ? UColors.green500
+                                : enforcer.status == EmployeeStatus.offDuty
+                                    ? UColors.red500
+                                    : enforcer.status == EmployeeStatus.active
+                                        ? UColors.blue500
+                                        : UColors.gray500,
                           ),
                     ),
-                    const SizedBox(width: USpace.space4),
-                    const CircleAvatar(
-                      radius: 5,
-                      backgroundColor: UColors.green500,
+                    const SizedBox(width: USpace.space8),
+                    CircleAvatar(
+                      radius: 6,
+                      backgroundColor: enforcer.status == EmployeeStatus.onDuty
+                          ? UColors.green500
+                          : enforcer.status == EmployeeStatus.offDuty
+                              ? UColors.red500
+                              : enforcer.status == EmployeeStatus.active
+                                  ? UColors.blue500
+                                  : UColors.gray500,
                     )
                   ],
-                )
-              ],
-            ),
-            const SizedBox(height: USpace.space8),
-            Container(
-              decoration: BoxDecoration(
-                color: UColors.blue600,
-                borderRadius: BorderRadius.circular(USpace.space8),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
+                ),
+                const SizedBox(height: USpace.space8),
+                Container(
+                  decoration: BoxDecoration(
+                    color: UColors.blue600,
+                    borderRadius: BorderRadius.circular(USpace.space8),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Text(
-                          "Oct 26",
-                          style: const UTextStyle().textxlfontmedium.copyWith(
-                                color: UColors.white,
-                              ),
-                        ),
-                        const Spacer(),
                         Row(
                           children: [
-                            Container(
-                              padding: const EdgeInsets.all(USpace.space8),
-                              decoration: BoxDecoration(
-                                color: UColors.white,
-                                borderRadius:
-                                    BorderRadius.circular(USpace.space8),
-                              ),
-                              child: Text(
-                                "1:00 PM",
-                                style: const UTextStyle()
-                                    .textbasefontmedium
-                                    .copyWith(
-                                      color: UColors.gray600,
-                                    ),
-                              ),
-                            ),
-                            const SizedBox(width: USpace.space12),
                             Text(
-                              "to",
-                              style: const UTextStyle()
-                                  .textbasefontmedium
-                                  .copyWith(
-                                    color: UColors.white,
-                                  ),
+                              sched.postName,
+                              style:
+                                  const UTextStyle().textxlfontmedium.copyWith(
+                                        color: UColors.white,
+                                      ),
                             ),
-                            const SizedBox(width: USpace.space12),
-                            Container(
-                              padding: const EdgeInsets.all(USpace.space8),
-                              decoration: BoxDecoration(
-                                color: UColors.white,
-                                borderRadius:
-                                    BorderRadius.circular(USpace.space8),
-                              ),
-                              child: Text(
-                                "9:00 PM",
+                            const Spacer(),
+                            Chip(
+                              label: Text(
+                                sched.shift.name.capitalize,
                                 style: const UTextStyle()
-                                    .textbasefontmedium
+                                    .textxsfontnormal
                                     .copyWith(
-                                      color: UColors.gray600,
+                                      color: UColors.white,
                                     ),
+                              ),
+                              side: const BorderSide(
+                                color: UColors.white,
+                                width: 2,
+                              ),
+                              backgroundColor:
+                                  sched.shift == ShiftPeriod.morning
+                                      ? UColors.green400
+                                      : sched.shift == ShiftPeriod.afternoon
+                                          ? UColors.orange400
+                                          : UColors.indigo400,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: USpace.space12),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const Icon(
+                              Icons.location_on_outlined,
+                              color: UColors.white,
+                              size: USpace.space28,
+                            ),
+                            const SizedBox(width: USpace.space8),
+                            Expanded(
+                              child:
+                                  ref.watch(getTrafficpost(sched.postId)).when(
+                                data: (post) {
+                                  return Text(
+                                    post.location.address,
+                                    style: const UTextStyle()
+                                        .textlgfontbold
+                                        .copyWith(
+                                          color: UColors.white,
+                                        ),
+                                  );
+                                },
+                                error: (error, stackTrace) {
+                                  return Text(
+                                    'Error fetching post',
+                                    style: const UTextStyle()
+                                        .textlgfontbold
+                                        .copyWith(
+                                          color: UColors.white,
+                                        ),
+                                  );
+                                },
+                                loading: () {
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                },
                               ),
                             ),
                           ],
                         ),
                       ],
                     ),
-                    const SizedBox(height: USpace.space12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const Icon(
-                          Icons.location_on_outlined,
-                          color: UColors.white,
-                          size: USpace.space28,
-                        ),
-                        const SizedBox(width: USpace.space8),
-                        Text(
-                          "Post 1",
-                          style: const UTextStyle().textbasefontmedium.copyWith(
-                                color: UColors.white,
-                              ),
-                        ),
-                      ],
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-            const SizedBox(height: USpace.space12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Next Shift Rotation",
-                      style: const UTextStyle().textxsfontnormal.copyWith(
-                            color: UColors.gray600,
-                          ),
-                    ),
-                    const SizedBox(height: USpace.space4),
-                    Text(
-                      "November 2, 2023",
-                      style: const UTextStyle().textlgfontbold.copyWith(
-                            color: UColors.blue700,
-                          ),
-                    ),
-                  ],
-                ),
-                viewScheduleBtn(),
+                const SizedBox(height: USpace.space12),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: [
+                //     Column(
+                //       crossAxisAlignment: CrossAxisAlignment.start,
+                //       children: [
+                //         Text(
+                //           "Next Shift Rotation",
+                //           style: const UTextStyle().textxsfontnormal.copyWith(
+                //                 color: UColors.gray600,
+                //               ),
+                //         ),
+                //         const SizedBox(height: USpace.space4),
+                //         Text(
+                //           "November 2, 2023",
+                //           style: const UTextStyle().textlgfontbold.copyWith(
+                //                 color: UColors.blue700,
+                //               ),
+                //         ),
+                //       ],
+                //     ),
+                //     // viewScheduleBtn(),
+                //   ],
+                // ),
               ],
-            ),
-          ],
+            );
+          },
+          error: (error, stackTrace) {
+            return Center(
+              child: Text(
+                'Error fetching schedule',
+                style: const UTextStyle().textbasefontmedium.copyWith(
+                      color: UColors.gray700,
+                    ),
+              ),
+            );
+          },
+          loading: () {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          },
         ),
       ),
     );
@@ -284,7 +319,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Recent Tickets",
+                "Issued Tickets",
                 style: const UTextStyle().textbasefontnormal.copyWith(
                       color: UColors.gray500,
                     ),

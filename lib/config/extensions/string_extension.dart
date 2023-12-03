@@ -1,3 +1,5 @@
+import 'package:u_traffic_enforcer/config/enums/shift_period.dart';
+
 extension StringExtension on String? {
   String get replaceNull {
     if (this!.isEmpty) {
@@ -17,5 +19,26 @@ extension StringExtension on String? {
     }
 
     return int.parse(this!);
+  }
+
+  ShiftPeriod get toShiftPeriod {
+    switch (this) {
+      case 'morning':
+        return ShiftPeriod.morning;
+      case 'afternoon':
+        return ShiftPeriod.afternoon;
+      case 'night':
+        return ShiftPeriod.night;
+      default:
+        return ShiftPeriod.morning;
+    }
+  }
+
+  String get capitalize {
+    if (this == null) {
+      return '';
+    }
+
+    return '${this![0].toUpperCase()}${this!.substring(1)}';
   }
 }

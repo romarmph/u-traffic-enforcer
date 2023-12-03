@@ -1,14 +1,18 @@
 import 'package:u_traffic_enforcer/pages/auth/enforcer_suspended_page.dart';
 import 'package:u_traffic_enforcer/pages/auth/enforcer_terminated_page.dart';
-import 'package:u_traffic_enforcer/pages/home_wrapper.dart';
 
 import '../config/utils/exports.dart';
 
-class Wrapper extends ConsumerWidget {
+class Wrapper extends ConsumerStatefulWidget {
   const Wrapper({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<Wrapper> createState() => _WrapperState();
+}
+
+class _WrapperState extends ConsumerState<Wrapper> {
+  @override
+  Widget build(BuildContext context) {
     final authService = ref.watch(authProvider);
 
     return ref.watch(authStreamProvider).when(
@@ -16,7 +20,8 @@ class Wrapper extends ConsumerWidget {
             if (user == null) {
               return const Login();
             }
-            return ref.watch(enforcerStreamProvider).when(
+
+            return ref.watch(enforcerStreamProvider(user.uid)).when(
                   data: (data) {
                     if (data.status == EmployeeStatus.suspended) {
                       return const EnforcerSuspendedPage();
@@ -26,22 +31,33 @@ class Wrapper extends ConsumerWidget {
                       return const EnforcerTerminatedPage();
                     }
 
-                    return const ViewWrapper();
+                    ref.watch(violationsStreamProvider);
+                    ref.watch(vehicleTypeStreamProvider);
+                    return const HomePage();
                   },
                   error: (error, stackTrace) {
-                    return Column(
-                      children: [
-                        const Text("An error occured!"),
-                        const SizedBox(
-                          height: 20,
+                    return Scaffold(
+                      body: SafeArea(
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text("An error occured!"),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  authService.signOut();
+                                },
+                                child: const Text("Sign out"),
+                              ),
+                            ],
+                          ),
                         ),
-                        ElevatedButton(
-                          onPressed: () {
-                            authService.signOut();
-                          },
-                          child: const Text("Sign out"),
-                        ),
-                      ],
+                      ),
                     );
                   },
                   loading: () => const Scaffold(

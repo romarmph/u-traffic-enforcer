@@ -16,8 +16,6 @@ class StorageService {
 
     try {
       for (Evidence evidence in evidences) {
-        print(evidence.name);
-        print(evidence.path);
         final Reference evidenceRef = _storageReference.child(
           "$evidenceRoot/$ticketNumber/${evidence.name}.png",
         );

@@ -10,8 +10,7 @@ class EnforcerDBHelper {
   final String _enforcersCollection = "enforcers";
   final _firebase = FirebaseFirestore.instance;
 
-  Stream<Enforcer> getCurrentEnforcer() {
-    final uid = AuthService().currentUser.uid;
+  Stream<Enforcer> getCurrentEnforcer(String uid) {
     final doc = _firebase.collection(_enforcersCollection).doc(uid).snapshots();
 
     return doc.map((event) => Enforcer.fromJson(

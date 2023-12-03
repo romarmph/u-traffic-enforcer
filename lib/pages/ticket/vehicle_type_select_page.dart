@@ -93,8 +93,6 @@ class _VehicleTypeSelectPageState extends ConsumerState<VehicleTypeSelectPage>
               );
             },
             error: (error, stackTrace) {
-              print(error);
-              print(stackTrace);
               return const Center(
                 child: Text("Error loading vehicle types"),
               );

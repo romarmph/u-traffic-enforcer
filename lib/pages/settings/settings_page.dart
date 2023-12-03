@@ -5,6 +5,16 @@ import '../../config/utils/exports.dart';
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
 
+  void invalidateProviders(WidgetRef ref) {
+    ref.invalidate(ticketChangeNotifierProvider);
+    ref.invalidate(violationsStreamProvider);
+    ref.invalidate(enforcerStreamProvider);
+    ref.invalidate(getTicketsByEnforcerIdStream);
+    ref.invalidate(violationsListProvider);
+    ref.invalidate(selectedViolationsProvider);
+    ref.invalidate(navIndexProvider);
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
@@ -18,8 +28,16 @@ class SettingsPage extends ConsumerWidget {
                 PopupMenuItem(
                   value: "logout",
                   padding: EdgeInsets.zero,
-                  onTap: () {
-                    AuthService().signOut();
+                  onTap: () async {
+                    await AuthService().signOut();
+                    invalidateProviders(ref);
+                    Navigator.of(navigatorKey.currentContext!)
+                        .pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (context) => const Wrapper(),
+                      ),
+                      (route) => false,
+                    );
                   },
                   child: const ListTile(
                     leading: Icon(Icons.logout),
@@ -43,18 +61,6 @@ class SettingsPage extends ConsumerWidget {
               },
               trailing: const Icon(Icons.arrow_forward_ios),
             ),
-            // ListTile(
-            //   leading: const Icon(Icons.event),
-            //   title: const Text("Leave Application"),
-            //   onTap: () {
-            //     Navigator.of(context).push(
-            //       MaterialPageRoute(
-            //         builder: (context) => const LeavePage(),
-            //       ),
-            //     );
-            //   },
-            //   trailing: const Icon(Icons.arrow_forward_ios),
-            // ),
           ],
         ),
       ),
