@@ -29,19 +29,28 @@ class Wrapper extends ConsumerWidget {
                     return const ViewWrapper();
                   },
                   error: (error, stackTrace) {
-                    return Column(
-                      children: [
-                        const Text("An error occured!"),
-                        const SizedBox(
-                          height: 20,
+                    return Scaffold(
+                      body: SafeArea(
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text("An error occured!"),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  authService.signOut();
+                                },
+                                child: const Text("Sign out"),
+                              ),
+                            ],
+                          ),
                         ),
-                        ElevatedButton(
-                          onPressed: () {
-                            authService.signOut();
-                          },
-                          child: const Text("Sign out"),
-                        ),
-                      ],
+                      ),
                     );
                   },
                   loading: () => const Scaffold(
