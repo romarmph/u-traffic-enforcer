@@ -24,4 +24,8 @@ class ULocation {
       long: json['long'],
     );
   }
+
+  String get getAddress {
+    return address;
+  }
 }
