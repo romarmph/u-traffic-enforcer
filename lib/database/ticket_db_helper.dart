@@ -72,4 +72,109 @@ class TicketDBHelper {
       );
     });
   }
+
+  Stream<List<Ticket>> getRelatedTicketsStream(Ticket ticket) async* {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    CollectionReference collection = firestore.collection('tickets');
+
+    List<Ticket> allTickets = [];
+
+    if (ticket.licenseNumber!.isNotEmpty) {
+      final result = await collection
+          .where(
+            'licenseNumber',
+            isEqualTo: ticket.licenseNumber,
+          )
+          .get();
+      var tickets = result.docs.map((e) {
+        return Ticket.fromJson(
+          e.data() as Map<String, dynamic>,
+          e.id,
+        );
+      }).toList();
+      allTickets.addAll(tickets);
+    } else {
+      if (ticket.plateNumber!.isNotEmpty) {
+        final result = await collection
+            .where(
+              'plateNumber',
+              isEqualTo: ticket.plateNumber,
+            )
+            .get();
+        var tickets = result.docs.map((e) {
+          return Ticket.fromJson(
+            e.data() as Map<String, dynamic>,
+            e.id,
+          );
+        }).toList();
+        allTickets.addAll(tickets);
+      }
+
+      if (ticket.engineNumber!.isNotEmpty) {
+        final result = await collection
+            .where(
+              'engineNumber',
+              isEqualTo: ticket.engineNumber,
+            )
+            .get();
+        var tickets = result.docs.map((e) {
+          return Ticket.fromJson(
+            e.data() as Map<String, dynamic>,
+            e.id,
+          );
+        }).toList();
+        allTickets.addAll(tickets);
+      }
+
+      if (ticket.chassisNumber!.isNotEmpty) {
+        final result = await collection
+            .where(
+              'chassisNumber',
+              isEqualTo: ticket.chassisNumber,
+            )
+            .get();
+        var tickets = result.docs.map((e) {
+          return Ticket.fromJson(
+            e.data() as Map<String, dynamic>,
+            e.id,
+          );
+        }).toList();
+        allTickets.addAll(tickets);
+      }
+
+      if (ticket.conductionOrFileNumber!.isNotEmpty) {
+        final result = await collection
+            .where(
+              'conductionOrFileNumber',
+              isEqualTo: ticket.conductionOrFileNumber,
+            )
+            .get();
+        var tickets = result.docs.map((e) {
+          return Ticket.fromJson(
+            e.data() as Map<String, dynamic>,
+            e.id,
+          );
+        }).toList();
+        allTickets.addAll(tickets);
+      }
+
+      if (ticket.driverName!.isNotEmpty) {
+        final result = await collection
+            .where(
+              'driverName',
+              isEqualTo: ticket.driverName,
+            )
+            .get();
+        var tickets = result.docs.map((e) {
+          return Ticket.fromJson(
+            e.data() as Map<String, dynamic>,
+            e.id,
+          );
+        }).toList();
+        allTickets.addAll(tickets);
+      }
+    }
+
+    yield allTickets;
+  }
 }

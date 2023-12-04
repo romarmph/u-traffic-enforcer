@@ -409,6 +409,13 @@ class _HomePageState extends ConsumerState<HomePage> {
                   ),
                   onPressed: () {
                     Navigator.of(context).pop();
+                    ref.read(licenseImageProvider).resetLicense();
+                    ref.read(createTicketFormProvider).reset();
+                    ref.read(ticketChangeNotifierProvider).resetTicket();
+                    ref.invalidate(selectedViolationsProvider);
+                    ref.invalidate(evidenceListProvider);
+                    ref.invalidate(licenseImageProvider);
+                    ref.invalidate(isSameWithDriver);
                     goCreateTicket();
                   },
                   label: const Text("Fill Form"),
