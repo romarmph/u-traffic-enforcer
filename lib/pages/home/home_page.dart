@@ -90,35 +90,35 @@ class _HomePageState extends ConsumerState<HomePage> {
 
             return Column(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      enforcer.status.name.capitalize,
-                      style: const UTextStyle().textsmfontnormal.copyWith(
-                            color: enforcer.status == EmployeeStatus.onDuty
-                                ? UColors.green500
-                                : enforcer.status == EmployeeStatus.offDuty
-                                    ? UColors.red500
-                                    : enforcer.status == EmployeeStatus.active
-                                        ? UColors.blue500
-                                        : UColors.gray500,
-                          ),
-                    ),
-                    const SizedBox(width: USpace.space8),
-                    CircleAvatar(
-                      radius: 6,
-                      backgroundColor: enforcer.status == EmployeeStatus.onDuty
-                          ? UColors.green500
-                          : enforcer.status == EmployeeStatus.offDuty
-                              ? UColors.red500
-                              : enforcer.status == EmployeeStatus.active
-                                  ? UColors.blue500
-                                  : UColors.gray500,
-                    )
-                  ],
-                ),
-                const SizedBox(height: USpace.space8),
+                /// Row(
+                ///   mainAxisAlignment: MainAxisAlignment.end,
+                ///   children: [
+                ///     Text(
+                ///       enforcer.status.name.capitalize,
+                ///       style: const UTextStyle().textsmfontnormal.copyWith(
+                ///             color: enforcer.status == EmployeeStatus.onDuty
+                ///                 ? UColors.green500
+                ///                 : enforcer.status == EmployeeStatus.offDuty
+                ///                     ? UColors.red500
+                ///                     : enforcer.status == EmployeeStatus.active
+                ///                         ? UColors.blue500
+                ///                         : UColors.gray500,
+                ///           ),
+                ///     ),
+                ///     const SizedBox(width: USpace.space8),
+                ///     CircleAvatar(
+                ///       radius: 6,
+                ///       backgroundColor: enforcer.status == EmployeeStatus.onDuty
+                ///           ? UColors.green500
+                ///           : enforcer.status == EmployeeStatus.offDuty
+                ///               ? UColors.red500
+                ///               : enforcer.status == EmployeeStatus.active
+                ///                   ? UColors.blue500
+                ///                   : UColors.gray500,
+                ///     )
+                ///   ],
+                /// ),
+                /// const SizedBox(height: USpace.space8),
                 Container(
                   decoration: BoxDecoration(
                     color: UColors.blue600,
@@ -185,6 +185,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                                   );
                                 },
                                 error: (error, stackTrace) {
+                                  print(error);
+                                  print(stackTrace);
                                   return Text(
                                     'Error fetching post',
                                     style: const UTextStyle()
