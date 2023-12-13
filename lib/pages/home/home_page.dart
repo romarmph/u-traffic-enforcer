@@ -75,7 +75,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           borderRadius: BorderRadius.circular(USpace.space12),
           color: UColors.gray100,
         ),
-        child: ref.watch(schedProvider(enforcer.id)).when(
+        child: ref.watch(schedProviderStream(enforcer.id)).when(
           data: (sched) {
             if (sched == null) {
               return Center(
@@ -339,6 +339,34 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     ref.watch(violationsListProvider);
     ref.watch(vehicleTypeProvider);
+    final enforcer = ref.watch(enforcerProvider);
+    final schedule = ref.watch(schedProvider(enforcer.id));
+    bool onSchedule = false;
+
+    if (schedule == null) {
+      onSchedule = false;
+    }
+
+    if (schedule!.shift == ShiftPeriod.morning) {
+      print('morning');
+      if (DateTime.now().hour >= 5 && DateTime.now().hour <= 13) {
+        print('on schedule');
+        onSchedule = true;
+      }
+    } else if (schedule.shift == ShiftPeriod.afternoon) {
+      print('afternoon');
+      if (DateTime.now().hour >= 13 && DateTime.now().hour <= 21) {
+        print('on schedule');
+        onSchedule = true;
+      }
+    } else if (schedule.shift == ShiftPeriod.night) {
+      print('night');
+      if (DateTime.now().hour >= 21 && DateTime.now().hour <= 5) {
+        print('on schedule');
+        onSchedule = true;
+      }
+    }
+
     return Scaffold(
       key: _scaffoldKey,
       body: SafeArea(
@@ -357,12 +385,22 @@ class _HomePageState extends ConsumerState<HomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: showMenu,
+        onPressed: onSchedule ? showMenu : showNotOnScheduleError,
+        backgroundColor: onSchedule ? UColors.blue600 : UColors.gray400,
         label: const Text("Create Ticket"),
         icon: const Icon(Icons.add),
       ),
       endDrawer: const NotificationDrawer(),
       bottomNavigationBar: const BottomNav(),
+    );
+  }
+
+  void showNotOnScheduleError() {
+    QuickAlert.show(
+      context: context,
+      type: QuickAlertType.error,
+      title: 'Not on schedule',
+      text: 'You are not on schedule',
     );
   }
 
