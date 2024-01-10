@@ -317,7 +317,6 @@ class _ViolationListState extends ConsumerState<ViolationList> {
                           ];
 
                           final count = violationCounts[violation.id] ?? 0;
-                          print(count);
                           if (violation.offense.length == 3) {
                             if (count < 3) {
                               updatedSelectedViolations.add(

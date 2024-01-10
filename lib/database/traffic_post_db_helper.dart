@@ -15,4 +15,12 @@ class TrafficPostDB {
       return TrafficPost.fromJson(snapshot.data()!, snapshot.id);
     });
   }
+
+  Stream<List<TrafficPost>> getAllPost() {
+    return _collection.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return TrafficPost.fromJson(doc.data(), doc.id);
+      }).toList();
+    });
+  }
 }

@@ -1,8 +1,15 @@
+import 'dart:math';
+
 import 'package:u_traffic_enforcer/config/enums/shift_period.dart';
+import 'package:u_traffic_enforcer/database/attendance_db.dart';
+import 'package:u_traffic_enforcer/model/attendance.dart';
+import 'package:u_traffic_enforcer/model/schedule.dart';
 import 'package:u_traffic_enforcer/pages/common/bottom_nav.dart';
+import 'package:u_traffic_enforcer/riverpod/attendance.riverpod.dart';
 import 'package:u_traffic_enforcer/riverpod/sched.riverpod.dart';
 import 'package:u_traffic_enforcer/riverpod/trafficpost.riverpod.dart';
 import '../../config/utils/exports.dart';
+import 'package:geolocator/geolocator.dart' as geo;
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -13,6 +20,86 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  late EnforcerSchedule? schedule;
+
+  void _timeIn(Attendance attendance) async {
+    final result = await QuickAlert.show(
+      context: context,
+      type: QuickAlertType.confirm,
+      title: 'Time In',
+      text: 'Are you sure you want to time in?',
+      onConfirmBtnTap: () {
+        Navigator.of(context).pop(true);
+      },
+    );
+
+    if (result != true) return;
+
+    await AttendanceDBHelper.instance.timeIn(attendance);
+
+    QuickAlert.show(
+      context: navigatorKey.currentContext!,
+      type: QuickAlertType.success,
+      title: 'Time Int',
+      text: 'You have successfully timed in',
+    );
+  }
+
+  void _timeOut(Attendance attendance) async {
+    final result = await QuickAlert.show(
+      context: context,
+      type: QuickAlertType.confirm,
+      title: 'Time Out',
+      text: 'Are you sure you want to time out?',
+      onConfirmBtnTap: () {
+        Navigator.of(context).pop(true);
+      },
+    );
+
+    if (result != true) return;
+
+    await AttendanceDBHelper.instance.timeOut(attendance);
+
+    QuickAlert.show(
+      context: navigatorKey.currentContext!,
+      type: QuickAlertType.success,
+      title: 'Time Out',
+      text: 'You have successfully timed out',
+    );
+  }
+
+  void showLocationError() {
+    QuickAlert.show(
+      context: context,
+      type: QuickAlertType.error,
+      title: 'Location Error',
+      text: 'You are not within 100 meters of the post',
+    );
+  }
+
+  bool isWithin100Meters(lat1, lon1, lat2, lon2) {
+    const p = 0.017453292519943295;
+    const c = cos;
+    double a = 0.5 -
+        c((lat2 - lat1) * p) / 2 +
+        c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
+
+    double distance = 12742 * asin(sqrt(a));
+
+    return distance <= 0.1;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    schedule = ref.read(schedProvider);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   Widget userNav() {
     final enforcer = ref.watch(enforcerProvider);
@@ -48,23 +135,12 @@ class _HomePageState extends ConsumerState<HomePage> {
             ],
           ),
           const Spacer(),
-          // NotificationBellButton(
-          //   scaffoldKey: _scaffoldKey,
-          // ),
         ],
       ),
     );
   }
 
-  // Widget viewScheduleBtn() {
-  //   return TextButton(
-  //     onPressed: () {},
-  //     child: const Text("View Schedule"),
-  //   );
-  // }
-
   Widget miniDashboard() {
-    final enforcer = ref.watch(enforcerProvider);
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: USpace.space16,
@@ -75,7 +151,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           borderRadius: BorderRadius.circular(USpace.space12),
           color: UColors.gray100,
         ),
-        child: ref.watch(schedProviderStream(enforcer.id)).when(
+        child: ref.watch(schedProviderStream).when(
           data: (sched) {
             if (sched == null) {
               return Center(
@@ -90,35 +166,6 @@ class _HomePageState extends ConsumerState<HomePage> {
 
             return Column(
               children: [
-                /// Row(
-                ///   mainAxisAlignment: MainAxisAlignment.end,
-                ///   children: [
-                ///     Text(
-                ///       enforcer.status.name.capitalize,
-                ///       style: const UTextStyle().textsmfontnormal.copyWith(
-                ///             color: enforcer.status == EmployeeStatus.onDuty
-                ///                 ? UColors.green500
-                ///                 : enforcer.status == EmployeeStatus.offDuty
-                ///                     ? UColors.red500
-                ///                     : enforcer.status == EmployeeStatus.active
-                ///                         ? UColors.blue500
-                ///                         : UColors.gray500,
-                ///           ),
-                ///     ),
-                ///     const SizedBox(width: USpace.space8),
-                ///     CircleAvatar(
-                ///       radius: 6,
-                ///       backgroundColor: enforcer.status == EmployeeStatus.onDuty
-                ///           ? UColors.green500
-                ///           : enforcer.status == EmployeeStatus.offDuty
-                ///               ? UColors.red500
-                ///               : enforcer.status == EmployeeStatus.active
-                ///                   ? UColors.blue500
-                ///                   : UColors.gray500,
-                ///     )
-                ///   ],
-                /// ),
-                /// const SizedBox(height: USpace.space8),
                 Container(
                   decoration: BoxDecoration(
                     color: UColors.blue600,
@@ -185,8 +232,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                                   );
                                 },
                                 error: (error, stackTrace) {
-                                  print(error);
-                                  print(stackTrace);
                                   return Text(
                                     'Error fetching post',
                                     style: const UTextStyle()
@@ -205,35 +250,103 @@ class _HomePageState extends ConsumerState<HomePage> {
                             ),
                           ],
                         ),
+                        const SizedBox(height: USpace.space12),
+                        StreamBuilder<geo.Position>(
+                          stream: geo.Geolocator.getPositionStream(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const CircularProgressIndicator();
+                            }
+
+                            if (snapshot.hasError) {
+                              return const Text('Error fetching location');
+                            }
+
+                            final position = snapshot.data;
+
+                            final allPost = ref.watch(allPostProvider);
+
+                            final post = allPost.firstWhere(
+                              (post) => post.id == sched.postId,
+                            );
+
+                            bool canTimeInTimeOut = isWithin100Meters(
+                              position!.latitude,
+                              position.longitude,
+                              post.location.lat,
+                              post.location.long,
+                            );
+
+                            return ref
+                                .watch(attendanceProvider(sched.shift))
+                                .when(
+                              data: (attendance) {
+                                if (attendance == null) {
+                                  return ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: UColors.white,
+                                      foregroundColor: UColors.blue600,
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: USpace.space12,
+                                      ),
+                                    ),
+                                    onPressed: canTimeInTimeOut
+                                        ? () {
+                                            Attendance attendance = Attendance(
+                                              enforcerId: AuthService()
+                                                  .currentUser!
+                                                  .uid,
+                                              timeIn: Timestamp.now(),
+                                              schedule: sched,
+                                            );
+
+                                            _timeIn(attendance);
+                                          }
+                                        : showLocationError,
+                                    child: const Text("Time In"),
+                                  );
+                                }
+
+                                if (attendance.schedule.shift.isOnDuty &&
+                                    attendance.timeOut == null) {
+                                  return ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: UColors.white,
+                                      foregroundColor: UColors.blue600,
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: USpace.space12,
+                                      ),
+                                    ),
+                                    onPressed: canTimeInTimeOut
+                                        ? () {
+                                            final timeOut = attendance.copyWith(
+                                              timeOut: Timestamp.now(),
+                                            );
+
+                                            _timeOut(timeOut);
+                                          }
+                                        : showLocationError,
+                                    child: const Text("Time Out"),
+                                  );
+                                }
+
+                                return const SizedBox.shrink();
+                              },
+                              error: (error, stackTrace) {
+                                return const SizedBox.shrink();
+                              },
+                              loading: () {
+                                return const CircularProgressIndicator();
+                              },
+                            );
+                          },
+                        ),
                       ],
                     ),
                   ),
                 ),
                 const SizedBox(height: USpace.space12),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //   children: [
-                //     Column(
-                //       crossAxisAlignment: CrossAxisAlignment.start,
-                //       children: [
-                //         Text(
-                //           "Next Shift Rotation",
-                //           style: const UTextStyle().textxsfontnormal.copyWith(
-                //                 color: UColors.gray600,
-                //               ),
-                //         ),
-                //         const SizedBox(height: USpace.space4),
-                //         Text(
-                //           "November 2, 2023",
-                //           style: const UTextStyle().textlgfontbold.copyWith(
-                //                 color: UColors.blue700,
-                //               ),
-                //         ),
-                //       ],
-                //     ),
-                //     // viewScheduleBtn(),
-                //   ],
-                // ),
               ],
             );
           },
@@ -339,33 +452,6 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     ref.watch(violationsListProvider);
     ref.watch(vehicleTypeProvider);
-    final enforcer = ref.watch(enforcerProvider);
-    final schedule = ref.watch(schedProvider(enforcer.id));
-    bool onSchedule = false;
-
-    if (schedule == null) {
-      onSchedule = false;
-    }
-
-    if (schedule!.shift == ShiftPeriod.morning) {
-      print('morning');
-      if (DateTime.now().hour >= 5 && DateTime.now().hour <= 13) {
-        print('on schedule');
-        onSchedule = true;
-      }
-    } else if (schedule.shift == ShiftPeriod.afternoon) {
-      print('afternoon');
-      if (DateTime.now().hour >= 13 && DateTime.now().hour <= 21) {
-        print('on schedule');
-        onSchedule = true;
-      }
-    } else if (schedule.shift == ShiftPeriod.night) {
-      print('night');
-      if (DateTime.now().hour >= 21 && DateTime.now().hour <= 5) {
-        print('on schedule');
-        onSchedule = true;
-      }
-    }
 
     return Scaffold(
       key: _scaffoldKey,
@@ -384,11 +470,47 @@ class _HomePageState extends ConsumerState<HomePage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: onSchedule ? showMenu : showNotOnScheduleError,
-        backgroundColor: onSchedule ? UColors.blue600 : UColors.gray400,
-        label: const Text("Create Ticket"),
-        icon: const Icon(Icons.add),
+      floatingActionButton: ref.watch(schedProviderStream).when(
+        data: (attendance) {
+          if (attendance == null) {
+            return const SizedBox.shrink();
+          }
+
+          return ref.watch(attendanceProvider(attendance.shift)).when(
+            data: (data) {
+              if (data == null ||
+                  !data.schedule.shift.isOnDuty ||
+                  data.timeOut != null) {
+                return const SizedBox.shrink();
+              }
+
+              return FloatingActionButton(
+                onPressed: () {
+                  showMenu();
+                },
+                child: const Icon(Icons.add),
+              );
+            },
+            error: (error, stackTrace) {
+              return const SizedBox.shrink();
+            },
+            loading: () {
+              return const FloatingActionButton(
+                onPressed: null,
+                child: CircularProgressIndicator(),
+              );
+            },
+          );
+        },
+        error: (error, stackTrace) {
+          return const SizedBox.shrink();
+        },
+        loading: () {
+          return const FloatingActionButton(
+            onPressed: null,
+            child: CircularProgressIndicator(),
+          );
+        },
       ),
       endDrawer: const NotificationDrawer(),
       bottomNavigationBar: const BottomNav(),
@@ -419,30 +541,6 @@ class _HomePageState extends ConsumerState<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
               children: [
-                // ElevatedButton.icon(
-                //   style: OutlinedButton.styleFrom(
-                //     padding: const EdgeInsets.all(USpace.space24),
-                //   ),
-                //   onPressed: () async {
-                //     Navigator.of(context).pop();
-                //     String barcodeScanRes =
-                //         await FlutterBarcodeScanner.scanBarcode(
-                //       '#ff6666',
-                //       'Cancel',
-                //       true,
-                //       ScanMode.QR,
-                //     );
-
-                //     QRDetails qrDetails = QRDetails.fromJson(
-                //       jsonDecode(barcodeScanRes),
-                //     );
-
-                //     goCreateTicketWithLicense(qrDetails);
-                //   },
-                //   label: const Text("Scan QR"),
-                //   icon: const Icon(Icons.qr_code_scanner_outlined),
-                // ),
-                // const SizedBox(height: USpace.space12),
                 ElevatedButton.icon(
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.all(USpace.space24),

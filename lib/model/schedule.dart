@@ -10,6 +10,7 @@ class EnforcerSchedule {
   final String postName;
   final String createdBy;
   final String updatedBy;
+  final Timestamp? scheduleDay;
   final Timestamp createdAt;
   final Timestamp? updatedAt;
 
@@ -24,6 +25,7 @@ class EnforcerSchedule {
     this.updatedBy = "",
     required this.createdAt,
     this.updatedAt,
+    this.scheduleDay,
   });
 
   factory EnforcerSchedule.fromJson(Map<String, dynamic> json, String id) {
@@ -38,6 +40,7 @@ class EnforcerSchedule {
       updatedBy: json['updatedBy'],
       createdAt: json['createdAt'],
       updatedAt: json['updatedAt'],
+      scheduleDay: json['scheduleDay'],
     );
   }
 
@@ -53,6 +56,7 @@ class EnforcerSchedule {
       'updatedBy': updatedBy,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
+      'scheduleDay': scheduleDay,
     };
   }
 
@@ -73,6 +77,7 @@ class EnforcerSchedule {
     String? updatedBy,
     Timestamp? createdAt,
     Timestamp? updatedAt,
+    Timestamp? scheduleDay,
   }) {
     return EnforcerSchedule(
       id: id ?? this.id,
@@ -85,6 +90,7 @@ class EnforcerSchedule {
       updatedBy: updatedBy ?? this.updatedBy,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      scheduleDay: scheduleDay ?? this.scheduleDay,
     );
   }
 }

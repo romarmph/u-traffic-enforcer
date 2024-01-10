@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:geolocator/geolocator.dart';
 import '../config/utils/exports.dart';
 import 'package:geocoding/geocoding.dart' as geocoder;
 
@@ -48,4 +51,6 @@ class LocationServices {
 
     return '${place[1].street!} ${place[1].subLocality!} ${place[1].locality!}';
   }
+
+  final Geolocator geolocator = Geolocator();
 }

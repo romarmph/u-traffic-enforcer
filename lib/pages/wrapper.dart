@@ -1,5 +1,7 @@
 import 'package:u_traffic_enforcer/pages/auth/enforcer_suspended_page.dart';
 import 'package:u_traffic_enforcer/pages/auth/enforcer_terminated_page.dart';
+import 'package:u_traffic_enforcer/riverpod/sched.riverpod.dart';
+import 'package:u_traffic_enforcer/riverpod/trafficpost.riverpod.dart';
 
 import '../config/utils/exports.dart';
 
@@ -33,6 +35,8 @@ class _WrapperState extends ConsumerState<Wrapper> {
 
                     ref.watch(violationsStreamProvider);
                     ref.watch(vehicleTypeStreamProvider);
+                    ref.watch(schedProviderStream);
+                    ref.watch(getAllPost);
                     return const HomePage();
                   },
                   error: (error, stackTrace) {
