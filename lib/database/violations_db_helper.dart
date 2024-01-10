@@ -9,7 +9,11 @@ class ViolationsDatabase {
   static final _firestore = FirebaseFirestore.instance;
 
   Stream<List<Violation>> getViolationsStream() {
-    return _firestore.collection('violations').snapshots().map(
+    return _firestore
+        .collection('violations')
+        .where('isDisabled', isEqualTo: false)
+        .snapshots()
+        .map(
           (snapshot) => snapshot.docs
               .map((doc) => Violation.fromJson(doc.data(), doc.id))
               .toList(),

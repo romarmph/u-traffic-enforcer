@@ -20,8 +20,8 @@ class ULocation {
   factory ULocation.fromJson(Map<String, dynamic> json) {
     return ULocation(
       address: json['address'],
-      lat: json['lat'],
-      long: json['long'],
+      lat: double.parse(json['lat'].toString()),
+      long: double.parse(json['long'].toString()),
     );
   }
 

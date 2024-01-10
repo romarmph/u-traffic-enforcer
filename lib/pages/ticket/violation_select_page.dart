@@ -17,7 +17,9 @@ class _ViolationListState extends ConsumerState<ViolationList> {
 
   @override
   Widget build(BuildContext context) {
-    final selectedViolations = ref.watch(selectedViolationsProvider);
+    List<IssuedViolation> selectedViolations =
+        ref.watch(selectedViolationsProvider);
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -102,12 +104,26 @@ class _ViolationListState extends ConsumerState<ViolationList> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        subtitle: Text(
-                          "Fine: ${issuedViolation.fine}",
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: UColors.red500,
-                          ),
+                        subtitle: Row(
+                          children: [
+                            Text(
+                              "Fine: ${issuedViolation.fine}",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: UColors.red500,
+                              ),
+                            ),
+                            const SizedBox(
+                              width: USpace.space8,
+                            ),
+                            Text(
+                              "Offense: ${issuedViolation.offense}",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: UColors.red500,
+                              ),
+                            ),
+                          ],
                         ),
                         trailing: IconButton(
                           onPressed: () async {
@@ -232,93 +248,175 @@ class _ViolationListState extends ConsumerState<ViolationList> {
 
   Widget _buildViolationsList() {
     final selectedViolations = ref.watch(selectedViolationsProvider);
+    final currentTicket = ref.watch(ticketChangeNotifierProvider).ticket;
     return ref.watch(violationsStreamProvider).when(
-      data: (violations) {
-        final query = ref.watch(searchQueryProvider);
-        violations = _searchViolation(violations, query);
-        return ListView.separated(
-          itemCount: violations.length,
-          itemBuilder: (context, index) {
-            final Violation violation = violations[index];
-            final isSelected = selectedViolations
-                .any((element) => element.violationID == violation.id);
-            return Container(
-              decoration: BoxDecoration(
-                color: isSelected ? UColors.blue100 : UColors.white,
-                borderRadius: BorderRadius.circular(USpace.space8),
-                border: Border.all(
-                  color: isSelected ? UColors.blue700 : Colors.transparent,
-                ),
-              ),
-              child: ListTile(
-                onTap: () {
-                  if (selectedViolations
-                      .any((element) => element.violationID == violation.id)) {
-                    final List<IssuedViolation> updatedSelectedViolations = [
-                      ...selectedViolations
-                    ];
+          data: (violations) {
+            return ref.watch(relatedTicketsStream(currentTicket)).when(
+              data: (tickets) {
+                List<IssuedViolation> relatedViolations = [];
+                for (var ticket in tickets) {
+                  relatedViolations.addAll(ticket.issuedViolations);
+                }
 
-                    updatedSelectedViolations.removeWhere(
-                        (element) => element.violationID == violation.id);
+                Map<String, int> violationCounts = {};
 
-                    ref.read(selectedViolationsProvider.notifier).update(
-                          (state) => updatedSelectedViolations,
-                        );
-                    return;
+                for (var violation in relatedViolations) {
+                  if (violations.any((v) => v.id == violation.violationID)) {
+                    if (violationCounts.containsKey(violation.violationID)) {
+                      violationCounts[violation.violationID] =
+                          violationCounts[violation.violationID]! + 1;
+                    } else {
+                      violationCounts[violation.violationID] = 1;
+                    }
                   }
+                }
 
-                  final List<IssuedViolation> updatedSelectedViolations = [
-                    ...selectedViolations
-                  ];
+                violationCounts.updateAll(
+                  (key, value) => value > 3 ? 3 : value,
+                );
 
-                  updatedSelectedViolations.add(
-                    IssuedViolation(
-                      fine: violation.offense.first.fine,
-                      violation: violation.name,
-                      violationID: violation.id!,
-                      isBigVehicle: true,
-                      offense: violation.offense.first.level,
-                    ),
-                  );
+                final query = ref.watch(searchQueryProvider);
+                violations = _searchViolation(violations, query);
+                return ListView.separated(
+                  itemCount: violations.length,
+                  itemBuilder: (context, index) {
+                    final Violation violation = violations[index];
+                    final isSelected = selectedViolations
+                        .any((element) => element.violationID == violation.id);
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: isSelected ? UColors.blue100 : UColors.white,
+                        borderRadius: BorderRadius.circular(USpace.space8),
+                        border: Border.all(
+                          color:
+                              isSelected ? UColors.blue700 : Colors.transparent,
+                        ),
+                      ),
+                      child: ListTile(
+                        onTap: () {
+                          if (selectedViolations.any((element) =>
+                              element.violationID == violation.id)) {
+                            final List<IssuedViolation>
+                                updatedSelectedViolations = [
+                              ...selectedViolations
+                            ];
 
-                  ref.read(selectedViolationsProvider.notifier).update((state) {
-                    return updatedSelectedViolations;
-                  });
-                },
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(USpace.space8),
-                ),
-                selected: isSelected,
-                selectedTileColor: UColors.blue100,
-                title: Text(
-                  violation.name,
-                  style: TextStyle(
-                    fontWeight:
-                        isSelected ? FontWeight.bold : FontWeight.normal,
-                    color: isSelected ? UColors.gray700 : UColors.gray600,
-                  ),
-                ),
-              ),
+                            updatedSelectedViolations.removeWhere((element) =>
+                                element.violationID == violation.id);
+
+                            ref
+                                .read(selectedViolationsProvider.notifier)
+                                .state = updatedSelectedViolations;
+
+                            return;
+                          }
+
+                          final List<IssuedViolation>
+                              updatedSelectedViolations = [
+                            ...selectedViolations
+                          ];
+
+                          final count = violationCounts[violation.id] ?? 0;
+                          if (violation.offense.length == 3) {
+                            if (count < 3) {
+                              updatedSelectedViolations.add(
+                                IssuedViolation(
+                                  violationID: violation.id!,
+                                  violation: violation.name,
+                                  fine: violation.offense[count].fine,
+                                  offense: violation.offense[count].level,
+                                ),
+                              );
+                            } else {
+                              updatedSelectedViolations.add(
+                                IssuedViolation(
+                                  violationID: violation.id!,
+                                  violation: violation.name,
+                                  fine: violation.offense[2].fine,
+                                  offense: violation.offense[2].level,
+                                ),
+                              );
+                            }
+                          } else if (violation.offense.length == 2) {
+                            if (count >= 1) {
+                              updatedSelectedViolations.add(
+                                IssuedViolation(
+                                  violationID: violation.id!,
+                                  violation: violation.name,
+                                  fine: violation.offense[1].fine,
+                                  offense: violation.offense[1].level,
+                                ),
+                              );
+                            } else {
+                              updatedSelectedViolations.add(
+                                IssuedViolation(
+                                  violationID: violation.id!,
+                                  violation: violation.name,
+                                  fine: violation.offense[0].fine,
+                                  offense: violation.offense[0].level,
+                                ),
+                              );
+                            }
+                          } else {
+                            updatedSelectedViolations.add(
+                              IssuedViolation(
+                                violationID: violation.id!,
+                                violation: violation.name,
+                                fine: violation.offense[0].fine,
+                                offense: violation.offense[0].level,
+                              ),
+                            );
+                          }
+
+                          ref.read(selectedViolationsProvider.notifier).state =
+                              updatedSelectedViolations;
+                        },
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(USpace.space8),
+                        ),
+                        selected: isSelected,
+                        selectedTileColor: UColors.blue100,
+                        title: Text(
+                          violation.name,
+                          style: TextStyle(
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                            color:
+                                isSelected ? UColors.gray700 : UColors.gray600,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                  separatorBuilder: (context, index) {
+                    return const SizedBox(
+                      height: USpace.space12,
+                    );
+                  },
+                );
+              },
+              error: (error, stackTrace) {
+                return const Center(
+                  child: Text('Error fetching violatios'),
+                );
+              },
+              loading: () {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
             );
           },
-          separatorBuilder: (context, index) {
-            return const SizedBox(
-              height: USpace.space12,
+          error: (error, stackTrace) {
+            return const Center(
+              child: Text('Error fetching related tickets'),
             );
           },
+          loading: () => const Center(
+            child: CircularProgressIndicator(),
+          ),
         );
-      },
-      error: (error, stackTrace) {
-        return const Center(
-          child: Text('Error fetching violatios'),
-        );
-      },
-      loading: () {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      },
-    );
   }
 
   void _previewTicket() {
@@ -348,5 +446,34 @@ class _ViolationListState extends ConsumerState<ViolationList> {
     return violations.where((violation) {
       return violation.name.toLowerCase().contains(query.toLowerCase());
     }).toList();
+  }
+
+  bool isRelated(Ticket ticket, Ticket relatedTicket) {
+    if (ticket.licenseNumber!.isNotEmpty &&
+        ticket.licenseNumber == relatedTicket.licenseNumber) {
+      return true;
+    }
+
+    if (ticket.plateNumber!.isNotEmpty &&
+        ticket.plateNumber == relatedTicket.plateNumber) {
+      return true;
+    }
+
+    if (ticket.engineNumber!.isNotEmpty &&
+        ticket.engineNumber == relatedTicket.engineNumber) {
+      return true;
+    }
+
+    if (ticket.chassisNumber!.isNotEmpty &&
+        ticket.chassisNumber == relatedTicket.chassisNumber) {
+      return true;
+    }
+
+    if (ticket.conductionOrFileNumber!.isNotEmpty &&
+        ticket.conductionOrFileNumber == relatedTicket.conductionOrFileNumber) {
+      return true;
+    }
+
+    return false;
   }
 }

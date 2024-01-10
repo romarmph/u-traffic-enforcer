@@ -4,6 +4,7 @@ class Violation {
   final String? id;
   final String name;
   final List<ViolationOffense> offense;
+  final bool isDisabled;
   // final List<ViolationOffense> offenseBigVehicle;
   final String createdBy;
   final String editedBy;
@@ -16,6 +17,7 @@ class Violation {
     required this.id,
     required this.name,
     required this.offense,
+    this.isDisabled = false,
     // required this.offenseBigVehicle,
     required this.createdBy,
     required this.editedBy,
@@ -30,6 +32,7 @@ class Violation {
       offense: List<Map<String, dynamic>>.from(json['offense'])
           .map((e) => ViolationOffense.fromJson(e))
           .toList(),
+      isDisabled: json['isDisabled'],
       // offenseBigVehicle:
       //     List<Map<String, dynamic>>.from(json['offenseBigVehicle'])
       //         .map((e) => ViolationOffense.fromJson(e))
@@ -45,6 +48,7 @@ class Violation {
     return {
       'name': name,
       'offense': offense,
+      'isDisabled': isDisabled,
       'createdBy': createdBy,
       'editedBy': editedBy,
       'dateCreated': dateCreated,
@@ -57,6 +61,7 @@ class Violation {
     String? id,
     String? name,
     List<ViolationOffense>? offense,
+    bool? isDisabled,
     List<ViolationOffense>? offenseBigVehicle,
     String? createdBy,
     String? editedBy,
@@ -67,6 +72,7 @@ class Violation {
       id: id ?? this.id,
       name: name ?? this.name,
       offense: offense ?? this.offense,
+      isDisabled: isDisabled ?? this.isDisabled,
       // offenseBigVehicle: offenseBigVehicle ?? this.offenseBigVehicle,
       createdBy: createdBy ?? this.createdBy,
       editedBy: editedBy ?? this.editedBy,

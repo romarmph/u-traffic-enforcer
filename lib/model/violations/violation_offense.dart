@@ -24,4 +24,16 @@ class ViolationOffense {
       'penalty': penalty,
     };
   }
+
+  ViolationOffense copyWith({
+    int? level,
+    int? fine,
+    String? penalty,
+  }) {
+    return ViolationOffense(
+      level: level ?? this.level,
+      fine: fine ?? this.fine,
+      penalty: penalty ?? this.penalty,
+    );
+  }
 }

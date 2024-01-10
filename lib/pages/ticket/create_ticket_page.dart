@@ -2,6 +2,8 @@ import '../../../config/utils/exports.dart';
 
 final scanFinishFlagProvider = StateProvider<bool>((ref) => false);
 
+final isSameWithDriver = StateProvider<bool>((ref) => false);
+
 class CreateTicketPage extends ConsumerStatefulWidget {
   const CreateTicketPage({
     super.key,
@@ -96,7 +98,6 @@ class _CreateTicketPageState extends ConsumerState<CreateTicketPage>
   Widget build(BuildContext context) {
     final details = ref.watch(scannedDetailsProvider);
 
-
     if (details.details.isNotEmpty) {
       _nameController.text = details.details['fullname'] ?? "";
       _addressController.text = details.details['address'] ?? "";
@@ -109,6 +110,12 @@ class _CreateTicketPageState extends ConsumerState<CreateTicketPage>
         ref.read(scannedDetailsProvider).clearDetails();
       });
     }
+
+    if(ref.watch(isSameWithDriver)) {
+      _vehicleOwnerController.text = _nameController.text;
+      _vehicleOwnerAddressController.text = _addressController.text;
+    }
+
     return WillPopScope(
       onWillPop: _showCancelConfirm,
       child: Scaffold(

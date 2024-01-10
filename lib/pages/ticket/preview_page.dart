@@ -320,6 +320,18 @@ class _TicketPreviewState extends ConsumerState<TicketPreview>
               fontWeight: FontWeight.w600,
             ),
           ),
+          subtitle: Text(
+            violation.offense == 1
+                ? '1st Offense'
+                : violation.offense == 2
+                    ? '2nd Offense'
+                    : '3rd Offense',
+            style: const TextStyle(
+              color: UColors.gray600,
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
           titleTextStyle: const TextStyle(
             color: UColors.gray600,
             fontSize: 20,

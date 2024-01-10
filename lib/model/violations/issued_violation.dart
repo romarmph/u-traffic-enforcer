@@ -36,4 +36,22 @@ class IssuedViolation {
       'isBigVehicle': isBigVehicle,
     };
   }
+
+  IssuedViolation copyWith({
+    String? violationID,
+    String? violation,
+    int? offense,
+    int? fine,
+    String? penalty,
+    bool? isBigVehicle,
+  }) {
+    return IssuedViolation(
+      violationID: violationID ?? this.violationID,
+      violation: violation ?? this.violation,
+      offense: offense ?? this.offense,
+      fine: fine ?? this.fine,
+      penalty: penalty ?? this.penalty,
+      isBigVehicle: isBigVehicle ?? this.isBigVehicle,
+    );
+  }
 }

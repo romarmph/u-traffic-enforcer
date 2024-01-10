@@ -1,3 +1,5 @@
+import 'package:u_traffic_enforcer/pages/attendance/attendance.dart';
+
 import '../../config/utils/exports.dart';
 
 class BottomNav extends ConsumerWidget {
@@ -18,6 +20,12 @@ class BottomNav extends ConsumerWidget {
                 pageBuilder: (_, __, ___) => const HomePage(),
               ),
             );
+          } else if (index == 1) {
+            Navigator.of(navigatorKey.currentContext!).pushReplacement(
+              PageRouteBuilder(
+                pageBuilder: (_, __, ___) => const AttendancePage(),
+              ),
+            );
           } else {
             Navigator.of(navigatorKey.currentContext!).pushReplacement(
               PageRouteBuilder(
@@ -34,6 +42,11 @@ class BottomNav extends ConsumerWidget {
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
             label: "Home",
+            activeIcon: Icon(Icons.home),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_month),
+            label: "Attendance",
             activeIcon: Icon(Icons.home),
           ),
           BottomNavigationBarItem(

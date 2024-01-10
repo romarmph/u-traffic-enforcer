@@ -10,9 +10,17 @@ class ScheduleDBHelper {
   static final _firestore = FirebaseFirestore.instance;
   static final _collection = _firestore.collection('enforcerSchedules');
 
-  Stream<EnforcerSchedule?> getEnforcerSchedules(String enforcerId) {
+  Stream<EnforcerSchedule?> getEnforcerSchedules(
+      String enforcerId, Timestamp day) {
+    DateTime now = DateTime.now();
+    DateTime date = DateTime(now.year, now.month, now.day);
+    Timestamp start = Timestamp.fromDate(date);
+    Timestamp end = Timestamp.fromDate(date.add(const Duration(days: 1)));
+
     return _collection
         .where('enforcerId', isEqualTo: enforcerId)
+        .where('scheduleDay', isGreaterThanOrEqualTo: start)
+        .where('scheduleDay', isLessThan: end)
         .snapshots()
         .map((snapshot) {
       if (snapshot.docs.isNotEmpty) {
@@ -23,6 +31,17 @@ class ScheduleDBHelper {
       } else {
         return null;
       }
+    });
+  }
+
+  Stream<List<EnforcerSchedule>> getAllSchedules(String enforcerId) {
+    return _collection
+        .where('enforcerId', isEqualTo: enforcerId)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return EnforcerSchedule.fromJson(doc.data(), doc.id);
+      }).toList();
     });
   }
 }

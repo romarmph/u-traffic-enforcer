@@ -109,9 +109,9 @@ class VehiecleDetailsForm extends ConsumerWidget {
                 contentPadding: const EdgeInsets.all(0),
                 dense: true,
                 visualDensity: VisualDensity.compact,
-                value: form.isVehicleOwnedByDriver,
+                value: ref.watch(isSameWithDriver),
                 onChanged: (value) {
-                  form.setIsVehicleOwnedByDriver(value!);
+                  ref.read(isSameWithDriver.notifier).state = value!;
                 },
               ),
             ),

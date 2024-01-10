@@ -65,6 +65,8 @@ dependencies:
   path_provider: ^2.1.1
   flutter_riverpod: ^2.4.6
   restart_app: ^1.2.1
+  geolocator: ^10.1.0
+  calendar_view: ^1.0.4
 
 dev_dependencies:
   flutter_test:
