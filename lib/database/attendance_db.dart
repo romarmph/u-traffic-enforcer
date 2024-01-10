@@ -48,6 +48,19 @@ class AttendanceDBHelper {
     });
   }
 
+  Stream<List<Attendance>> getAttendanceList(
+    String enforcerId,
+  ) {
+    return _collection
+        .where('enforcerId', isEqualTo: enforcerId)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return Attendance.fromMap(doc.data(), doc.id);
+      }).toList();
+    });
+  }
+
   Future<void> timeIn(Attendance attendance) async {
     await _collection.add(attendance.toMap());
   }

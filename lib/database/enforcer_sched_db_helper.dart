@@ -33,4 +33,15 @@ class ScheduleDBHelper {
       }
     });
   }
+
+  Stream<List<EnforcerSchedule>> getAllSchedules(String enforcerId) {
+    return _collection
+        .where('enforcerId', isEqualTo: enforcerId)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return EnforcerSchedule.fromJson(doc.data(), doc.id);
+      }).toList();
+    });
+  }
 }
