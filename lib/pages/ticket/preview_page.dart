@@ -11,6 +11,7 @@ class _TicketPreviewState extends ConsumerState<TicketPreview>
     with SingleTickerProviderStateMixin {
   late TabController tabController;
   bool _isSaving = false;
+  bool _refuseToSign = false;
 
   @override
   void initState() {
@@ -46,24 +47,65 @@ class _TicketPreviewState extends ConsumerState<TicketPreview>
             visible: !form.isDriverNotPresent,
             child: SizedBox(
               width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  final evidences = ref.watch(evidenceListProvider);
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  CheckboxListTile(
+                    title: const Text("Refuse to Sign"),
+                    value: _refuseToSign,
+                    onChanged: (value) {
+                      setState(() {
+                        _refuseToSign = value!;
+                      });
+                      final ticket = ref.watch(
+                        ticketChangeNotifierProvider,
+                      );
 
-                  final signature =
-                      evidences.where((element) => element.id == "signature");
+                      final violations = ticket.ticket.issuedViolations;
 
-                  if (signature.isNotEmpty) {
-                    ref.read(evidenceListProvider.notifier).state = [
-                      ...evidences
-                          .where((element) => element.id != "signature"),
-                    ];
-                  }
+                      if (value!) {
+                        violations.add(
+                          const IssuedViolation(
+                            violationID: "P5tPnEB5BbxsgGxVQ1AQ",
+                            violation: "Refuse to Sign",
+                            fine: 500,
+                            isBigVehicle: false,
+                            offense: 1,
+                            penalty: "",
+                          ),
+                        );
+                      } else {
+                        violations.removeWhere((element) =>
+                            element.violationID == "P5tPnEB5BbxsgGxVQ1AQ");
+                      }
 
-                  goSignaturePad();
-                },
-                icon: const Icon(Icons.create_rounded),
-                label: const Text("Sign Ticket"),
+                      ticket.updateTicket(
+                        ticket.ticket.copyWith(
+                          issuedViolations: violations,
+                        ),
+                      );
+                    },
+                  ),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      final evidences = ref.watch(evidenceListProvider);
+
+                      final signature = evidences
+                          .where((element) => element.id == "signature");
+
+                      if (signature.isNotEmpty) {
+                        ref.read(evidenceListProvider.notifier).state = [
+                          ...evidences
+                              .where((element) => element.id != "signature"),
+                        ];
+                      }
+
+                      goSignaturePad();
+                    },
+                    icon: const Icon(Icons.create_rounded),
+                    label: const Text("Sign Ticket"),
+                  ),
+                ],
               ),
             ),
           ),
@@ -108,7 +150,7 @@ class _TicketPreviewState extends ConsumerState<TicketPreview>
     final signature = evidence.where((element) => element.id == "signature");
 
     if (!form.isDriverNotPresent) {
-      if (signature.isEmpty) {
+      if (signature.isEmpty && !_refuseToSign) {
         QuickAlert.show(
           context: context,
           type: QuickAlertType.error,

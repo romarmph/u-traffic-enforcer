@@ -4,6 +4,10 @@ final searchQueryProvider = StateProvider<String>((ref) {
   return "";
 });
 
+// final selectedViolationsProvider = StateProvider<List<IssuedViolation>>((ref) {
+//   return [];
+// });
+
 class ViolationList extends ConsumerStatefulWidget {
   const ViolationList({super.key});
 
@@ -14,11 +18,16 @@ class ViolationList extends ConsumerStatefulWidget {
 class _ViolationListState extends ConsumerState<ViolationList> {
   final _searchController = TextEditingController();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  List<IssuedViolation> selectedViolations = [];
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    List<IssuedViolation> selectedViolations =
-        ref.watch(selectedViolationsProvider);
+    selectedViolations = ref.watch(selectedViolationsProvider);
 
     return Scaffold(
       key: _scaffoldKey,

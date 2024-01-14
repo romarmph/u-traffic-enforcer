@@ -293,6 +293,11 @@ class _HomePageState extends ConsumerState<HomePage> {
                                     ),
                                     onPressed: canTimeInTimeOut
                                         ? () {
+                                            if (!sched.shift.isOnDuty) {
+                                              showNotOnScheduleError();
+                                              return;
+                                            }
+
                                             Attendance attendance = Attendance(
                                               enforcerId: AuthService()
                                                   .currentUser!

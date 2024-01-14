@@ -54,4 +54,12 @@ class IssuedViolation {
       isBigVehicle: isBigVehicle ?? this.isBigVehicle,
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is IssuedViolation && violationID == other.violationID;
+
+  @override
+  int get hashCode => violationID.hashCode;
 }

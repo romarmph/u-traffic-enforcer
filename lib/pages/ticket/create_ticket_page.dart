@@ -111,7 +111,7 @@ class _CreateTicketPageState extends ConsumerState<CreateTicketPage>
       });
     }
 
-    if(ref.watch(isSameWithDriver)) {
+    if (ref.watch(isSameWithDriver)) {
       _vehicleOwnerController.text = _nameController.text;
       _vehicleOwnerAddressController.text = _addressController.text;
     }
